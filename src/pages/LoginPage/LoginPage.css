@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;1,400;1,500&display=swap');
+
+.login-page-container {
+  overflow: hidden;
+}
+
+.background-twirl {
+  height: 110vh;
+  top: -5vh;
+  left: -15vw;
+  position: absolute;
+  z-index: -1;
+}
+
+.background-twirl-bottom {
+  width: 25vw;
+}
+
+.login-form-container {
+    margin-left: auto;
+    margin-right: 10vw;
+    width: 50%;
+}
+
+.login-form-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.login-form-header-text {
+}
+
+.input-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.input-container img {
+    margin-top: auto;
+    margin-right: 1rem;
+}
+
+.input-text {
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.input-text, .checkbox-text {
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    display: flex;
+
+    color: #4B4B4B;
+}
+
+.login-form-checkbox-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.login-form-checkbox-container input{
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.input-text input {
+    height: 2rem;
+    width: 20rem;
+    padding-left: 1rem;
+}
+
+.login-form-input-field {
+    background: #F4F4F4;
+    border-radius: 5px;
+    text-decoration: none;
+    border: none;
+}
+
+.login-form-button-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-form-button {
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    text-align: center;
+
+    color: #FFFFFF;
+    height: 2rem;
+    border: none;
+
+    width: 23.5rem;
+
+}
+
+.login-form-button-primary {
+    background: linear-gradient(90.17deg, #7E3E4F 0.19%, #AB818D 99.77%);
+    border-radius: 5px;
+
+    margin-bottom: 1rem;
+}
+
+.login-form-button-secondary {
+    background: transparent;
+    color: #4B4B4B;
+}
