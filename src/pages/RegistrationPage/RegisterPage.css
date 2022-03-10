@@ -10,13 +10,14 @@
   position: absolute;
   background: #f6fbf9;
   border-radius: 4rem;
-  top: 5%;
-  left: 23%;
-  width: 55vw;
-  height: 85vh;
-  padding: 1rem;
+  top: 7%;
+  left: 25%;
+  width: 50rem;
+  height: auto;
+  padding: 2rem 5rem 5rem 5rem;
   display: flex;
   flex-direction: column;
+  /* border: 1px solid black; */
 }
 
 .card-title {

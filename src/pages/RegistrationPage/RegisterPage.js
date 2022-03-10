@@ -33,6 +33,8 @@ export default function RegisterPage() {
             placeholder="Email Address"
           />
 
+          
+
           <input type="text" placeholder="Username" />
           <input type="text" placeholder="Password" />
           <input type="text" placeholder="Confirm password" />
