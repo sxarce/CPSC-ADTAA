@@ -1,0 +1,105 @@
+@import url("https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700&display=swap");
+.background-register {
+  background: #d2b7be;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  font-family: Karla;
+}
+.card {
+  position: absolute;
+  background: #f6fbf9;
+  border-radius: 4rem;
+  top: 5%;
+  left: 23%;
+  width: 55vw;
+  height: 85vh;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  text-align: center;
+}
+
+.red-rectangle-left {
+  position: absolute;
+  top: 0rem;
+  left: 0rem;
+  width: 35vw;
+  height: 50vh;
+}
+
+.red-rectangle-right {
+  position: absolute;
+  bottom: 0rem;
+  right: 0rem;
+  width: 45vw;
+  height: 55vh;
+}
+.ualr-logo-red {
+  mix-blend-mode: darken;
+  position: absolute;
+  bottom: 2rem;
+  left: 2rem;
+}
+
+.input-fields {
+  display: flex;
+  flex-direction: column;
+}
+.card-title-create {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+form.input-fields {
+  width: auto;
+  margin-top: 2rem;
+  align-self: center;
+  align-items: center;
+  border: 1px solid rgb(180, 27, 27);
+}
+
+form.input-fields input {
+  background: #ffffff;
+  border: 1.53407px solid rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  border-radius: 0.8rem;
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+
+  width: 40rem;
+  height: 4rem;
+}
+
+.register-btn {
+  background: #6f2539;
+  border-radius: 1rem;
+  font-family: "Karla";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 44px;
+  border: none;
+  padding: 1rem;
+  margin: 1.5rem;
+  width: 25rem;
+  align-self: center;
+  /* or 130% */
+
+  text-align: center;
+
+  color: #ffffff;
+}
+
+form.input-fields input.input-field-email {
+  width: 20rem;
+  align-self: flex-start;
+}
+
+.sign-in-text {
+  text-decoration: underline;
+}
