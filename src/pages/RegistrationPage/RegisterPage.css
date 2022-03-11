@@ -5,19 +5,21 @@
   width: 100vw;
   height: 100vh;
   font-family: Karla;
+ 
+  
 }
 .card {
   position: absolute;
   background: #f6fbf9;
   border-radius: 4rem;
-  top: 7%;
-  left: 25%;
-  width: 50rem;
+  top: 5%;
+  left: 20%;
+  width: 50vw;
   height: auto;
-  padding: 2rem 5rem 5rem 5rem;
+  padding: 1rem 2rem 2rem 2rem;
   display: flex;
   flex-direction: column;
-  /* border: 1px solid black; */
+  /* border: 1px solid black; */ 
 }
 
 .card-title {
@@ -46,9 +48,13 @@
   left: 2rem;
 }
 
-.input-fields {
-  display: flex;
-  flex-direction: column;
+.input-fields-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  border: 1px solid black;
+  
+  
 }
 .card-title-create {
   font-size: 2.5rem;
@@ -57,7 +63,10 @@
 }
 
 form.input-fields {
-  width: auto;
+  display: flex;
+  flex-direction: column;
+
+  /* width: 50rem; */
   margin-top: 2rem;
   align-self: center;
   align-items: center;
@@ -70,11 +79,12 @@ form.input-fields input {
   box-sizing: border-box;
   border-radius: 0.8rem;
   padding-left: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.3rem;
 
   width: 40rem;
   height: 4rem;
 }
+
 
 .register-btn {
   background: #6f2539;
@@ -97,10 +107,13 @@ form.input-fields input {
 }
 
 form.input-fields input.input-field-email {
-  width: 20rem;
+  width: 25rem;
   align-self: flex-start;
 }
 
+.sign-in-full-text {
+  margin: 0.2rem;
+}
 .sign-in-text {
   text-decoration: underline;
 }
