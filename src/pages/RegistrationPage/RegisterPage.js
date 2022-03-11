@@ -18,7 +18,7 @@ export default function RegisterPage() {
         alt="right red rectangle"
       />
 
-      <img className="ualr-logo-red" src={ualrLogo} alt="ualr logo in red"/>
+      <img className="ualr-logo-red" src={ualrLogo} alt="ualr logo in red" />
 
       <div className="card">
         <section className="card-title">
@@ -26,7 +26,6 @@ export default function RegisterPage() {
           <p>Submit a registration request with your desired access level</p>
         </section>
 
-        <div> </div>
         <form className="input-fields">
           <div className="input-fields-top">
             <input
@@ -34,6 +33,16 @@ export default function RegisterPage() {
               className="input-field-email"
               placeholder="Email Address"
             />
+            <select name="access-levels" id="access-levels">
+              <optgroup label="Access levels">
+                <option value="" disabled selected>
+                  Access level
+                </option>
+                <option value="ROOT">Root User</option>
+                <option value="ADMIN">Admin</option>
+                <option value="ASSISTANT">Assistant</option>
+              </optgroup>
+            </select>
           </div>
 
           <input type="text" placeholder="Username" />
@@ -41,7 +50,7 @@ export default function RegisterPage() {
           <input type="text" placeholder="Confirm password" />
           <button className="register-btn">Create Account</button>
 
-          <div className="sign-in-full-text"> 
+          <div className="sign-in-full-text">
             <span>Already Have An Account? </span>
             <span className="sign-in-text">Sign In</span>
           </div>

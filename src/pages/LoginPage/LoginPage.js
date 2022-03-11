@@ -1,12 +1,12 @@
 import "./LoginPage.css";
 import leftImg from "../../assets/svg/background_twirl.svg";
-import rightImg from "../../assets/svg/background_twirl2.svg"
+import rightImg from "../../assets/svg/background_twirl2.svg";
 import ualrLogo from "../../assets/svg/ualrLogo.svg";
-import ellipse from "../../assets/svg/ellipse.svg"
+import ellipse from "../../assets/svg/ellipse.svg";
 import userLogo from "../../assets/svg/briefcase.svg";
 import passLogo from "../../assets/svg/lock.svg";
 
-
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 const LoginPage = () => {
@@ -14,6 +14,11 @@ const LoginPage = () => {
   const [passwordInput, setPasswordInput] = useState("");
   const [rememberBool, setRememberBool] = useState(false);
 
+  let navigate = useNavigate()
+  function routeChange() {
+    let path = "/register"
+    navigate(path)
+  }
   return (
     //   <div className="login-page-container">
     //     <img className="background-twirl" src={svg} />
@@ -81,7 +86,7 @@ const LoginPage = () => {
         <div className="sign-in-fields">
           <div className="sign-in-areas">
             <img src={userLogo} />
-            <div>
+            <div className="wrapper">
               <label for="email">Email address / Username</label>
               <br />
               <input className="field" type="text" name="email" />
@@ -90,7 +95,7 @@ const LoginPage = () => {
 
           <div className="sign-in-areas">
             <img src={passLogo} />
-            <div>
+            <div className="wrapper">
               <label for="password">Password</label>
               <br />
               <input className="field" type="text" name="password" />
@@ -108,9 +113,7 @@ const LoginPage = () => {
 
           <div className="button-areas">
             <button className="sign-in-button">Sign in</button>
-            <button className="register-button">
-              Register
-            </button>
+            <button className="register-button" onClick={routeChange}>Register</button>
           </div>
         </div>
       </section>

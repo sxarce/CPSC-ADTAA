@@ -7,6 +7,10 @@
     /* border: 1px solid black; */
    
   }
+  @media all and (max-width: 1070px) {
+    .sign-in-title, .ualr-logo, .left-img { display: none; }
+    
+  }
   
   .left-img {
     position: absolute;
@@ -45,6 +49,7 @@
     top: 3rem;
     color: #4b4b4b;
     width: 40vw;
+    height: auto;
   }
   
   div.sign-in-title {
@@ -64,7 +69,9 @@
     flex-direction: column;
     padding-left: 0rem;
     margin-top: 3rem;
-    /* border: 1px solid black; */
+    /* border: 1px solid yellow; */
+    width: 100%;
+    height: 100%;
   }
   
   div.sign-in-fields input.field {
@@ -74,10 +81,14 @@
     box-shadow: 5px 10px 21px -6px #5b525a;
     margin-top: 0.5rem;
     margin-bottom: 2rem;
-    height: 3rem;
-    min-width: 30rem;
+    height: 2.8rem;
+    width: 100%;
     
     padding-left: 1rem;
+  }
+  div.wrapper {
+    /* border: 1px solid red; */
+    width: 100%;
   }
   
   div.sign-in-fields input.field:focus {
@@ -94,7 +105,9 @@
   
   div.sign-in-areas {
     display: flex;
-    margin-bottom: 0.2rem;
+    /* margin-bottom: 0.2rem; */
+    width: 100%;
+    /* border: 1px solid black; */
   }
   
   div.sign-in-areas input[type="checkbox"] {
@@ -117,6 +130,9 @@
     display: flex;
     flex-direction: column;
     margin-top: 1.7rem;
+    width: 100%;
+    height: 100%;
+    /* border: 1px solid black; */
   }
   
   .button-areas button {
@@ -127,8 +143,8 @@
     font-family: Poppins;
     font-size: 0.9em;
     height: 3rem;
-    width: 31rem;
-    margin-left: 2rem;
+    width: 98%;
+    margin-left: 2.0rem;
     cursor: pointer;
   }
   
