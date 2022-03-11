@@ -5,6 +5,12 @@ import rect_right from "../../assets/svg/background_rectangle2.svg";
 import ualrLogo from "../../assets/svg/uarLogoRed.svg";
 
 export default function RegisterPage() {
+  const [email, setEmail] = React.useState("");
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [passwordConfirm, setPasswordConfirm] = React.useState("");
+  const [accessLevel, setAccessLevel] = React.useState("");
+
   return (
     <div className="background-register">
       <img
@@ -32,8 +38,15 @@ export default function RegisterPage() {
               type="text"
               className="input-field-email"
               placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
-            <select name="access-levels" id="access-levels">
+            <select
+              name="access-levels"
+              id="access-levels"
+              onChange={(e) => setAccessLevel(e.target.value)}
+              value={accessLevel}
+            >
               <optgroup label="Access levels">
                 <option value="" disabled selected>
                   Access level
@@ -45,9 +58,24 @@ export default function RegisterPage() {
             </select>
           </div>
 
-          <input type="text" placeholder="Username" />
-          <input type="text" placeholder="Password" />
-          <input type="text" placeholder="Confirm password" />
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Confirm password"
+            value={passwordConfirm}
+            onChange={(e) => setPasswordConfirm(e.target.value)}
+          />
           <button className="register-btn">Create Account</button>
 
           <div className="sign-in-full-text">
