@@ -10,9 +10,26 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 const LoginPage = () => {
-  const [usernameInput, setUsernameInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
-  const [rememberBool, setRememberBool] = useState(false);
+  // const [usernameInput, setUsernameInput] = useState("");
+  // const [passwordInput, setPasswordInput] = useState("");
+  // const [rememberBool, setRememberBool] = useState(false);
+
+  const [formData, setFormData] = useState({
+    usernameInput: "",
+    passwordInput: "",
+    rememberBool: false,
+  });
+
+  function handleChange(e) {
+    const { name, value, type, checked } = e.target;
+    setFormData((prevFormData) => {
+      return {
+        ...formData,
+        [name]: type === "checkbox" ? checked : value,
+      };
+    });
+  }
+  // console.log(formData)
 
   let navigate = useNavigate();
   function routeChange() {
@@ -34,16 +51,16 @@ const LoginPage = () => {
 
         <div className="sign-in-fields">
           <div className="sign-in-areas">
-            <img src={userLogo} />
+            <img src={userLogo} alt="briefcase" />
             <div className="wrapper">
               <label for="email">Email address / Username</label>
               <br />
               <input
                 className="field"
                 type="text"
-                name="email"
-                value={usernameInput}
-                onChange={(e) => setUsernameInput(usernameInput)}
+                name="usernameInput"
+                value={formData.usernameInput}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -55,19 +72,20 @@ const LoginPage = () => {
               <br />
               <input
                 className="field"
-                type="text"
-                name="password"
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
+                type="password"
+                name="passwordInput"
+                value={formData.passwordInput}
+                onChange={handleChange}
               />
             </div>
           </div>
           <div className="sign-in-areas">
             <input
-              type="checkbox"
-              checked={rememberBool}
-              onChange={() => setRememberBool((prevRemember) => !prevRemember)}
               id="remember"
+              type="checkbox"
+              name="rememberBool"
+              checked={formData.rememberBool}
+              onChange={handleChange}
             />
             <label for="Remember me">Remember me</label>
           </div>

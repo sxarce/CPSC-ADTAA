@@ -19,7 +19,7 @@
   /* top: 2%; */
   /* left: 27%; */
   
-  width: 30vw;
+  width: auto;
   height: auto;
   
   /* padding: 1rem 1rem 1rem 1rem; */
@@ -65,7 +65,7 @@
 
 .input-fields-top {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1.8fr 1fr;
   grid-template-rows: 1fr;
   /* border: 1px solid black; */
   width: 100%;
@@ -85,6 +85,7 @@ select {
   border-radius: 1rem;
   color: #FFF;
   padding: 1rem;
+  width: 100%;
   height: 100%;
   font-family: "Karla";
 }
@@ -124,14 +125,15 @@ form.input-fields input {
   font-family: "Karla";
   font-style: normal;
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 100%;
   line-height: 44px;
   border: none;
   padding: 0.7rem;
   margin-top: 2rem;
   margin-bottom: 1rem;
-  width: 35%;
-  min-width: 240px;
+  width: 65%;
+  height: auto;
+  /* min-width: 240px; */
   align-self: center;
   /* or 130% */
 

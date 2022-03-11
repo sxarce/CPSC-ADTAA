@@ -5,11 +5,30 @@ import rect_right from "../../assets/svg/background_rectangle2.svg";
 import ualrLogo from "../../assets/svg/uarLogoRed.svg";
 
 export default function RegisterPage() {
-  const [email, setEmail] = React.useState("");
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [passwordConfirm, setPasswordConfirm] = React.useState("");
-  const [accessLevel, setAccessLevel] = React.useState("");
+  // const [email, setEmail] = React.useState("");
+  // const [username, setUsername] = React.useState("");
+  // const [password, setPassword] = React.useState("");
+  // const [passwordConfirm, setPasswordConfirm] = React.useState("");
+  // const [accessLevel, setAccessLevel] = React.useState("");
+
+  const [formData, setFormData] = React.useState({
+    email: "",
+    username: "",
+    password: "",
+    passwordConfirm: "",
+    accessLevel: "",
+  });
+  console.log(formData)
+
+  function handleChange(e) {
+    const { name, value, type, checked } = e.target;
+    setFormData((prevFormData) => {
+      return {
+        ...prevFormData,
+        [name]: type === "checkbox" ? checked : value,
+      };
+    });
+  }
 
   return (
     <div className="background-register">
@@ -35,17 +54,18 @@ export default function RegisterPage() {
         <form className="input-fields">
           <div className="input-fields-top">
             <input
-              type="text"
+              type="email"
               className="input-field-email"
               placeholder="Email Address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              name="email"
+              value={formData.email}
+              onChange={handleChange}              
             />
             <select
-              name="access-levels"
               id="access-levels"
-              onChange={(e) => setAccessLevel(e.target.value)}
-              value={accessLevel}
+              name="accessLevel"
+              value={formData.accessLevel}
+              onChange={handleChange}
             >
               <optgroup label="Access levels">
                 <option value="" disabled selected>
@@ -61,20 +81,23 @@ export default function RegisterPage() {
           <input
             type="text"
             placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
           />
           <input
-            type="text"
+            type="password"
             placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
           />
           <input
-            type="text"
+            type="password"
             placeholder="Confirm password"
-            value={passwordConfirm}
-            onChange={(e) => setPasswordConfirm(e.target.value)}
+            name="passwordConfirm"
+            value={formData.passwordConfirm}
+            onChange={handleChange}
           />
           <button className="register-btn">Create Account</button>
 
