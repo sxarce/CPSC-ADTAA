@@ -23,6 +23,7 @@ const App = () => {
     { path: "/", element: <LoginPage /> },
     { path: "/login", element: <LoginPage /> },
     { path: "/register", element: <RegisterPage /> },
+    { path: "/dashboard", element: <DashboardPage /> },
   ]);
   return routes;
 };
