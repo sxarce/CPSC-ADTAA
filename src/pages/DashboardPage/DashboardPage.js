@@ -6,22 +6,25 @@ import gear from "../../assets/svg/gear.svg";
 import peopleAssist from "../../assets/svg/people_assistance.svg";
 import pencil from "../../assets/svg/pencil.svg";
 import ualrLogo from "../../assets/svg/ualrLogo.svg";
+import { useNavigate } from "react-router-dom";
 
 export default function DashboardPage() {
+  let navigate = useNavigate();
+
   return (
-    <div className="background">
-      <img src={leftImg} alt="ellipse" className="left-img" />
-      <img src={rightImg} alt="two circles" className="right-img" />
+    <div className="background-dashboard">
+      <img src={leftImg} alt="ellipse" className="left-img-dashboard" />
+      <img src={rightImg} alt="two circles" className="right-img-dashboard" />
       <img src={ualrLogo} alt="ualr logo" className="ualr-logo-dashboard" />
 
       <div className="buttons-area">
-        <button class="btn">
+        <button class="btn" onClick={() => navigate("/setup")}>
           <img src={gear} alt="gear icon" />
         </button>
-        <button class="btn">
+        <button class="btn" onClick={() => navigate("/assistant")}>
           <img src={peopleAssist} alt="assist icon" />
         </button>
-        <button class="btn">
+        <button class="btn" onClick={() => navigate("/edit")}>
           <img src={pencil} alt="pencil icon" />
         </button>
       </div>

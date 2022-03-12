@@ -1,4 +1,9 @@
-.background {
+@media all and (max-width: 1070px) {
+    .left-img-dashboard { display: none; }
+    
+  }
+
+.background-dashboard {
     position: relative;
     width: 100vw;
     height: 100vh;
@@ -9,13 +14,13 @@
     align-items: center;
     
 }
-.left-img {
+.left-img-dashboard {
     position: absolute;
     top: 0rem;
     left: 0rem;
     height: 40vh;
 }
-.right-img {
+.right-img-dashboard {
     position: absolute;
     bottom: 0rem;
     right: 0rem;
