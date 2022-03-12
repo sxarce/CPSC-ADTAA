@@ -1,8 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;700&display=swap');
+
 .background-setup {
     position: relative;
     width: 100vw;
-    height: 100vh;
+    height: 120vh;
 }
 
 /* BANNER */
@@ -10,73 +11,11 @@
     background: linear-gradient(90deg, #732D40 0%, #A87D89 100%);
     position: absolute;
     top: 0rem;
-    height: 25%;
+    height: 20%;
     min-width: 100vw;
 }
 .gear-background {
     position: absolute;
     right: 0rem;
     top: 0rem;
-}
-
-/* SIDEBAR */
-.sidebar {
-    position: absolute;
-    top: 0rem;
-    left: 0rem;
-    bottom: 0rem;
-    background: #DDCDD1;
-    min-width: 15%;
-
-    display: flex;
-    flex-direction: column;
-    
-}
-.sidebar-items {
-    /* width: 100%; */
-    margin-top: 1.5rem;
-    padding-inline-start: 0rem;
-    list-style-type: none;
-}
-.sidebar-items li {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    padding-right: 2rem;
-}
-.sidebar-items li img {
-    align-self: center;
-    justify-self: center;
-}
-.sidebar-items>li>a {
-    text-decoration: none;
-    display: block;
-    color: #000000;
-    padding: 1rem 0rem;
-
-    font-family: "Open sans";
-    font-size: small;
-    opacity: 0.85;
-}
-.sidebar-items>li:hover {
-    background-color: #D0A8B3;
-}
-.sidebar-ualr-logo {
-    mix-blend-mode: darken;
-    /* border: 1px solid black; */
-    width: 60%;
-    
-    align-self: center;
-    position: absolute;
-    bottom: 0rem;
-    margin-bottom: 0.75rem;
-    
-}
-
-.solid-line-sidebar-divider {
-    width: 80%;
-    border: 0;
-    border-top: 0.045rem solid rgba(0, 0, 0, 0.1);
-    margin: 1em 0em;
-    padding: 0;
-    align-self: center;
 }
