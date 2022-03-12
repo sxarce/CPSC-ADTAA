@@ -17,13 +17,16 @@ import {
   useRoutes,
 } from "react-router-dom";
 import RegisterPage from "./pages/RegistrationPage/RegisterPage";
+import SetupPage from "./pages/SetupPage/SetupPage";
 
 const App = () => {
   let routes = useRoutes([
-    { path: "/", element: <LoginPage /> },
+    { path: "/", element: <SetupPage /> },
+
     { path: "/login", element: <LoginPage /> },
     { path: "/register", element: <RegisterPage /> },
     { path: "/dashboard", element: <DashboardPage /> },
+    { path: "/setup", element: <SetupPage /> },
   ]);
   return routes;
 };
