@@ -9,6 +9,9 @@ import passLogo from "../../assets/svg/lock.svg";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
+import { Button } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+
 const LoginPage = () => {
   // const [usernameInput, setUsernameInput] = useState("");
   // const [passwordInput, setPasswordInput] = useState("");
@@ -36,6 +39,23 @@ const LoginPage = () => {
     let path = "/register";
     navigate(path);
   }
+
+  const useStyles = makeStyles({
+    sign_in_button: {
+      color: "#FFFFFF !important",
+      background: "linear-gradient(90.17deg, #7e3e4f 0.19%, #ab818d 99.77%)",
+      textTransform: "none !important"
+    }
+  });
+  console.log(useStyles)
+
+  function SignInButton(){
+    const styles = useStyles();
+    return (
+      <Button className={styles.sign_in_button}>Sign in</Button>
+    )
+  }
+
   return (
     <div className="background">
       <img className="left-img" src={leftImg} alt="left design" />
@@ -91,7 +111,7 @@ const LoginPage = () => {
           </div>
 
           <div className="button-areas">
-            <button className="sign-in-button">Sign in</button>
+            <SignInButton />
             <button className="register-button" onClick={routeChange}>
               Register
             </button>
