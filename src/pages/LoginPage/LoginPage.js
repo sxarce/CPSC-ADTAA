@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import { Button } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+// import { makeStyles } from "@mui/styles";
 
 const LoginPage = () => {
   // const [usernameInput, setUsernameInput] = useState("");
@@ -40,21 +40,22 @@ const LoginPage = () => {
     navigate(path);
   }
 
-  const useStyles = makeStyles({
-    sign_in_button: {
-      color: "#FFFFFF !important",
-      background: "linear-gradient(90.17deg, #7e3e4f 0.19%, #ab818d 99.77%)",
-      textTransform: "none !important"
-    }
-  });
-  console.log(useStyles)
+  // Alternative way to make styles for button
+  // const useStyles = makeStyles({
+  //   sign_in_button: {
+  //     color: "#FFFFFF !important",
+  //     background: "linear-gradient(90.17deg, #7e3e4f 0.19%, #ab818d 99.77%)",
+  //     textTransform: "none !important"
+  //   }
+  // });
+  // console.log(useStyles)
 
-  function SignInButton(){
-    const styles = useStyles();
-    return (
-      <Button className={styles.sign_in_button}>Sign in</Button>
-    )
-  }
+  // function SignInButton(){
+  //   const styles = useStyles();
+  //   return (
+  //     <Button className={styles.sign_in_button}>Sign in</Button>
+  //   )
+  // }
 
   return (
     <div className="background">
@@ -111,7 +112,8 @@ const LoginPage = () => {
           </div>
 
           <div className="button-areas">
-            <SignInButton />
+            
+            <Button className="sign-in-button">Sign in</Button>
             <button className="register-button" onClick={routeChange}>
               Register
             </button>

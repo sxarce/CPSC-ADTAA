@@ -120,17 +120,16 @@ form.input-fields input {
 
 
 .register-btn {
-  background: #6f2539;
-  border-radius: 1rem;
-  font-family: "Karla";
-  font-style: normal;
-  font-weight: 700;
-  font-size: 100%;
-  line-height: 44px;
+  background: #6f2539 !important;
+  border-radius: 1rem !important;
+  font-family: "Karla" !important;
+  /* font-style: normal; */
+  font-weight: 700 !important;
+  font-size: 100% !important;
   border: none;
-  padding: 0.7rem;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
+  padding: 0.7rem !important;
+  margin-top: 2rem !important;
+  margin-bottom: 1rem !important;
   width: 65%;
   height: auto;
   /* min-width: 240px; */
@@ -139,7 +138,8 @@ form.input-fields input {
 
   text-align: center;
 
-  color: #ffffff;
+  color: #ffffff !important;
+  text-transform: none !important;
 }
 
 /* form.input-fields input.input-field-email {

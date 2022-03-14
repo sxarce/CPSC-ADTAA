@@ -4,6 +4,10 @@ import rect_left from "../../assets/svg/background_rectangle.svg";
 import rect_right from "../../assets/svg/background_rectangle2.svg";
 import ualrLogo from "../../assets/svg/uarLogoRed.svg";
 
+/* MUI components */
+import { Button } from "@mui/material";
+
+
 export default function RegisterPage() {
   // const [email, setEmail] = React.useState("");
   // const [username, setUsername] = React.useState("");
@@ -99,7 +103,7 @@ export default function RegisterPage() {
             value={formData.passwordConfirm}
             onChange={handleChange}
           />
-          <button className="register-btn">Create Account</button>
+          <Button className="register-btn">Create Account</Button>
 
           <div className="sign-in-full-text">
             <span>Already Have An Account? </span>

@@ -8,6 +8,9 @@ import pencil from "../../assets/svg/pencil.svg";
 import ualrLogo from "../../assets/svg/ualrLogo.svg";
 import { useNavigate } from "react-router-dom";
 
+/* MUI components */
+import { Button } from "@mui/material";
+
 export default function DashboardPage() {
   let navigate = useNavigate();
 
@@ -18,15 +21,16 @@ export default function DashboardPage() {
       <img src={ualrLogo} alt="ualr logo" className="ualr-logo-dashboard" />
 
       <div className="buttons-area">
-        <button class="btn" onClick={() => navigate("/setup")}>
+      
+        <Button className="btn" onClick={() => navigate("/setup")} >
           <img src={gear} alt="gear icon" />
-        </button>
-        <button class="btn" onClick={() => navigate("/assistant")}>
+        </Button>
+        <Button className="btn" onClick={() => navigate("/assistant")}>
           <img src={peopleAssist} alt="assist icon" />
-        </button>
-        <button class="btn" onClick={() => navigate("/edit")}>
+        </Button>
+        <Button className="btn" onClick={() => navigate("/edit")}>
           <img src={pencil} alt="pencil icon" />
-        </button>
+        </Button>
       </div>
     </div>
   );
