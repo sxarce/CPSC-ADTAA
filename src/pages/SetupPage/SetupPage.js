@@ -1,6 +1,7 @@
 import React from "react";
 import "./SetupPage.css";
 import Sidebar from "../../components/Sidebar"
+import InstructorSetupTable from "../../components/InstructorSetupTable"
 import gearBackground from "../../assets/svg/background_gear.svg";
 
 export default function SetupPage() {
@@ -11,6 +12,13 @@ export default function SetupPage() {
       </div>
       
       <Sidebar page="setup"/>
+
+      <div className="table-container">
+        <InstructorSetupTable />
+        
+      </div>
+
+
       
     </div>
   );

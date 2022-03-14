@@ -4,6 +4,10 @@
     position: relative;
     width: 100vw;
     height: 120vh;
+    
+    /* for table container */
+    /* display: flex;
+    justify-content: center; */
 }
 
 /* BANNER */
@@ -18,4 +22,19 @@
     position: absolute;
     right: 0rem;
     top: 0rem;
+}
+
+.table-container {
+    
+    width: max-content;
+    height: max-content;
+    padding: 1rem;
+    z-index: 1;
+    
+    position: absolute;
+    top: 15%;
+    left: 30%;
+
+    border: 1px solid green;
+    /* align-self: center; */
 }
