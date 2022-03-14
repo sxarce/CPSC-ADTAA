@@ -151,6 +151,13 @@ form.input-fields input {
   margin-top: 0.2rem;
   margin-bottom: 0.5rem;
 }
-.sign-in-text {
-  text-decoration: underline;
-}
+.sign-in-button {
+  background: none;
+  font-weight: 500;
+  font-family: Poppins;
+  font-size: 0.9em;
+  border: none;
+  color: #8c8c8c;
+  cursor: pointer;
+} 
+

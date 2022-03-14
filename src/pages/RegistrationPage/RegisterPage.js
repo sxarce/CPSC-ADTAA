@@ -3,6 +3,7 @@ import "./RegisterPage.css";
 import rect_left from "../../assets/svg/background_rectangle.svg";
 import rect_right from "../../assets/svg/background_rectangle2.svg";
 import ualrLogo from "../../assets/svg/uarLogoRed.svg";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
   // const [email, setEmail] = React.useState("");
@@ -28,6 +29,12 @@ export default function RegisterPage() {
         [name]: type === "checkbox" ? checked : value,
       };
     });
+  }
+
+  let navigate = useNavigate();
+  function routeChange() {
+    let path = "/login";
+    navigate(path);
   }
 
   return (
@@ -103,7 +110,7 @@ export default function RegisterPage() {
 
           <div className="sign-in-full-text">
             <span>Already Have An Account? </span>
-            <span className="sign-in-text">Sign In</span>
+            <button className="sign-in-button" onClick={routeChange}>Sign in</button>
           </div>
         </form>
       </div>

@@ -36,6 +36,8 @@ const LoginPage = () => {
     let path = "/register";
     navigate(path);
   }
+  
+  
   return (
     <div className="background">
       <img className="left-img" src={leftImg} alt="left design" />
