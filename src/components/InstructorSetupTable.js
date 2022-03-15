@@ -184,10 +184,10 @@ export default function CustomPaginationActionsTable() {
                 <TableCell component="th" scope="row" style={{fontSize: "small"}}>
                   {row.name}
                 </TableCell>
-                <TableCell style={{ width: 160 }} align="left" style={{fontSize: "small"}}>
+                <TableCell style={{ width: 160, fontSize: "small" }}  align="left" >
                   {row.calories}
                 </TableCell>
-                <TableCell style={{ width: 160 }} align="left" style={{fontSize: "small"}}>
+                <TableCell style={{ width: 160, fontSize: "small" }} align="left">
                   {row.fat}
                 </TableCell>
               </TableRow>
