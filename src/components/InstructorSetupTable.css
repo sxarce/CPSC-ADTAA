@@ -1,4 +1,18 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;700&display=swap");
+
+/*  */
+
+tbody tr {
+  border-bottom: 1px solid #E9ECEF;
+}
+.add-instructor-btn {
+  margin: 1rem !important;
+  border-radius: 0.5rem;
+  padding: 0.35rem 1rem;
+  background: #28a745 !important;
+  border-style: none;
+}
+/* 
 table.roster-table {
   border-collapse: collapse;
   font-family: "Open sans";
@@ -13,9 +27,8 @@ thead tr.table-title th {
   padding: 1.5rem 0rem 1.5rem 1.3rem;
   text-align: start;
   color: #32325d;
-
-  /* border: 1px solid black; */
 }
+
 thead tr.table-headers th {
   border-top: 1px solid #E9ECEF;
   border-bottom: 1px solid #E9ECEF;
@@ -25,7 +38,7 @@ thead tr.table-headers th {
   background-color: #f6f9fc;
   text-align: start;
 
-  /* border: 1px solid red; */
+  
 }
 
 thead tr.table-title th:first-child {
@@ -48,9 +61,7 @@ tbody tr.table-data td:nth-child(4),
 tbody tr.table-data td:nth-child(3) {
   color: #8898aa;
 }
-tbody tr {
-    border-bottom: 1px solid #E9ECEF;
-}
+
 
 tbody tr.table-data td:nth-child(3) ul {
   list-style: none;
@@ -64,14 +75,5 @@ tbody tr.table-data td {
   text-align: start;
   background-color: #fff;
 
-  /* border: 1px solid violet; */
-}
-
-.add-instructor-btn {
-  margin: 1rem;
-  border-radius: 0.5rem;
-  padding: 0.35rem 1rem;
-  background: #28a745;
-
-  border-style: none;
-}
+  
+} */

@@ -24,6 +24,7 @@
     top: 0rem;
 }
 
+
 .table-container {
     
     width: max-content;
@@ -31,9 +32,10 @@
     padding: 1rem;
     z-index: 1;
     
+    
     position: absolute;
     top: 15%;
-    left: 30%;
+    left: 25%;
 
     border: 1px solid green;
     /* align-self: center; */
