@@ -5,7 +5,7 @@ from app import create_app,db
 # from models import Articles,articles_schema
 from models import User, users_schema, user_schema
 
-import logging
+
 
 
 # Create an application instance
@@ -49,7 +49,10 @@ def register_user():
 	accessLevel = request.json['accessLevel']
 	new_user = User(username=username, email=email, password=password, accessLevel=accessLevel)
 	
-	db.session.add(new_user)
+	# db.session.add(new_user)
+	# db.session.commit()
+
+	db.session.query(User).delete()
 	db.session.commit()
 
 	return user_schema.jsonify(new_user)
@@ -57,4 +60,5 @@ def register_user():
 
 
 if __name__ == "__main__":
+	
 	app.run(debug=True)

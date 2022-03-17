@@ -21,7 +21,7 @@ import SetupPage from "./pages/SetupPage/SetupPage";
 
 const App = () => {
   let routes = useRoutes([
-    { path: "/", element: <SetupPage /> },
+    { path: "/", element: <RegisterPage /> },
 
     { path: "/login", element: <LoginPage /> },
     { path: "/register", element: <RegisterPage /> },

@@ -16,6 +16,21 @@ const LoginPage = () => {
   // const [usernameInput, setUsernameInput] = useState("");
   // const [passwordInput, setPasswordInput] = useState("");
   // const [rememberBool, setRememberBool] = useState(false);
+  const [articles, setArticles] = useState([]);
+  useEffect(()=>{
+    fetch('http://localhost:5000/articles',{
+      'methods':'GET',
+      headers : {
+        'Content-Type':'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(response => setArticles(response))
+    .catch(error => console.log(error))
+
+  },[])
+  console.log(articles)
+
 
   const [formData, setFormData] = useState({
     usernameInput: "",
@@ -74,7 +89,7 @@ const LoginPage = () => {
           <div className="sign-in-areas">
             <img src={userLogo} alt="briefcase" />
             <div className="wrapper">
-              <label for="email">Email address / Username</label>
+              <label htmlFor="email">Email address / Username</label>
               <br />
               <input
                 className="field"
@@ -89,7 +104,7 @@ const LoginPage = () => {
           <div className="sign-in-areas">
             <img src={passLogo} />
             <div className="wrapper">
-              <label for="password">Password</label>
+              <label htmlFor="password">Password</label>
               <br />
               <input
                 className="field"
@@ -108,7 +123,7 @@ const LoginPage = () => {
               checked={formData.rememberBool}
               onChange={handleChange}
             />
-            <label for="Remember me">Remember me</label>
+            <label htmlFor="Remember me">Remember me</label>
           </div>
 
           <div className="button-areas">
