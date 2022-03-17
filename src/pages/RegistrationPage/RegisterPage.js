@@ -19,6 +19,8 @@ import {
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 
+import { Link } from "react-router-dom";
+
 /* FORM VALIDATION REGEX */
 const USERNAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const EMAIL_REGEX = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
@@ -53,6 +55,15 @@ export default function RegisterPage() {
 
   function handleSubmit(e) {
     e.preventDefault();
+
+    /* prevent js button-enabling hack */
+    const usernameTest = USERNAME_REGEX.test(formData.username)
+    const passwordTest = PWD_REGEX.test(formData.password)
+    if (!usernameTest || !passwordTest) {
+      setErrMsg("Invalid entry")
+      return;
+    }
+
     insertUser();
     setFormData({
       email: "",
@@ -91,7 +102,7 @@ export default function RegisterPage() {
   const [matchFocus, setMatchFocus] = useState("false");
 
   const [errMsg, setErrMsg] = useState("");
-  const [success, setSuccess] = useState("");
+  // const [success, setSuccess] = useState("");
 
   useEffect(() => {
     userRef.current.focus();
@@ -334,7 +345,7 @@ export default function RegisterPage() {
 
           <div className="sign-in-full-text">
             <span>Already Have An Account? </span>
-            <span className="sign-in-text">Sign In</span>
+            <Link to="/login">Sign In</Link>
           </div>
         </form>
       </div>

@@ -1,3 +1,5 @@
+# python manage.py (do before flask run)
+
 def deploy():
 	"""Run deployment tasks."""
 	from app import create_app,db
@@ -10,6 +12,9 @@ def deploy():
 
 	# create database and tables
 	db.create_all()
+
+	# deletes all tables --> useful after editing columns from child classes of db.Model 
+	# db.drop_all()
 	
 
 	# migrate database to latest revision
