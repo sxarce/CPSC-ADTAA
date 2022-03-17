@@ -79,13 +79,18 @@
   width: 100%;
 }
 select {
-  background-color: #9d6170;
+  /* background-color: #9d6170; */
+  background-color: #6f2539;
   border-radius: 1rem;
   color: #fff;
   padding: 1rem;
   width: 100%;
   height: 100%;
   font-family: "Karla";
+}
+select option:disabled {
+  /* color: #9d6170; */
+  color: #6f2539;
 }
 
 .input-fields {
@@ -116,6 +121,9 @@ form.input-fields input {
   font-family: "Karla";
 }
 
+.register-btn:disabled {
+  background: #746b6b !important;
+}
 .register-btn {
   background: #6f2539 !important;
   border-radius: 1rem !important;

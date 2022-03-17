@@ -19,6 +19,11 @@ import {
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 
+/* FORM VALIDATION REGEX */
+const USERNAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+const EMAIL_REGEX = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+
 export default function RegisterPage() {
   // const [email, setEmail] = React.useState("");
   // const [username, setUsername] = React.useState("");
@@ -69,16 +74,19 @@ export default function RegisterPage() {
   }
 
   /* FORM VALIDATION */
-  const USERNAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
-  const EMAIL_REGEX = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+
   const userRef = useRef();
   const errRef = useRef();
 
   const [validUsername, setValidUsername] = useState("false");
-  const [validEmail, setValidEmail] = useState("false");
   const [userFocus, setUserFocus] = useState("false");
+
+  const [validEmail, setValidEmail] = useState("false");
+  const [emailFocus, setEmailFocus] = useState("false");
+
   const [validPwd, setValidPwd] = useState("false");
   const [pwdFocus, setPwdFocus] = useState("false");
+
   const [validMatch, setValidMatch] = useState("false");
   const [matchFocus, setMatchFocus] = useState("false");
 
@@ -91,13 +99,17 @@ export default function RegisterPage() {
 
   useEffect(() => {
     const resultUsername = USERNAME_REGEX.test(formData.username);
-    console.log(resultUsername);
-    console.log(formData.username);
     setValidUsername(resultUsername);
-
+  }, [formData.username]);
+  useEffect(() => {
     const resultEmail = EMAIL_REGEX.test(formData.email);
     setValidEmail(resultEmail);
-  }, [formData]);
+  }, [formData.email]);
+  useEffect(() => {
+    const resultPwd = PWD_REGEX.test(formData.password);
+    setValidPwd(resultPwd);
+    setValidMatch(formData.password === formData.passwordConfirm);
+  }, [formData.password, formData.passwordConfirm]);
 
   useEffect(() => {
     setErrMsg("");
@@ -145,8 +157,8 @@ export default function RegisterPage() {
                 autoComplete="off"
                 ref={userRef}
                 aria-describedby="uidnote"
-                onFocus={() => setUserFocus(true)}
-                onBlur={() => setUserFocus(false)}
+                onFocus={() => setEmailFocus(true)}
+                onBlur={() => setEmailFocus(false)}
               />
               <span className="errspan">
                 <FontAwesomeIcon
@@ -161,6 +173,7 @@ export default function RegisterPage() {
                 />
               </span>
             </div>
+
             <select
               id="access-levels"
               name="accessLevel"
@@ -169,29 +182,15 @@ export default function RegisterPage() {
               required
             >
               {/* <optgroup label="Access levels"> */}
-                <option value="" disabled selected>
-                  Access level
-                </option>
-                <option value="ROOT">Root User</option>
-                <option value="ADMIN">Admin</option>
-                <option value="ASSISTANT">Assistant</option>
+              <option value="" disabled selected>
+                Access level
+              </option>
+              <option value="ROOT">Root User</option>
+              <option value="ADMIN">Admin</option>
+              <option value="ASSISTANT">Assistant</option>
               {/* </optgroup> */}
             </select>
           </div>
-          {/* <p
-            id="uidnote"
-            style={{marginTop: "0rem"}}
-            className={
-              userFocus && formData.email && !validEmail
-                ? "instructions"
-                : "offscreen"
-            }
-            
-          >
-            <FontAwesomeIcon icon={faInfoCircle} />
-            Must be a valid email.
-           
-          </p> */}
 
           <div className="input-wrapper">
             <input
@@ -201,6 +200,7 @@ export default function RegisterPage() {
               value={formData.username}
               onChange={handleChange}
               autoComplete="off"
+              required
               aria-describedby="uidnote"
               onFocus={() => setUserFocus(true)}
               onBlur={() => setUserFocus(false)}
@@ -235,22 +235,102 @@ export default function RegisterPage() {
             <br />
             Letters, numbers, underscores, hyphens allowed.
           </p>
+          <div className="input-wrapper">
+            <input
+              type="password"
+              placeholder="Password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              autoComplete="off"
+              onFocus={() => setPwdFocus(true)}
+              onBlur={() => setPwdFocus(false)}
+              aria-describedby="pwdnote"
+            />
+            <span className="errspan">
+              <FontAwesomeIcon
+                icon={faCheck}
+                className={validPwd ? "valid" : "hide"}
+              />
 
-          <input
-            type="password"
-            placeholder="Password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-          <input
-            type="password"
-            placeholder="Confirm password"
-            name="passwordConfirm"
-            value={formData.passwordConfirm}
-            onChange={handleChange}
-          />
-          <button className="register-btn">Create Account</button>
+              <FontAwesomeIcon
+                icon={faTimes}
+                color="red"
+                className={validPwd || !formData.password ? "hide" : "invalid"}
+              />
+            </span>
+          </div>
+          <p
+            id="pwdnote"
+            className={
+              pwdFocus && formData.password && !validPwd
+                ? "instructions"
+                : "offscreen"
+            }
+          >
+            <FontAwesomeIcon icon={faInfoCircle} />
+            8 to 24 characters.
+            <br />
+            Must include uppercase and lowercase letters, a number and a special
+            character.
+            <br />
+            Allowed special characters:{" "}
+            <span aria-label="exclamation mark">!</span>{" "}
+            <span aria-label="at symbol">@</span>{" "}
+            <span aria-label="hashtag">#</span>{" "}
+            <span aria-label="dollar sign">$</span>{" "}
+            <span aria-label="percent">%</span>
+          </p>
+
+          <div className="input-wrapper">
+            <input
+              type="password"
+              placeholder="Confirm password"
+              name="passwordConfirm"
+              value={formData.passwordConfirm}
+              onChange={handleChange}
+              required
+              autoComplete="off"
+              onFocus={() => setMatchFocus(true)}
+              onBlur={() => setMatchFocus(false)}
+              // aria-describedby="confirmnote"
+            />
+            <span className="errspan">
+              <FontAwesomeIcon
+                icon={faCheck}
+                className={
+                  validMatch && formData.passwordConfirm ? "valid" : "hide"
+                }
+              />
+
+              <FontAwesomeIcon
+                icon={faTimes}
+                color="red"
+                className={
+                  validMatch || !formData.passwordConfirm ? "hide" : "invalid"
+                }
+              />
+            </span>
+          </div>
+          <p
+            id="confirmnote"
+            className={matchFocus && !validMatch ? "instructions" : "offscreen"}
+          >
+            <FontAwesomeIcon icon={faInfoCircle} />
+            Passwords do not match.
+          </p>
+          <button
+            type="submit"
+            disabled={
+              !validUsername || !validPwd || !validMatch || !validEmail
+                ? true
+                : false
+            }
+            className="register-btn"
+          >
+            Create Account
+          </button>
 
           <div className="sign-in-full-text">
             <span>Already Have An Account? </span>
