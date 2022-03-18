@@ -10,27 +10,57 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import { Button } from "@mui/material";
+import axios from "axios";
 // import { makeStyles } from "@mui/styles";
 
 const LoginPage = () => {
   // const [usernameInput, setUsernameInput] = useState("");
   // const [passwordInput, setPasswordInput] = useState("");
   // const [rememberBool, setRememberBool] = useState(false);
-  const [articles, setArticles] = useState([]);
-  useEffect(()=>{
-    fetch('http://localhost:5000/articles',{
-      'methods':'GET',
-      headers : {
-        'Content-Type':'application/json'
-      }
-    })
-    .then(response => response.json())
-    .then(response => setArticles(response))
-    .catch(error => console.log(error))
 
-  },[])
-  console.log(articles)
+  // sample code
+  // const [articles, setArticles] = useState([]);
+  // useEffect(()=>{
+  //   fetch('http://localhost:5000/articles',{
+  //     'methods':'GET',
+  //     headers : {
+  //       'Content-Type':'application/json'
+  //     }
+  //   })
+  //   .then(response => response.json())
+  //   .then(response => setArticles(response))
+  //   .catch(error => console.log(error))
 
+  // },[])
+  // console.log(articles)
+
+  const loginUser = () => {
+    axios
+      .post(
+        "http://localhost:5000/login-user",
+        JSON.stringify({
+          username: formData.usernameInput,
+          password: formData.passwordInput,
+        }),
+        {
+          headers: { "Content-Type": "application/json" },
+          // withCredentials: true,
+        }
+      )
+      .then((response) => console.log(response))
+      .catch((error) => console.log(error));
+  };
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    loginUser();
+
+    setFormData({
+      usernameInput: "",
+      passwordInput: "",
+      rememberBool: false,
+    });
+  }
 
   const [formData, setFormData] = useState({
     usernameInput: "",
@@ -86,53 +116,57 @@ const LoginPage = () => {
         </div>
 
         <div className="sign-in-fields">
-          <div className="sign-in-areas">
-            <img src={userLogo} alt="briefcase" />
-            <div className="wrapper">
-              <label htmlFor="email">Email address / Username</label>
-              <br />
+          <form onSubmit={handleSubmit}>
+            <div className="sign-in-areas">
+              <img src={userLogo} alt="briefcase" />
+              <div className="wrapper">
+                <label htmlFor="email">Email address / Username</label>
+                <br />
+                <input
+                  className="field"
+                  type="text"
+                  name="usernameInput"
+                  value={formData.usernameInput}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="sign-in-areas">
+              <img src={passLogo} />
+              <div className="wrapper">
+                <label htmlFor="password">Password</label>
+                <br />
+                <input
+                  className="field"
+                  type="password"
+                  name="passwordInput"
+                  value={formData.passwordInput}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            <div className="sign-in-areas">
               <input
-                className="field"
-                type="text"
-                name="usernameInput"
-                value={formData.usernameInput}
+                id="remember"
+                type="checkbox"
+                name="rememberBool"
+                checked={formData.rememberBool}
                 onChange={handleChange}
               />
+              <label htmlFor="Remember me">Remember me</label>
             </div>
-          </div>
 
-          <div className="sign-in-areas">
-            <img src={passLogo} />
-            <div className="wrapper">
-              <label htmlFor="password">Password</label>
-              <br />
-              <input
-                className="field"
-                type="password"
-                name="passwordInput"
-                value={formData.passwordInput}
-                onChange={handleChange}
-              />
+            <div className="button-areas">
+              {/* <Button className="sign-in-button">Sign in</Button> */}
+              <button className="sign-in-button" type="submit">
+                Sign in
+              </button>
+              <button className="register-button" onClick={routeChange}>
+                Register
+              </button>
             </div>
-          </div>
-          <div className="sign-in-areas">
-            <input
-              id="remember"
-              type="checkbox"
-              name="rememberBool"
-              checked={formData.rememberBool}
-              onChange={handleChange}
-            />
-            <label htmlFor="Remember me">Remember me</label>
-          </div>
-
-          <div className="button-areas">
-            
-            <Button className="sign-in-button">Sign in</Button>
-            <button className="register-button" onClick={routeChange}>
-              Register
-            </button>
-          </div>
+          </form>
         </div>
       </section>
     </div>

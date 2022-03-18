@@ -11,7 +11,7 @@ class User(db.Model):
     password = db.Column(db.String(40), nullable=False)
 
     def __repr__(self):
-        return f'User\n Email: {self.email}, Username: {self.username}, Access Level: {self.accessLevel}, Password: {self.password}'
+        return f'User-> Email:{self.email}, Username:{self.username}, Access Level:{self.accessLevel}, Password:{self.password}'
 
 # Generate marshmallow Schemas from your models
 class UserSchema(ma.Schema):
