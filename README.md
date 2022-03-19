@@ -7,7 +7,6 @@ In "Backend terminal":
 ```
 pip install -r requirements.txt
 python manage.py
-$env:FLASK_APP="routes.py"
 python -m flask run
 ```
 
