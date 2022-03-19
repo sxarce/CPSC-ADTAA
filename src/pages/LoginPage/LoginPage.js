@@ -13,7 +13,7 @@ import { Button } from "@mui/material";
 import axios from "axios";
 // import { makeStyles } from "@mui/styles";
 
-const LoginPage = () => {
+const LoginPage = (props) => {
   // const [usernameInput, setUsernameInput] = useState("");
   // const [passwordInput, setPasswordInput] = useState("");
   // const [rememberBool, setRememberBool] = useState(false);
@@ -34,10 +34,10 @@ const LoginPage = () => {
   // },[])
   // console.log(articles)
 
-  const loginUser = () => {
+  const loginUser = (e) => {
     axios
       .post(
-        "http://localhost:5000/login-user",
+        "/login-user",
         JSON.stringify({
           username: formData.usernameInput,
           password: formData.passwordInput,
@@ -47,8 +47,17 @@ const LoginPage = () => {
           // withCredentials: true,
         }
       )
-      .then((response) => console.log(response))
-      .catch((error) => console.log(error));
+      .then((response) => {
+        console.log(response);
+        return props.setToken(response.data.access_token);
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error.response);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        }
+      });
   };
 
   function handleSubmit(e) {

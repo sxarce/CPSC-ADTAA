@@ -26,7 +26,7 @@ def create_app():
 
     # for login
     app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
-    jwt = JWTManager(app)
+    # jwt = JWTManager(app)
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
     # Initialize extensions

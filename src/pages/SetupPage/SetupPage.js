@@ -6,7 +6,7 @@ import CourseSetupTable from "../../components/CourseSetupTable"
 import gearBackground from "../../assets/svg/background_gear.svg";
 
 
-export default function SetupPage() {
+export default function SetupPage(props) {
   return (
     <div className="background-setup">
       <div className="banner">

@@ -14,7 +14,9 @@ export default class APIService{
 	// .then(response => response.json())
 	// .catch(error => console.log(error))
 	// }
+	
 
+	// NOT USED.
     static InsertUser(body){
 		return fetch('http://localhost:5000/register-user',{
       		'method':'POST',

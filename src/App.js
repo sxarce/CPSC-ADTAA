@@ -12,31 +12,64 @@ import DashboardPage from "./pages/DashboardPage/DashboardPage";
 import {
   BrowserRouter as Router,
   Routes,
-  Switch,
   Route,
   useRoutes,
 } from "react-router-dom";
 import RegisterPage from "./pages/RegistrationPage/RegisterPage";
 import SetupPage from "./pages/SetupPage/SetupPage";
 
-const App = () => {
-  let routes = useRoutes([
-    { path: "/", element: <RegisterPage /> },
+import useToken from "./components/Token/useToken";
+import Header from "./components/Token/Header";
+// const App = () => {
+//   let routes = useRoutes([
+//     { path: "/", element: <RegisterPage /> },
 
-    { path: "/login", element: <LoginPage /> },
-    { path: "/register", element: <RegisterPage /> },
-    { path: "/dashboard", element: <DashboardPage /> },
-    { path: "/setup", element: <SetupPage /> },
-  ]);
-  return routes;
-};
+//     { path: "/login", element: <LoginPage /> },
+//     { path: "/register", element: <RegisterPage /> },
+//     { path: "/dashboard", element: <DashboardPage /> },
+//     { path: "/setup", element: <SetupPage /> },
+//   ]);
+//   return routes;
+// };
+// const AppWrapper = () => {
+//   return (
+//     <Router>
+//       <App />
+//     </Router>
+//   );
+// };
+// export default AppWrapper;
 
-const AppWrapper = () => {
+export default function App() {
+  const { token, removeToken, setToken } = useToken();
+
   return (
     <Router>
-      <App />
+      {/* <Header token={removeToken} /> TODO: logout button move to another component*/} 
+      <Routes>
+        <Route exact path="/" element={<LoginPage setToken={setToken}/>}/>
+        <Route exact path="/register" element={<RegisterPage />} />
+        {!token && token !== "" && token !== undefined ? (
+          // <LoginPage setToken={setToken} />
+          <Route exact path="/login" element={<LoginPage setToken={setToken} />} />
+        ) : (
+          <>
+            {/* <Routes> */}
+            <Route
+              exact
+              path="/dashboard"
+              element={<DashboardPage token={token} setToken={setToken} />}
+            />
+
+            <Route
+              exact
+              path="/setup"
+              element={<SetupPage token={token} setToken={setToken} />}
+            />
+            {/* </Routes> */}
+          </>
+        )}
+      </Routes>
     </Router>
   );
-};
-
-export default AppWrapper;
+}

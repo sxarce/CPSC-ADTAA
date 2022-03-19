@@ -40,7 +40,7 @@ export default function RegisterPage() {
     passwordConfirm: "",
     accessLevel: "",
   });
-  // console.log(formData);
+  console.log(formData);
 
   const insertUser = () => {
     axios
@@ -120,7 +120,7 @@ export default function RegisterPage() {
     const resultPwd = PWD_REGEX.test(formData.password);
     setValidPwd(resultPwd);
     setValidMatch(formData.password === formData.passwordConfirm);
-  }, [formData.password, formData.passwordConfirm]);
+  }, [formData.passwordConfirm, formData.password]);
 
   useEffect(() => {
     setErrMsg("");
@@ -305,7 +305,7 @@ export default function RegisterPage() {
               autoComplete="off"
               onFocus={() => setMatchFocus(true)}
               onBlur={() => setMatchFocus(false)}
-              // aria-describedby="confirmnote"
+              aria-describedby="confirmnote"
             />
             <span className="errspan">
               <FontAwesomeIcon
@@ -326,7 +326,7 @@ export default function RegisterPage() {
           </div>
           <p
             id="confirmnote"
-            className={matchFocus && !validMatch ? "instructions" : "offscreen"}
+            className={!validMatch && matchFocus ? "instructions" : "offscreen"}
           >
             <FontAwesomeIcon icon={faInfoCircle} />
             Passwords do not match.
