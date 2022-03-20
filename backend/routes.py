@@ -83,15 +83,19 @@ def login_user():  # create_token()
     usernameInput = request.json['username']
     passwordInput = request.json['password']
     attempted_user = User.query.filter_by(username=usernameInput).first()
+    if not attempted_user:
+        attempted_user = User.query.filter_by(email=usernameInput).first()
+
     print(attempted_user, file=sys.stderr)
 
     if not attempted_user or attempted_user.password != passwordInput:
         return {"msg": "wrong email or password"}, 401
 
     access_token = create_access_token(identity=usernameInput)
-    return jsonify(access_token=access_token)
+    return jsonify(access_token=access_token, email=attempted_user.email, accessLevel=attempted_user.accessLevel)
 
 
+# TODO: NOT USED
 @app.route("/protected", methods=["GET"])
 @jwt_required()
 def protected():
@@ -108,7 +112,8 @@ def logout():
 
 
 # gives email and accesslevel to render on UI
-@app.route("/credentials")
+@app.route("/credentials", methods=['GET'])
+@jwt_required()
 def credentials():
     username = get_jwt_identity()
     current_user = User.query.filter_by(username=username).first()
@@ -120,8 +125,10 @@ def credentials():
     return credentials
 
 
-# refresh jwt token
+# refreshing jwt tokens
 jwt = JWTManager(app)
+
+# TODO: test to see if this works?
 
 
 @app.after_request

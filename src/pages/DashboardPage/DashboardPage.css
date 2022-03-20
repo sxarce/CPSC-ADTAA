@@ -34,8 +34,11 @@
 }
 
 .buttons-area {
-    display: grid; 
+    /* display: grid; 
     grid-template-columns: 1fr 1fr 1fr;
+    gap: 3vw; */
+    display: flex;
+    flex-direction: row;
     gap: 3vw;
 }
 
@@ -49,8 +52,10 @@
    background: linear-gradient(180deg, #8C324A 0%, #945E6D 100%);
    color: #fff !important;
    cursor: pointer;
-   
+}
 
+.hide-button {
+    display: none !important; 
 }
 
 

@@ -10,7 +10,7 @@ import { useRef, useState, useEffect } from "react";
 /* MUI components */
 import { Button } from "@mui/material";
 
-import APIService from "../../components/APIService";
+// import APIService from "../../components/APIService";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -27,12 +27,6 @@ const EMAIL_REGEX = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 export default function RegisterPage() {
-  // const [email, setEmail] = React.useState("");
-  // const [username, setUsername] = React.useState("");
-  // const [password, setPassword] = React.useState("");
-  // const [passwordConfirm, setPasswordConfirm] = React.useState("");
-  // const [accessLevel, setAccessLevel] = React.useState("");
-
   const [formData, setFormData] = React.useState({
     email: "",
     username: "",

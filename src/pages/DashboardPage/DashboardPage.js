@@ -7,7 +7,7 @@ import peopleAssist from "../../assets/svg/people_assistance.svg";
 import pencil from "../../assets/svg/pencil.svg";
 import ualrLogo from "../../assets/svg/ualrLogo.svg";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 /* MUI components */
 import { Button } from "@mui/material";
@@ -16,14 +16,12 @@ import axios from "axios";
 
 export default function DashboardPage(props) {
   const [credentials, setCredentials] = useState(null);
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   function getData() {
-    // axios({
-    //   method: "GET",
-    //   url: "/credentials",
-    //   headers: {
-    //     Authorization: "Bearer " + props.token,
-    //   },
-    // })
     axios
       .get("/credentials", {
         headers: { Authorization: "Bearer " + props.token },
@@ -48,6 +46,20 @@ export default function DashboardPage(props) {
 
   let navigate = useNavigate();
 
+  if (credentials === undefined || credentials === null)
+    return (
+      <>
+        <p
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignContent: "center",
+          }}
+        >
+          Loading...
+        </p>
+      </>
+    );
   return (
     <div className="background-dashboard">
       <img src={leftImg} alt="ellipse" className="left-img-dashboard" />
@@ -55,13 +67,26 @@ export default function DashboardPage(props) {
       <img src={ualrLogo} alt="ualr logo" className="ualr-logo-dashboard" />
 
       <div className="buttons-area">
-        <Button className="btn" onClick={() => navigate("/setup")}>
+        <Button
+          className={`btn ${
+            credentials.user_access_level !== "ROOT" &&
+            credentials.user_access_level !== "ADMIN"
+              ? "hide-button"
+              : ""
+          }`}
+          onClick={() => navigate("/setup")}
+        >
           <img src={gear} alt="gear icon" />
         </Button>
         <Button className="btn" onClick={() => navigate("/assistant")}>
           <img src={peopleAssist} alt="assist icon" />
         </Button>
-        <Button className="btn" onClick={() => navigate("/edit")}>
+        <Button className={`btn ${
+            credentials.user_access_level !== "ROOT" &&
+            credentials.user_access_level !== "ADMIN"
+              ? "hide-button"
+              : ""
+          }`} onClick={() => navigate("/edit")}>
           <img src={pencil} alt="pencil icon" />
         </Button>
       </div>

@@ -53,7 +53,6 @@ export default function App() {
           path="/"
           element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />}
         />
-
         
         {isLoggedIn
           ? [
