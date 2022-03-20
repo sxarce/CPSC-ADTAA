@@ -13,12 +13,19 @@ import { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 
 import axios from "axios";
+import Loader from "../../components/LoadingScreen/Loader";
 
 export default function DashboardPage(props) {
-  const [credentials, setCredentials] = useState(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 3000);
+  }, []);
 
+  const [credentials, setCredentials] = useState(null);
+  let navigate = useNavigate();
   useEffect(() => {
     getData();
+    // testProtected()
   }, []);
 
   function getData() {
@@ -27,6 +34,7 @@ export default function DashboardPage(props) {
         headers: { Authorization: "Bearer " + props.token },
       })
       .then((response) => {
+        console.log(response);
         const data = response.data;
         data.access_token && props.setToken(data.access_token);
         setCredentials({
@@ -39,27 +47,14 @@ export default function DashboardPage(props) {
           console.log(error.response);
           console.log(error.response.status);
           console.log(error.response.headers);
+          localStorage.removeItem("token");
         }
       });
   }
   console.log(credentials);
 
-  let navigate = useNavigate();
-
-  if (credentials === undefined || credentials === null)
-    return (
-      <>
-        <p
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignContent: "center",
-          }}
-        >
-          Loading...
-        </p>
-      </>
-    );
+  if (loading === true) return <Loader />;
+  else if (credentials === undefined || credentials === null) return <Loader />;
   return (
     <div className="background-dashboard">
       <img src={leftImg} alt="ellipse" className="left-img-dashboard" />
@@ -81,12 +76,15 @@ export default function DashboardPage(props) {
         <Button className="btn" onClick={() => navigate("/assistant")}>
           <img src={peopleAssist} alt="assist icon" />
         </Button>
-        <Button className={`btn ${
+        <Button
+          className={`btn ${
             credentials.user_access_level !== "ROOT" &&
             credentials.user_access_level !== "ADMIN"
               ? "hide-button"
               : ""
-          }`} onClick={() => navigate("/edit")}>
+          }`}
+          onClick={() => navigate("/edit")}
+        >
           <img src={pencil} alt="pencil icon" />
         </Button>
       </div>

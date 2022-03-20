@@ -92,6 +92,7 @@ def login_user():  # create_token()
         return {"msg": "wrong email or password"}, 401
 
     access_token = create_access_token(identity=usernameInput)
+    
     return jsonify(access_token=access_token, email=attempted_user.email, accessLevel=attempted_user.accessLevel)
 
 
@@ -101,6 +102,8 @@ def login_user():  # create_token()
 def protected():
     # Access the identity of the current user with get_jwt_identity
     current_user = get_jwt_identity()
+
+    # returns {logged_in_as: "<value>", access_token: "<value>"}
     return jsonify(logged_in_as=current_user), 200
 
 
@@ -117,6 +120,9 @@ def logout():
 def credentials():
     username = get_jwt_identity()
     current_user = User.query.filter_by(username=username).first()
+
+    if not current_user:
+        current_user = User.query.filter_by(email=username).first()
 
     credentials = {"email": current_user.email,
                    "accessLevel": current_user.accessLevel}
@@ -136,7 +142,7 @@ def refresh_expiring_jwts(response):
     try:
         exp_timestamp = get_jwt()["exp"]
         now = datetime.now(timezone.utc)
-        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+        target_timestamp = datetime.timestamp(now + timedelta(hours=1))
         if target_timestamp > exp_timestamp:
             access_token = create_access_token(identity=get_jwt_identity())
             data = response.get_json()

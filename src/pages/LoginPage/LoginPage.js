@@ -89,7 +89,7 @@ const LoginPage = (props) => {
   // console.log(formData)
 
   let navigate = useNavigate();
-  function routeChange() {
+  function routeChange(e) {
     let path = "/register";
     navigate(path);
   }
@@ -168,9 +168,11 @@ const LoginPage = (props) => {
 
             <div className="button-areas">
               {/* <Button className="sign-in-button">Sign in</Button> */}
-              <button className="sign-in-button" type="submit">
+              <Button className="sign-in-button" type="submit"
+                disabled = {formData.usernameInput === "" || formData.passwordInput === ""}
+              >
                 Sign in
-              </button>
+              </Button>
               <button className="register-button" onClick={routeChange}>
                 Register
               </button>

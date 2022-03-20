@@ -153,7 +153,9 @@
     background: linear-gradient(90.17deg, #7e3e4f 0.19%, #ab818d 99.77%);
     text-transform: none !important;
   }
-
+  .sign-in-button:disabled {
+    background: #746b6b !important;
+  }
   
   
   .register-button {
