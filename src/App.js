@@ -14,6 +14,7 @@ import {
   Routes,
   Route,
   useRoutes,
+  Navigate,
 } from "react-router-dom";
 import RegisterPage from "./pages/RegistrationPage/RegisterPage";
 import SetupPage from "./pages/SetupPage/SetupPage";
@@ -42,33 +43,39 @@ import Header from "./components/Token/Header";
 
 export default function App() {
   const { token, removeToken, setToken } = useToken();
-
+  let isLoggedIn = token !== null && token !== undefined
   return (
     <Router>
-      {/* <Header token={removeToken} /> TODO: logout button move to another component*/} 
+      {/* <Header token={removeToken} /> TODO: logout button move to another component*/}
       <Routes>
-        <Route exact path="/" element={<LoginPage setToken={setToken}/>}/>
-        <Route exact path="/register" element={<RegisterPage />} />
-        {!token && token !== "" && token !== undefined ? (
-          // <LoginPage setToken={setToken} />
-          <Route exact path="/login" element={<LoginPage setToken={setToken} />} />
-        ) : (
-          <>
-            {/* <Routes> */}
-            <Route
-              exact
-              path="/dashboard"
-              element={<DashboardPage token={token} setToken={setToken} />}
-            />
+        <Route
+          exact
+          path="/"
+          element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />}
+        />
 
-            <Route
-              exact
-              path="/setup"
-              element={<SetupPage token={token} setToken={setToken} />}
-            />
-            {/* </Routes> */}
-          </>
-        )}
+        
+        {isLoggedIn
+          ? [
+              <Route
+                path={"/dashboard"}
+                element={<DashboardPage token={token} setToken={setToken} />}
+              />,
+              <Route
+                path={"/setup"}
+                element={<SetupPage token={token} setToken={setToken} />}
+              />,
+            ]
+          : [
+              <Route
+                exact
+                path="/login"
+                element={<LoginPage setToken={setToken} />}
+              />,
+              <Route exact path="/register" element={<RegisterPage />} />
+            ]}
+
+        <Route path={"*"} element={<Navigate replace to={"/"} />} />
       </Routes>
     </Router>
   );
