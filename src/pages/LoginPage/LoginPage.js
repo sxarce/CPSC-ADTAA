@@ -14,25 +14,12 @@ import axios from "axios";
 // import { makeStyles } from "@mui/styles";
 
 const LoginPage = (props) => {
-  // const [usernameInput, setUsernameInput] = useState("");
-  // const [passwordInput, setPasswordInput] = useState("");
-  // const [rememberBool, setRememberBool] = useState(false);
-
-  // sample code
-  // const [articles, setArticles] = useState([]);
-  // useEffect(()=>{
-  //   fetch('http://localhost:5000/articles',{
-  //     'methods':'GET',
-  //     headers : {
-  //       'Content-Type':'application/json'
-  //     }
-  //   })
-  //   .then(response => response.json())
-  //   .then(response => setArticles(response))
-  //   .catch(error => console.log(error))
-
-  // },[])
-  // console.log(articles)
+  // TEST: sends ONE email upon visiting the website.
+  useEffect(() => {
+    axios.get("/send-email")
+    .then(response => console.log(response))
+    .catch(error => console.log(error))
+  }, [])
 
   const loginUser = (e) => {
     axios

@@ -1,7 +1,6 @@
-import logging
 from flask import current_app, jsonify, request
 from flask_cors import cross_origin
-from app import create_app, db
+from app import create_app, db, mail
 # from models import Articles,articles_schema
 from models import User, users_schema, user_schema
 from flask_login import login_user
@@ -15,27 +14,20 @@ from flask_jwt_extended import unset_jwt_cookies, get_jwt
 
 import json
 from datetime import timedelta, timezone, datetime
-# from flask_jwt_extended import JWTManager
-
 from flask_jwt_extended import JWTManager
+
+from flask_mail import Message
 
 # Create an application instance
 app = create_app()
 
-# Define a route to fetch the avaialable articles
-# @app.route("/")
-# @app.route("/articles", methods=["GET"], strict_slashes=False)
-# def articles():
-# 	articles = Articles.query.all()
-# 	results = articles_schema.dump(articles)
-# 	return jsonify(results)
-
-
-@app.route("/")
-@app.route("/hello-world")
-def hello():
-    print("hello world", file=sys.stderr)  # for debugging
-    return "<h1>hello world</h1>"
+@app.route("/send-email", methods=['GET'])
+def send_email():
+    msg = Message('Hello from the other side!',
+                  sender='33acc45e679867', recipients=['33acc45e679867'])
+    msg.body = "Hey Paul, sending you this email from my Flask app, lmk if it works"
+    mail.send(msg)
+    return "Message sent!"
 
 
 @app.route("/register-user", methods=["POST"], strict_slashes=False)
@@ -56,8 +48,6 @@ def register_user():
     # db.session.commit()
 
     return user_schema.jsonify(new_user)
-
-# LOGIN ROUTES
 
 
 @app.after_request
@@ -93,7 +83,7 @@ def login_user():  # create_token()
         return {"msg": "wrong email or password"}, 401
 
     access_token = create_access_token(identity=usernameInput)
-    
+
     return jsonify(access_token=access_token, email=attempted_user.email, accessLevel=attempted_user.accessLevel)
 
 
@@ -135,8 +125,6 @@ def credentials():
 # refreshing jwt tokens
 jwt = JWTManager(app)
 
-# TODO: test to see if this works?
-
 
 @app.after_request
 def refresh_expiring_jwts(response):
@@ -157,5 +145,4 @@ def refresh_expiring_jwts(response):
 
 
 if __name__ == "__main__":
-
     app.run(debug=True)
