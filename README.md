@@ -27,8 +27,16 @@ npm start
 
 ----------------- Issues -----------------
 
-**Import could not be resolved from source**
+***Import could not be resolved from source***
 - Inside VSCode command palette (```Ctrl + Shift + P```), find *Python: Select Interpeter*
 - Select, *Enter interpreter path*
 - Navigate to and select *CPSC-ADTAA/venv/Scripts/python.exe*
+
+
+***No pyvenv.cfg***
+- Create a virtual environment and activate
+``` 
+python -m venv venv
+venv/Scripts/activate
+```
 
