@@ -5,8 +5,10 @@ Inside your IDE, open 2 terminals. One for backend (```cd backend```), one for f
 
 In "Backend terminal":
 ```
+python -m venv venv
+venv/Scripts/activate
 pip install -r requirements.txt
-python manage.py
+
 python -m flask run
 ```
 
