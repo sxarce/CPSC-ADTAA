@@ -5,6 +5,7 @@ from app import create_app, db
 # from models import Articles,articles_schema
 from models import User, users_schema, user_schema
 from flask_login import login_user
+
 import sys
 
 from flask_jwt_extended import create_access_token

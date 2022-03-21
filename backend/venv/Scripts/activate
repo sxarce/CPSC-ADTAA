@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\miggy\CPSC-ADTAA\backend\venv"
+VIRTUAL_ENV="C:\Users\miggy\vs_code_repos\CPSC-ADTAA\backend\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
