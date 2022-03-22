@@ -14,12 +14,12 @@ import axios from "axios";
 // import { makeStyles } from "@mui/styles";
 
 const LoginPage = (props) => {
-  // TEST: sends ONE email upon visiting the website.
-  useEffect(() => {
-    axios.get("/send-email")
-    .then(response => console.log(response))
-    .catch(error => console.log(error))
-  }, [])
+  // TEST ONLY: sends ONE email upon visiting the website.
+  // useEffect(() => {
+  //   axios.get("/send-email")
+  //   .then(response => console.log(response))
+  //   .catch(error => console.log(error))
+  // }, [])
 
   const loginUser = (e) => {
     axios

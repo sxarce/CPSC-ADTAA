@@ -1,4 +1,4 @@
-from flask import current_app, jsonify, request
+from flask import current_app, flash, jsonify, request, redirect
 from flask_cors import cross_origin
 from app import create_app, db, mail
 # from models import Articles,articles_schema
@@ -17,17 +17,70 @@ from datetime import timedelta, timezone, datetime
 from flask_jwt_extended import JWTManager
 
 from flask_mail import Message
+from flask import render_template, url_for
+from itsdangerous import BadSignature, URLSafeTimedSerializer
 
 # Create an application instance
 app = create_app()
 
-@app.route("/send-email", methods=['GET'])
-def send_email():
-    msg = Message('Hello from the other side!',
-                  sender='33acc45e679867', recipients=['33acc45e679867'])
-    msg.body = "Hey Paul, sending you this email from my Flask app, lmk if it works"
-    mail.send(msg)
-    return "Message sent!"
+#######################################################
+################## helper functions ###################
+#######################################################
+
+
+def send_confirmation_email(user_email):
+    confirm_serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+
+    confirm_url = url_for(
+        'confirm_email',
+        token=confirm_serializer.dumps(
+            user_email, salt='email-confirmation-salt'),
+        _external=True
+    )
+
+    msg = Message(subject='Confirm Your Email Address',
+                  html=render_template(
+                      'email_confirmation.html', confirm_url=confirm_url),
+                  recipients=[user_email], sender='33acc45e679867')
+
+    return mail.send(msg)
+
+#############################################
+################## routes ###################
+#############################################
+
+
+@app.route("/confirm/<token>")
+def confirm_email(token):
+    try:
+        confirm_serializer = URLSafeTimedSerializer(
+            current_app.config['SECRET_KEY'])
+        email = confirm_serializer.loads(
+            token, salt='email-confirmation-salt', max_age=3600)
+    except BadSignature:
+        # TODO: redirect template dead-end page
+        print("The confirmation link is expired.", file=sys.stderr)
+
+    existing_user = User.query.filter_by(email=email).first()
+
+    if existing_user.email_confirmed:
+        #TODO: Make template dead-end page to redirect to login (external url)
+        print('Email already confirmed. Please log in', file=sys.stderr)
+        # return '<p>Email already confirmed. Please log in. </p>'
+        # return redirect('http://localhost:3000/')
+    else:
+        existing_user.email_confirmed = True
+        existing_user.email_confirmed_on = datetime.now()
+
+        # supposedly UPDATES user
+        db.session.add(existing_user)
+        db.session.commit()
+        #TODO: redirect to template dead-end page
+        print('Thank you for confirming your email address.', file=sys.stderr)
+        return '<p> Thank you for confirming your email address'
+
+    # return jsonify(logged_in_as=existing_user.email), 200
+    # return '<p> email confirmed </p>'
 
 
 @app.route("/register-user", methods=["POST"], strict_slashes=False)
@@ -43,29 +96,12 @@ def register_user():
     db.session.add(new_user)
     db.session.commit()
 
-    # DELETE ALL ENTRIES FROM DB (On submit form)
+    send_confirmation_email(new_user.email)
+    # For testing purposes: DELETE ALL ENTRIES FROM DB (On submit form)
     # db.session.query(User).delete()
     # db.session.commit()
 
     return user_schema.jsonify(new_user)
-
-
-@app.after_request
-def refresh_expiring_jwts(response):
-    try:
-        exp_timestamp = get_jwt()["exp"]
-        now = datetime.now(timezone.utc)
-        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
-        if target_timestamp > exp_timestamp:
-            access_token = create_access_token(identity=get_jwt_identity())
-            data = response.get_json()
-            if type(data) is dict:
-                data["access_token"] = access_token
-                response.data = json.dumps(data)
-        return response
-    except (RuntimeError, KeyError):
-        # Case where there is not a valid JWT. Just return the original respone
-        return response
 
 
 @app.route("/login-user", methods=['GET', 'POST'])
@@ -87,7 +123,7 @@ def login_user():  # create_token()
     return jsonify(access_token=access_token, email=attempted_user.email, accessLevel=attempted_user.accessLevel)
 
 
-# TODO: NOT USED
+# TODO: protected() for testing only.
 @app.route("/protected", methods=["GET"])
 @jwt_required()
 def protected():
@@ -96,6 +132,8 @@ def protected():
 
     # returns {logged_in_as: "<value>", access_token: "<value>"}
     return jsonify(logged_in_as=current_user), 200
+
+# TODO: not used. Alternative: localStorage.removeItem("token")
 
 
 @app.route("/logout", methods=["POST"])
@@ -142,6 +180,15 @@ def refresh_expiring_jwts(response):
     except (RuntimeError, KeyError):
         # Case where there is not a valid JWT. Just return the original respone
         return response
+
+# send_email() is for testing only.
+# @app.route("/send-email", methods=['GET'])
+# def send_email():
+#     msg = Message('Hello from the other side!',
+#                   sender='33acc45e679867', recipients=['33acc45e679867'])
+#     msg.body = "Hey Paul, sending you this email from my Flask app, lmk if it works"
+#     mail.send(msg)
+#     return "Message sent!"
 
 
 if __name__ == "__main__":

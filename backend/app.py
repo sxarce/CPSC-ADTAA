@@ -25,20 +25,29 @@ def create_app():
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    # for login
-    app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
+    # for login and registration, respectively.
+    app.config["JWT_SECRET_KEY"] = "super-secret"  # TODO: Change this!
+    app.config["SECRET_KEY"] = "super-secret" # TODO: Change this too!
     # jwt = JWTManager(app)
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
     app.config['MAIL_SERVER'] = 'smtp.mailtrap.io'
 
-    # sending email configurations
+    # email configurations
     app.config['MAIL_SERVER'] = 'smtp.mailtrap.io'
     app.config['MAIL_PORT'] = 2525
     app.config['MAIL_USERNAME'] = '33acc45e679867'
     app.config['MAIL_PASSWORD'] = '11626d76e96b23'
     app.config['MAIL_USE_TLS'] = True
     app.config['MAIL_USE_SSL'] = False
+
+    # TODO: Make a gmail account for this app. Use gmail to handle sending email.
+    # app.config['MAIL_SERVER']='smtp.gmail.com'
+    # app.config['MAIL_PORT'] = 465
+    # app.config['MAIL_USERNAME'] = 'your_email@gmail.com'
+    # app.config['MAIL_PASSWORD'] = 'your_password'
+    # app.config['MAIL_USE_TLS'] = False
+    # app.config['MAIL_USE_SSL'] = True
 
     # Initialize extensions
     # To use the application instances above, instantiate with an application:
