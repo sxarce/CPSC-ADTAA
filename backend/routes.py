@@ -41,7 +41,7 @@ def send_confirmation_email(user_email):
     msg = Message(subject='Confirm Your Email Address',
                   html=render_template(
                       'email_confirmation.html', confirm_url=confirm_url),
-                  recipients=[user_email], sender='33acc45e679867')
+                  recipients=[user_email], sender=app.config['MAIL_USERNAME'])
 
     return mail.send(msg)
 
@@ -66,7 +66,7 @@ def confirm_email(token):
     if existing_user.email_confirmed:
         #TODO: Make template dead-end page to redirect to login (external url)
         print('Email already confirmed. Please log in', file=sys.stderr)
-        # return '<p>Email already confirmed. Please log in. </p>'
+        return '<p>Email already confirmed. Please log in. </p>'
         # return redirect('http://localhost:3000/')
     else:
         existing_user.email_confirmed = True
