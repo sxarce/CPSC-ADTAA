@@ -40,3 +40,15 @@ python -m venv venv
 venv/Scripts/activate
 ```
 
+***database errors***
+
+- Initialize database: 
+
+```python manage.py```
+
+- Deleting database entries:
+
+Comment out *db.create_all()*. Uncomment *db.drop_all* (in manage.py)
+Then, ```python manage.py```
+
+
