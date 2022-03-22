@@ -52,3 +52,9 @@ Comment out *db.create_all()*. Uncomment *db.drop_all* (in manage.py)
 Then, ```python manage.py```
 
 
+
+***Testing email confirmation***
+
+Create mailtrap account. The free version only.
+In app.py:
+- Change *app.config['MAIL_USERNAME]* and *app.config['MAIL_PASSWORD']* to your mailtrap credentials (SMTP Settings > Integrations > Flask-Mail
