@@ -1,7 +1,6 @@
 from flask import current_app, flash, jsonify, request, redirect
 from flask_cors import cross_origin
 from app import create_app, db, mail
-# from models import Articles,articles_schema
 from models import User, users_schema, user_schema
 from flask_login import login_user
 
@@ -64,7 +63,7 @@ def confirm_email(token):
     existing_user = User.query.filter_by(email=email).first()
 
     if existing_user.email_confirmed:
-        #TODO: Make template dead-end page to redirect to login (external url)
+        # TODO: Make template dead-end page to redirect to login (external url)
         print('Email already confirmed. Please log in', file=sys.stderr)
         return '<p>Email already confirmed. Please log in. </p>'
         # return redirect('http://localhost:3000/')
@@ -75,7 +74,7 @@ def confirm_email(token):
         # supposedly UPDATES user
         db.session.add(existing_user)
         db.session.commit()
-        #TODO: redirect to template dead-end page
+        # TODO: redirect to template dead-end page
         print('Thank you for confirming your email address.', file=sys.stderr)
         return '<p> Thank you for confirming your email address'
 
@@ -141,6 +140,39 @@ def logout():
     response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
     return response
+
+
+@app.route("/set-registration-status", methods=['POST'])
+def set_registration_status():
+    email = request.json['email']
+    isApproved = request.json['isApproved']
+
+    print(
+        f'REQUEST.JSON: email: {email}, approved? {isApproved}', file=sys.stderr)
+
+    public_user = User.query.filter_by(email=email).first()
+    public_user.email_confirmed = isApproved
+
+    db.session.add(public_user)
+    db.session.commit()
+
+    return jsonify({'Request': 'OK'})
+
+# @jwt_required
+
+
+@app.route("/get-registration-requests", methods=['GET'])
+def get_registration_requests():
+    users = User.query.filter(User.email_confirmed == True).all()
+
+    validUsers = []
+    for user in users:
+        print(user, file=sys.stderr)
+        if user.email_confirmed:
+            validUsers.append(dict(username=user.username,
+                                   email=user.email, accessLevel=user.accessLevel,))
+
+    return jsonify({"validUsers": validUsers})
 
 
 # gives email and accesslevel to render on UI

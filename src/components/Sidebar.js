@@ -8,29 +8,30 @@ import pencilImg from "../assets/svg/sidebar/sidebar_pencil.svg";
 import personImg from "../assets/svg/sidebar/sidebar_person.svg";
 import ualrLogo from "../assets/svg/sidebar/sidebar_ualr.svg";
 
+import {Link} from "react-router-dom"
 export default function Sidebar(props) {
   return (
     <div className="sidebar">
       <ul className="sidebar-items">
         <li>
           <img src={monitorImg} alt="monitor icon" />
-          <a href="">Dashboard</a>
+          <Link to="/dashboard">Dashboard</Link>
         </li>
         <li className={`${props.page === "setup" ? "sidebar-current-page" : ""}`}>
           <img src={gearImg} alt="gear icon" />
-          <a href="">Setup</a>
+          <Link to="/setup">Setup</Link>
         </li>
         <li className={`${props.page === "edit" ? "sidebar-current-page" : ""}`}>
           <img src={pencilImg} alt="pencil icon" />
-          <a href="">Edit</a>
+          <Link to="/edit">Edit</Link>
         </li>
         <li className={`${props.page === "assistant" ? "sidebar-current-page" : ""}`}>
           <img src={assistImg} alt="icon of people carrying box" />
-          <a href="">Assistant</a>
+          <Link to="/assistant">Assistant</Link>
         </li>
         <li className={`${props.page === "regRequests" ? "sidebar-current-page" : ""}`}>
           <img src={personImg} alt="person icon" />
-          <a href="">Registration requests</a>
+          <Link to="/registration-requests">Registration requests</Link>
         </li>
       </ul>
 

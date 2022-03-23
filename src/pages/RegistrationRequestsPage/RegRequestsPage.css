@@ -1,0 +1,9 @@
+.background-requests {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    
+    /* for table container */
+    /* display: flex;
+    justify-content: center; */
+}
