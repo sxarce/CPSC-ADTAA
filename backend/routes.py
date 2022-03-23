@@ -151,9 +151,14 @@ def set_registration_status():
         f'REQUEST.JSON: email: {email}, approved? {isApproved}', file=sys.stderr)
 
     public_user = User.query.filter_by(email=email).first()
-    public_user.email_confirmed = isApproved
+    # public_user.email_confirmed = isApproved
+    if isApproved:
+        public_user.isValid = True
+        db.session.add(public_user)
+    else:
+        # db.session.delete(public_user)
+        public_user.isValid = False
 
-    db.session.add(public_user)
     db.session.commit()
 
     return jsonify({'Request': 'OK'})
@@ -163,7 +168,7 @@ def set_registration_status():
 
 @app.route("/get-registration-requests", methods=['GET'])
 def get_registration_requests():
-    users = User.query.filter(User.email_confirmed == True).all()
+    users = User.query.filter(User.email_confirmed == True, User.isValid == False).all()
 
     validUsers = []
     for user in users:

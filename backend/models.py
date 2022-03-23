@@ -15,6 +15,9 @@ class User(db.Model):
     email_confirmed = db.Column(db.Boolean, nullable=True, default=False)
     email_confirmed_on = db.Column(db.DateTime, nullable=True)
 
+    # Valid user?
+    isValid = db.Column(db.Boolean, nullable=False, default=False)
+
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         self.email_confirmation_sent_on = datetime.now()

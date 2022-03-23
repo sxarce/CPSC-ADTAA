@@ -44,7 +44,7 @@ import RegRequestsPage from "./pages/RegistrationRequestsPage/RegRequestsPage";
 
 export default function App() {
   const { token, removeToken, setToken } = useToken();
-  let isLoggedIn = token !== null && token !== undefined
+  let isLoggedIn = token !== null && token !== undefined;
   return (
     <Router>
       {/* <Header token={removeToken} /> TODO: logout button move to another component*/}
@@ -54,11 +54,14 @@ export default function App() {
           path="/"
           element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />}
         /> */}
+
         {/* Route (exact path="/" Navigate to="registration-requests") is for testing only */}
-        <Route 
-        exact path="/"
-        element={<Navigate to={"/registration-requests"}/>} />
-        
+        <Route
+          exact
+          path="/"
+          element={<Navigate to={"/registration-requests"} />}
+        />
+
         {isLoggedIn
           ? [
               <Route
@@ -77,7 +80,11 @@ export default function App() {
                 element={<LoginPage setToken={setToken} />}
               />,
               <Route exact path="/register" element={<RegisterPage />} />,
-              <Route exact path="/registration-requests" element={<RegRequestsPage token={token} setToken={setToken} />} />, 
+              <Route
+                exact
+                path="/registration-requests"
+                element={<RegRequestsPage token={token} setToken={setToken} />}
+              />,
             ]}
 
         <Route path={"*"} element={<Navigate replace to={"/"} />} />
