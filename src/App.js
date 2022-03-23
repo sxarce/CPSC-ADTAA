@@ -49,18 +49,18 @@ export default function App() {
     <Router>
       {/* <Header token={removeToken} /> TODO: logout button move to another component*/}
       <Routes>
-        {/* <Route
-          exact
-          path="/"
-          element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />}
-        /> */}
-
-        {/* Route (exact path="/" Navigate to="registration-requests") is for testing only */}
         <Route
           exact
           path="/"
-          element={<Navigate to={"/registration-requests"} />}
+          element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />}
         />
+
+        {/* Below Route (exact path="/" Navigate to="registration-requests") is for testing only */}
+        {/* <Route
+          exact
+          path="/"
+          element={<Navigate to={"/registration-requests"} />}
+        /> */}
 
         {isLoggedIn
           ? [
@@ -72,6 +72,11 @@ export default function App() {
                 path={"/setup"}
                 element={<SetupPage token={token} setToken={setToken} />}
               />,
+              <Route
+                exact
+                path="/registration-requests"
+                element={<RegRequestsPage token={token} setToken={setToken} />}
+              />,
             ]
           : [
               <Route
@@ -80,11 +85,7 @@ export default function App() {
                 element={<LoginPage setToken={setToken} />}
               />,
               <Route exact path="/register" element={<RegisterPage />} />,
-              <Route
-                exact
-                path="/registration-requests"
-                element={<RegRequestsPage token={token} setToken={setToken} />}
-              />,
+              
             ]}
 
         <Route path={"*"} element={<Navigate replace to={"/"} />} />

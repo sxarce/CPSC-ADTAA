@@ -122,7 +122,7 @@ def login_user():  # create_token()
     return jsonify(access_token=access_token, email=attempted_user.email, accessLevel=attempted_user.accessLevel)
 
 
-# TODO: protected() for testing only.
+# TODO: This is an example. DO NOT DELETE.
 @app.route("/protected", methods=["GET"])
 @jwt_required()
 def protected():
@@ -143,6 +143,7 @@ def logout():
 
 
 @app.route("/set-registration-status", methods=['POST'])
+@jwt_required()
 def set_registration_status():
     email = request.json['email']
     isApproved = request.json['isApproved']
@@ -151,24 +152,23 @@ def set_registration_status():
         f'REQUEST.JSON: email: {email}, approved? {isApproved}', file=sys.stderr)
 
     public_user = User.query.filter_by(email=email).first()
-    # public_user.email_confirmed = isApproved
     if isApproved:
         public_user.isValid = True
         db.session.add(public_user)
     else:
-        # db.session.delete(public_user)
+        # TODO: Replace "public_user.isValid = False " with "db.session.delete(public_user)"
         public_user.isValid = False
 
     db.session.commit()
 
     return jsonify({'Request': 'OK'})
 
-# @jwt_required
-
 
 @app.route("/get-registration-requests", methods=['GET'])
+@jwt_required()
 def get_registration_requests():
-    users = User.query.filter(User.email_confirmed == True, User.isValid == False).all()
+    users = User.query.filter(User.email_confirmed ==
+                              True, User.isValid == False).all()
 
     validUsers = []
     for user in users:
@@ -218,7 +218,7 @@ def refresh_expiring_jwts(response):
         # Case where there is not a valid JWT. Just return the original respone
         return response
 
-# send_email() is for testing only.
+# TODO: This is an example for sending emails. DO NOT DELETE.
 # @app.route("/send-email", methods=['GET'])
 # def send_email():
 #     msg = Message('Hello from the other side!',
