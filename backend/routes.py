@@ -156,12 +156,13 @@ def set_registration_status():
         public_user.isValid = True
         db.session.add(public_user)
     else:
-        # TODO: Replace "public_user.isValid = False " with "db.session.delete(public_user)"
-        public_user.isValid = False
+        # public_user.isValid = False
+        db.session.delete(public_user)
 
     db.session.commit()
 
     return jsonify({'Request': 'OK'})
+    # return get_registration_requests()
 
 
 @app.route("/get-registration-requests", methods=['GET'])
