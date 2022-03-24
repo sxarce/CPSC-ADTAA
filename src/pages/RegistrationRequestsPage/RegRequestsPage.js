@@ -43,18 +43,24 @@ export default function RegRequestsPage(props) {
     // getRegisterRequests(); // Table used to be here. This call was needed to fill the table w/ initial data
   }, []);
 
-  if (loading === true) return <Loader message={""} />
-  else if (credentials === null || credentials === undefined)
-    return <Loader message={"Authentication failed. Please refresh the page."} />
-  else if (credentials.user_access_level !== "ROOT")
-    return <Loader message={"Unauthorized access. Please refresh the page"} />
+  // useEffect() runs after render. Render loading page first to ensure credentials are retrieved.
+  if (loading === true) return <Loader message={""} />;
+  else if (credentials === undefined || credentials === null)
+  // handles tampering using localStorage.setItem("token") and localStorage.removeItem("token")
+    return (
+      <Loader message={"Authentication failed. Please refresh the page."} />
+    );
+  else if (credentials.user_access_level !== "ROOT") {
+    // handles going to page via URL.
+    return <Navigate replace to="/dashboard" />;
+  }
   return (
     <div className="background-requests">
       <div className="banner">
         <img src={userBackground} alt="gear logo" className="gear-background" />
       </div>
 
-      <Sidebar page="regRequests" />
+      <Sidebar page="regRequests" accessLevel={credentials.user_access_level} />
       <div className="table-container">
         <RegistrationRequestsTable
           token={props.token}

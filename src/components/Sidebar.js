@@ -8,8 +8,9 @@ import pencilImg from "../assets/svg/sidebar/sidebar_pencil.svg";
 import personImg from "../assets/svg/sidebar/sidebar_person.svg";
 import ualrLogo from "../assets/svg/sidebar/sidebar_ualr.svg";
 
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom";
 export default function Sidebar(props) {
+  console.log(props.accessLevel);
   return (
     <div className="sidebar">
       <ul className="sidebar-items">
@@ -17,22 +18,44 @@ export default function Sidebar(props) {
           <img src={monitorImg} alt="monitor icon" />
           <Link to="/dashboard">Dashboard</Link>
         </li>
-        <li className={`${props.page === "setup" ? "sidebar-current-page" : ""}`}>
-          <img src={gearImg} alt="gear icon" />
-          <Link to="/setup">Setup</Link>
-        </li>
-        <li className={`${props.page === "edit" ? "sidebar-current-page" : ""}`}>
-          <img src={pencilImg} alt="pencil icon" />
-          <Link to="/edit">Edit</Link>
-        </li>
-        <li className={`${props.page === "assistant" ? "sidebar-current-page" : ""}`}>
+        <li
+          className={`${
+            props.page === "assistant" ? "sidebar-current-page" : ""
+          }`}
+        >
           <img src={assistImg} alt="icon of people carrying box" />
           <Link to="/assistant">Assistant</Link>
         </li>
-        <li className={`${props.page === "regRequests" ? "sidebar-current-page" : ""}`}>
-          <img src={personImg} alt="person icon" />
-          <Link to="/registration-requests">Registration requests</Link>
-        </li>
+        {(props.accessLevel === "ROOT" || props.accessLevel === "ADMIN") && (
+          <>
+            <li
+              className={`${
+                props.page === "setup" ? "sidebar-current-page" : ""
+              }`}
+            >
+              <img src={gearImg} alt="gear icon" />
+              <Link to="/setup">Setup</Link>
+            </li>
+            <li
+              className={`${
+                props.page === "edit" ? "sidebar-current-page" : ""
+              }`}
+            >
+              <img src={pencilImg} alt="pencil icon" />
+              <Link to="/edit">Edit</Link>
+            </li>
+          </>
+        )}
+        {props.accessLevel === "ROOT" && (
+          <li
+            className={`${
+              props.page === "regRequests" ? "sidebar-current-page" : ""
+            }`}
+          >
+            <img src={personImg} alt="person icon" />
+            <Link to="/registration-requests">Registration requests</Link>
+          </li>
+        )}
       </ul>
 
       <hr className="solid-line-sidebar-divider" />

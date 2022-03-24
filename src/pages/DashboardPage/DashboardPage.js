@@ -19,7 +19,7 @@ export default function DashboardPage(props) {
   // For <Loader />
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    setTimeout(() => setLoading(false), 2000);
+    setTimeout(() => setLoading(false), 1200);
   }, []);
 
   const [credentials, setCredentials] = useState(null);

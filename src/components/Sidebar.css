@@ -63,3 +63,8 @@
     padding: 0;
     align-self: center;
 }
+
+.option-hidden {
+    display: none; /* Handles space occupied by element */
+    visibility: hidden; /* Handles visibility of element */
+}
