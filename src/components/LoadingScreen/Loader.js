@@ -6,7 +6,7 @@ export default function Loader(props) {
   return (
     <div className="loader-wrapper">
       <p className="loading-text" style={{color: "#FFF"}}>
-        Loading... Please wait.. If page fails to load, please refresh the page.
+        {props.message}
       </p>
 
       <span className="loader">

@@ -16,9 +16,10 @@ import axios from "axios";
 import Loader from "../../components/LoadingScreen/Loader";
 
 export default function DashboardPage(props) {
+  // For <Loader />
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    setTimeout(() => setLoading(false), 3000);
+    setTimeout(() => setLoading(false), 2000);
   }, []);
 
   const [credentials, setCredentials] = useState(null);
@@ -53,8 +54,9 @@ export default function DashboardPage(props) {
   }
   console.log(credentials);
 
-  if (loading === true) return <Loader />;
-  else if (credentials === undefined || credentials === null) return <Loader />;
+  if (loading === true) return <Loader message={""} />;
+  else if (credentials === undefined || credentials === null)
+    return <Loader message={"Authentication failed. Please refresh the page"} />;
   return (
     <div className="background-dashboard">
       <img src={leftImg} alt="ellipse" className="left-img-dashboard" />
