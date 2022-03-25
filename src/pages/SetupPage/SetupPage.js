@@ -58,7 +58,7 @@ export default function SetupPage(props) {
         <img src={gearBackground} alt="gear logo" className="gear-background" />
       </div>
 
-      <Sidebar page="setup" accessLevel={credentials.user_access_level} />
+      <Sidebar page="setup" accessLevel={credentials.user_access_level} email={credentials.user_email} />
 
       <div className="table-container">
         <InstructorSetupTable />

@@ -7,6 +7,8 @@ import assistImg from "../assets/svg/sidebar/sidebar_assist.svg";
 import pencilImg from "../assets/svg/sidebar/sidebar_pencil.svg";
 import personImg from "../assets/svg/sidebar/sidebar_person.svg";
 import ualrLogo from "../assets/svg/sidebar/sidebar_ualr.svg";
+import userLogo from "../assets/svg/user-logo-bottom.svg";
+import keyLogo from "../assets/svg/key-logo-bottom.svg";
 
 import { Link } from "react-router-dom";
 export default function Sidebar(props) {
@@ -61,6 +63,17 @@ export default function Sidebar(props) {
       <hr className="solid-line-sidebar-divider" />
 
       <img src={ualrLogo} alt="ualr logo" className="sidebar-ualr-logo" />
+      <section className="user-credentials">
+        <div>
+          <img src={keyLogo} alt="user email logo" />
+          <p><i>{props.accessLevel}</i></p>
+        </div>
+        <div>
+          <img src={userLogo} alt="user email logo" />
+          <p><i>{props.email}</i></p>
+        </div>
+      </section>
+      <hr className="solid-line-sidebar-divider" />
     </div>
   );
 }

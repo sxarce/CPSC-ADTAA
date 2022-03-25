@@ -60,7 +60,7 @@ export default function RegRequestsPage(props) {
         <img src={userBackground} alt="gear logo" className="gear-background" />
       </div>
 
-      <Sidebar page="regRequests" accessLevel={credentials.user_access_level} />
+      <Sidebar page="regRequests" accessLevel={credentials.user_access_level} email={credentials.user_email}  />
       <div className="table-container">
         <RegistrationRequestsTable
           token={props.token}
