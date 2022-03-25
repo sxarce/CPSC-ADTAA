@@ -48,7 +48,7 @@ export default function SetupPage(props) {
     return (
       <Loader message={"Authentication failed. Please refresh the page"} />
     );
-  else if (credentials.user_access_level !== "ROOT") {
+  else if (credentials.user_access_level !== "ROOT" && credentials.user_access_level !== "ADMIN") {
     // handles going to page via URL.
     return <Navigate replace to="/dashboard" />
   }
