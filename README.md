@@ -67,8 +67,8 @@ npm install
 npm start
 ```
 
-
------------------ Issues -----------------
+------------------------------------------
+***ISSUES***
 
 ***Import could not be resolved from source***
 - Inside VSCode command palette (```Ctrl + Shift + P```), find *Python: Select Interpeter*
@@ -93,6 +93,8 @@ venv/Scripts/activate
 
 Comment out *db.create_all()*. Uncomment *db.drop_all* (in manage.py)
 Then, ```python manage.py```
+
+Or, use *DB Browser for SQLite* to execute SQL statements.
 
 
 
