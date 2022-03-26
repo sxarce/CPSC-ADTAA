@@ -1,5 +1,5 @@
 
-**Setting up** (Updated 3/21/22)
+**Setting up** (Updated 3/25/22)
 
 Inside VSCode, open 2 terminals. One for backend (```cd backend```), one for frontend.
 
@@ -9,15 +9,13 @@ In "Backend terminal":
 python -m venv venv
 venv/Scripts/activate
 ```
-- Install dependencies/libraries
+- Install dependencies/libraries (*Optional* - check if correct dependencies alrady exist ```pip list``` or ```python -m pip list```)
 ```
 pip install -r requirements.txt
 ```
 
 - Run the backend
-```
-python -m flask run
-```
+``` python -m flask run ``` or ``` flask run ```
 
 In "Frontend terminal":
 ```
