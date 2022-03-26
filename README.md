@@ -32,7 +32,7 @@ In "Backend terminal":
 - Create a virtual environment (venv) and activate it
 ```
 python3 -m venv venv
-venv/Scripts/activate
+source venv/bin/activate
 ```
 
 - (*Optional*) Ensure you have Homebrew installed (```brew --version```). Otherwise, do:
@@ -46,16 +46,18 @@ brew install mysql
 
 
 
-- Install dependencies (```pip list``` to check):
+- (*Optional*) Install dependencies if they don't exist (```pip list``` to check):
 ``` pip install -r requirements.txt ```
 
-- Run the backend: ```python3 -m flask run``` or ```flask run```
+- Run the backend: ```flask run```
 
 
 In "Frontend terminal", install dependencies and run:
 
-- (*Optional*) Ensure you have Homebrew installed (```brew --version```). Same in backend setup. Otherwise, do:
+- (*Optional*) Ensure you have Homebrew installed (```brew --version```). Same in backend setup (If you've done this already, skip this part). Otherwise, do:
 ```/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"```
+
+- Install node
 
 ```brew install node```
 
