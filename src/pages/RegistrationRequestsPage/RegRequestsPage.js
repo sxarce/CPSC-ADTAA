@@ -8,16 +8,19 @@ import RegistrationRequestsTable from "../../components/Tables/RegistrationReque
 import Loader from "../../components/LoadingScreen/Loader";
 import { Navigate } from "react-router-dom";
 
+import { useSpring, animated } from "react-spring";
+
 export default function RegRequestsPage(props) {
   // For <Loader />
   const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    setTimeout(() => setLoading(false), 900);
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => setLoading(false), 900);
+  // }, []);
 
   const [credentials, setCredentials] = React.useState(null);
-
   useEffect(() => {
+    setTimeout(() => setLoading(false), 1200);
+
     axios
       .get("/credentials", {
         headers: { Authorization: "Bearer " + props.token },
@@ -42,32 +45,38 @@ export default function RegRequestsPage(props) {
 
     // getRegisterRequests(); // Table used to be here. This call was needed to fill the table w/ initial data
   }, []);
+  
+  const fadeInAnimationStyle = useSpring({to: {opacity: 1}, from: {opacity: -1}, config : {duration: 2500} })
 
   // useEffect() runs after render. Render loading page first to ensure credentials are retrieved.
   if (loading === true) return <Loader message={""} />;
   else if (credentials === undefined || credentials === null)
-  // handles tampering using localStorage.setItem("token") and localStorage.removeItem("token")
+    // handles tampering using localStorage.setItem("token") and localStorage.removeItem("token")
     return (
       <Loader message={"Authentication failed. Please refresh the page."} />
     );
   else if (credentials.user_access_level !== "ROOT") {
-    // handles going to page via URL.
+    // handles going to page via URL and unauthorized access.
     return <Navigate replace to="/dashboard" />;
   }
   return (
-    <div className="background-requests">
+    <animated.div className="background-requests" style={fadeInAnimationStyle}>
       <div className="banner">
         <img src={userBackground} alt="gear logo" className="gear-background" />
       </div>
 
-      <Sidebar page="regRequests" accessLevel={credentials.user_access_level} email={credentials.user_email}  />
+      <Sidebar
+        page="regRequests"
+        accessLevel={credentials.user_access_level}
+        email={credentials.user_email}
+      />
       <div className="table-container">
         <RegistrationRequestsTable
           token={props.token}
           setToken={props.setToken}
         />
       </div>
-    </div>
+    </animated.div>
   );
 }
 

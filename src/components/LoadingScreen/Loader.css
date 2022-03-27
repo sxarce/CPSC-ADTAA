@@ -18,14 +18,16 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    background-color: #6f2539;
+    /* background-color: #6f2539; */
+    background-color: #Fff;
 }
 .loader {
   display: inline-block;
   width: 30px;
   height: 30px;
   position: relative;
-  border: 4px solid #Fff;
+  /* border: 4px solid #Fff; */
+  border: 4px solid #6f2539;
   top: 40%;
   left: 50%;
   animation: loader 2s infinite ease;
@@ -35,7 +37,8 @@ body {
   vertical-align: top;
   display: inline-block;
   width: 100%;
-  background-color: #fff;
+  /* background-color: #fff; */
+  background-color: #6f2539;
   animation: loader-inner 2s infinite ease-in;
 }
 

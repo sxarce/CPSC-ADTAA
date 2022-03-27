@@ -13,12 +13,14 @@ import { Navigate } from "react-router-dom";
 export default function SetupPage(props) {
   // For <Loader />
   const [loading, setLoading] = React.useState(true);
-  React.useEffect(() => {
-    setTimeout(() => setLoading(false), 900);
-  }, []);
-  const [credentials, setCredentials] = React.useState(null);
+  // React.useEffect(() => {
+  //   setTimeout(() => setLoading(false), 900);
+  // }, []);
 
+  const [credentials, setCredentials] = React.useState(null);
   React.useEffect(() => {
+    setTimeout(() => setLoading(false), 1200);
+
     axios
       .get("/credentials", {
         headers: { Authorization: "Bearer " + props.token },
@@ -48,9 +50,12 @@ export default function SetupPage(props) {
     return (
       <Loader message={"Authentication failed. Please refresh the page"} />
     );
-  else if (credentials.user_access_level !== "ROOT" && credentials.user_access_level !== "ADMIN") {
-    // handles going to page via URL.
-    return <Navigate replace to="/dashboard" />
+  else if (
+    credentials.user_access_level !== "ROOT" &&
+    credentials.user_access_level !== "ADMIN"
+  ) {
+    // handles going to page via URL and unauthorized access.
+    return <Navigate replace to="/dashboard" />;
   }
   return (
     <div className="background-setup">
@@ -58,7 +63,11 @@ export default function SetupPage(props) {
         <img src={gearBackground} alt="gear logo" className="gear-background" />
       </div>
 
-      <Sidebar page="setup" accessLevel={credentials.user_access_level} email={credentials.user_email} />
+      <Sidebar
+        page="setup"
+        accessLevel={credentials.user_access_level}
+        email={credentials.user_email}
+      />
 
       <div className="table-container">
         <InstructorSetupTable />

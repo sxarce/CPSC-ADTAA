@@ -15,16 +15,15 @@ import { Button } from "@mui/material";
 import axios from "axios";
 import Loader from "../../components/LoadingScreen/Loader";
 
-export default function DashboardPage(props) {
-  // For <Loader />
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    setTimeout(() => setLoading(false), 1200);
-  }, []);
+import { useSpring, animated } from "react-spring";
 
+export default function DashboardPage(props) {
+  const [loading, setLoading] = useState(true); // For <Loader />
   const [credentials, setCredentials] = useState(null);
   let navigate = useNavigate();
+
   useEffect(() => {
+    setTimeout(() => setLoading(false), 1200);
     getData();
     // testProtected()
   }, []);
@@ -54,42 +53,59 @@ export default function DashboardPage(props) {
   }
   console.log(credentials);
 
-  if (loading === true) return <Loader message={""} />;
-  else if (credentials === undefined || credentials === null)
-    return <Loader message={"Authentication failed. Please refresh the page"} />;
+  const fadeInAnimationStyle = useSpring({to: {opacity: 1}, from: {opacity: -1}, config : {duration: 2500} })
+  
+  // used conditional rendering for unmounting components.
   return (
-    <div className="background-dashboard">
-      <img src={leftImg} alt="ellipse" className="left-img-dashboard" />
-      <img src={rightImg} alt="two circles" className="right-img-dashboard" />
-      <img src={ualrLogo} alt="ualr logo" className="ualr-logo-dashboard" />
-
-      <div className="buttons-area">
-        <Button
-          className={`btn ${
-            credentials.user_access_level !== "ROOT" &&
-            credentials.user_access_level !== "ADMIN"
-              ? "hide-button"
-              : ""
-          }`}
-          onClick={() => navigate("/setup")}
-        >
-          <img src={gear} alt="gear icon" />
-        </Button>
-        <Button className="btn" onClick={() => navigate("/assistant")}>
-          <img src={peopleAssist} alt="assist icon" />
-        </Button>
-        <Button
-          className={`btn ${
-            credentials.user_access_level !== "ROOT" &&
-            credentials.user_access_level !== "ADMIN"
-              ? "hide-button"
-              : ""
-          }`}
-          onClick={() => navigate("/edit")}
-        >
-          <img src={pencil} alt="pencil icon" />
-        </Button>
-      </div>
-    </div>
+    <>
+      {loading ? (
+        <Loader message={""} />
+      ) : credentials === undefined || credentials === null ? (
+        <Loader message={"Authentication failed. Please refresh the page"} />
+      ) : (
+        <animated.div className={`${"background-dashboard"}`} style={fadeInAnimationStyle}>
+          <img src={leftImg} alt="ellipse" className="left-img-dashboard" />
+          <img
+            src={rightImg}
+            alt="two circles"
+            className="right-img-dashboard"
+          />
+          <img src={ualrLogo} alt="ualr logo" className="ualr-logo-dashboard" />
+          <div className="buttons-area">
+            <Button
+              className={`btn ${
+                credentials.user_access_level !== "ROOT" &&
+                credentials.user_access_level !== "ADMIN"
+                  ? "hide-button"
+                  : ""
+              }`}
+              onClick={() => navigate("/setup")}
+            >
+              <img src={gear} alt="gear icon" />
+            </Button>
+            <Button className="btn" onClick={() => navigate("/assistant")}>
+              <img src={peopleAssist} alt="assist icon" />
+            </Button>
+            <Button
+              className={`btn ${
+                credentials.user_access_level !== "ROOT" &&
+                credentials.user_access_level !== "ADMIN"
+                  ? "hide-button"
+                  : ""
+              }`}
+              onClick={() => navigate("/edit")}
+            >
+              <img src={pencil} alt="pencil icon" />
+            </Button>
+          </div>
+        </animated.div>
+      )}
+    </>
   );
 }
+
+// if (loading === true) return <Loader message={""} />;
+// if (credentials === undefined || credentials === null)
+//   return (
+//     <Loader message={"Authentication failed. Please refresh the page"} />
+//   );

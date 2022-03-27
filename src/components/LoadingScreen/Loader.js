@@ -1,17 +1,46 @@
 import React from "react";
 import "./Loader.css";
-
+import { animated, useSpring } from "react-spring";
 
 export default function Loader(props) {
+  const fadeInAnimationStyle = useSpring({
+    to: [{ opacity: 0.5 }, { opacity: 1 }, {opacity: 0}],
+    from: { opacity: 0 },
+  });
+
   return (
-    <div className="loader-wrapper">
-      <p className="loading-text" style={{color: "#FFF"}}>
+    <animated.div className={"loader-wrapper"} style={fadeInAnimationStyle}>
+      <p className="loading-text" style={{ color: "#FFF" }}>
         {props.message}
       </p>
 
       <span className="loader">
         <span className="loader-inner"></span>
       </span>
-    </div>
+    </animated.div>
   );
 }
+
+// const [show, setShow] = React.useState(true);
+// const transitions = useTransition(show, {
+//   from: { opacity: 0 },
+//   enter: { opacity: 1 },
+//   leave: {opacity : 0},
+//   onRest: () => setShow(!show)
+// });
+
+// return transitions((style, item) =>
+//   item ? (
+//     <animated.div className={"loader-wrapper"} style={style}>
+//       <p className="loading-text" style={{ color: "#FFF" }}>
+//         {props.message}
+//       </p>
+
+//       <span className="loader">
+//         <span className="loader-inner"></span>
+//       </span>
+//     </animated.div>
+//   ) : (
+//     ""
+//   )
+// );

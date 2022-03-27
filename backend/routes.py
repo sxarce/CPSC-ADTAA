@@ -117,7 +117,7 @@ def login_user():  # create_token()
     if not attempted_user or attempted_user.password != passwordInput:
         return {"msg": "wrong email or password"}, 401
     elif not attempted_user.isValid:
-        return {"msg": "Invalid account."}, 401
+        return {"msg": "Invalid account. User with pending registration request."}, 401
 
     access_token = create_access_token(identity=usernameInput)
 
