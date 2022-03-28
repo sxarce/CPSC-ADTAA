@@ -38,6 +38,41 @@ user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
 
+class Instructor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(30), nullable=False)
+    disciplineAreas = db.relationship(
+        'InstructorDisciplineArea', backref='owning_instructor', lazy=True)
+
+    def __repr__(self):
+        return f'INSTRUCTOR -> name: {self.name}, disciplineAreas: {self.disciplineAreas}'
+
+
+class InstructorSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ("id", "name", "disciplineAreas")
+
+
+instructor_schema = InstructorSchema()
+instructors_schema = InstructorSchema(many=True)
+
+
+class InstructorDisciplineArea(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    instructor_id = db.Column(db.Integer, db.ForeignKey(
+        'instructor.id'), nullable=False)
+
+
+class InstructorDisciplineAreaSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ("id", "name", "instructor_id")
+
+
+instructorDisciplineArea_schema = InstructorDisciplineAreaSchema()
+instructorDisciplineAreas_schema = InstructorDisciplineAreaSchema(many=True)
 # class Articles(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
 #     title = db.Column(db.String(100),nullable=False)
