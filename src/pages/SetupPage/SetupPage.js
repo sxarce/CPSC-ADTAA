@@ -1,8 +1,7 @@
 import React from "react";
 import "./SetupPage.css";
 import Sidebar from "../../components/Sidebar";
-import InstructorSetupTable from "../../components/InstructorSetupTable";
-import CourseSetupTable from "../../components/CourseSetupTable";
+import InstructorSetupTable from "../../components/Tables/InstructorSetupTable";
 import gearBackground from "../../assets/svg/background_gear.svg";
 
 import axios from "axios";
@@ -11,15 +10,11 @@ import Loader from "../../components/LoadingScreen/Loader";
 import { Navigate } from "react-router-dom";
 
 export default function SetupPage(props) {
-  // For <Loader />
-  const [loading, setLoading] = React.useState(true);
-  // React.useEffect(() => {
-  //   setTimeout(() => setLoading(false), 900);
-  // }, []);
+  const [loading, setLoading] = React.useState(true); // For <Loader />
 
   const [credentials, setCredentials] = React.useState(null);
   React.useEffect(() => {
-    setTimeout(() => setLoading(false), 1200);
+    setTimeout(() => setLoading(false), 1500);
 
     axios
       .get("/credentials", {
@@ -45,11 +40,6 @@ export default function SetupPage(props) {
   }, []);
 
   if (loading === true) return <Loader message={""} />;
-  else if (credentials === undefined || credentials === null)
-    // handles tampering using localStorage.setItem("token") and localStorage.removeItem("token")
-    return (
-      <Loader message={"Authentication failed. Please refresh the page"} />
-    );
   else if (
     credentials.user_access_level !== "ROOT" &&
     credentials.user_access_level !== "ADMIN"
@@ -58,20 +48,37 @@ export default function SetupPage(props) {
     return <Navigate replace to="/dashboard" />;
   }
   return (
-    <div className="background-setup">
-      <div className="banner">
-        <img src={gearBackground} alt="gear logo" className="gear-background" />
-      </div>
+    <>
+      {credentials === undefined || credentials === null ? (
+        <Loader message={"Authentication failed. Please refresh the page"} />
+      ) : (
+        <div className="background-setup">
+          <div className="banner">
+            <img
+              src={gearBackground}
+              alt="gear logo"
+              className="gear-background"
+            />
+          </div>
 
-      <Sidebar
-        page="setup"
-        accessLevel={credentials.user_access_level}
-        email={credentials.user_email}
-      />
+          <Sidebar
+            page="setup"
+            accessLevel={credentials.user_access_level}
+            email={credentials.user_email}
+          />
 
-      <div className="table-container">
-        <InstructorSetupTable />
-      </div>
-    </div>
+          <div className="table-container">
+            <InstructorSetupTable />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
+
+
+// else if (credentials === undefined || credentials === null)
+  //   // handles tampering using localStorage.setItem("token") and localStorage.removeItem("token")
+  //   return (
+  //     <Loader message={"Authentication failed. Please refresh the page"} />
+  //   );

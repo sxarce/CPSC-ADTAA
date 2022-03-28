@@ -23,7 +23,7 @@ export default function DashboardPage(props) {
   let navigate = useNavigate();
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 1200);
+    setTimeout(() => setLoading(false), 1500);
     getData();
     // testProtected()
   }, []);

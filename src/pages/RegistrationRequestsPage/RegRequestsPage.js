@@ -19,7 +19,7 @@ export default function RegRequestsPage(props) {
 
   const [credentials, setCredentials] = React.useState(null);
   useEffect(() => {
-    setTimeout(() => setLoading(false), 1200);
+    setTimeout(() => setLoading(false), 1500);
 
     axios
       .get("/credentials", {

@@ -4,7 +4,7 @@ import { animated, useSpring } from "react-spring";
 
 export default function Loader(props) {
   const fadeInAnimationStyle = useSpring({
-    to: [{ opacity: 0.5 }, { opacity: 1 }, {opacity: 0}],
+    to: [{ opacity: 0.2 }, {opacity: 0.7}],
     from: { opacity: 0 },
   });
 
