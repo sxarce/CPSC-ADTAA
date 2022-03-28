@@ -13,6 +13,8 @@ import { Button } from "@mui/material";
 import axios from "axios";
 // import { makeStyles } from "@mui/styles";
 
+import { animated, useSpring } from "react-spring";
+
 const LoginPage = (props) => {
   // TEST ONLY: sends ONE email upon visiting the website.
   // useEffect(() => {
@@ -97,9 +99,13 @@ const LoginPage = (props) => {
   //     <Button className={styles.sign_in_button}>Sign in</Button>
   //   )
   // }
-
+  const fadeInAnimationStyle = useSpring({
+    to: { opacity: 1 },
+    from: { opacity: -1 },
+    config: { duration: 2500 },
+  });
   return (
-    <div className="background">
+    <animated.div className="background" style={fadeInAnimationStyle}>
       <img className="left-img" src={leftImg} alt="left design" />
       <img className="right-img" src={rightImg} alt="right design" />
       <img className="ualr-logo" src={ualrLogo} alt="ualr logo" />
@@ -155,8 +161,12 @@ const LoginPage = (props) => {
 
             <div className="button-areas">
               {/* <Button className="sign-in-button">Sign in</Button> */}
-              <Button className="sign-in-button" type="submit"
-                disabled = {formData.usernameInput === "" || formData.passwordInput === ""}
+              <Button
+                className="sign-in-button"
+                type="submit"
+                disabled={
+                  formData.usernameInput === "" || formData.passwordInput === ""
+                }
               >
                 Sign in
               </Button>
@@ -167,7 +177,7 @@ const LoginPage = (props) => {
           </form>
         </div>
       </section>
-    </div>
+    </animated.div>
   );
 };
 
