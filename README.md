@@ -15,7 +15,12 @@ pip install -r requirements.txt
 ```
 
 - Run the backend
-``` python -m flask run ``` or ``` flask run ```
+
+``` 
+python -m flask run 
+``` 
+or 
+``` flask run ```
 
 In "Frontend terminal", install dependencies and run:
 ```
@@ -24,7 +29,7 @@ npm start
 ```
 
 ------------------------------------------
-**Setting up (MacOS)** (Updated 3/26/22)
+**Setting up (MacOS)** (Updated 3/28/22)
 
 Inside VSCode, open 2 terminals. One for backend (```cd backend```), one for frontend.
 
@@ -37,8 +42,11 @@ source venv/bin/activate
 
 - (*Optional*) Ensure you have Homebrew installed (```brew --version```). Otherwise, do:
 
-```/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"```
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+```
 
+- Install *node* and *mysql* (frontend and backend dependency requirements)
 ```
 brew install node
 brew install mysql
@@ -47,19 +55,30 @@ brew install mysql
 
 
 - (*Optional*) Install dependencies if they don't exist (```pip list``` to check):
-``` pip install -r requirements.txt ```
+``` 
+pip install -r requirements.txt 
+```
 
-- Run the backend: ```flask run```
+- Run the backend: 
+
+```
+flask run
+```
 
 
 In "Frontend terminal", install dependencies and run:
 
 - (*Optional*) Ensure you have Homebrew installed (```brew --version```). Same in backend setup (If you've done this already, skip this part). Otherwise, do:
-```/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"```
 
-- Install node
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+```
 
-```brew install node```
+- Install node (same in backend setup. skip if done)
+
+```
+brew install node
+```
 
 - Run the frontend:
 ```
