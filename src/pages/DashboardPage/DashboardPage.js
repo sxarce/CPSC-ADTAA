@@ -21,7 +21,7 @@ export default function DashboardPage(props) {
   const [loading, setLoading] = useState(true); // For <Loader />
   const [credentials, setCredentials] = useState(null);
   let navigate = useNavigate();
-
+  
   useEffect(() => {
     setTimeout(() => setLoading(false), 1500);
     getData();

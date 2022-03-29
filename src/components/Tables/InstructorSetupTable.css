@@ -12,6 +12,18 @@ tbody tr {
   background: #28a745 !important;
   border-style: none;
 }
+.add-instructor-btn:disabled {
+  background: #9fada2 !important;
+  /* color: #000 !important; */
+}
+
+/* .save-btn:enabled {
+  color: rgb(43, 155, 43);
+} */
+
+.last-name-text {
+  font-weight: bold !important;
+}
 /* 
 table.roster-table {
   border-collapse: collapse;

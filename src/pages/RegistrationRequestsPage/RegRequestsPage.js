@@ -46,7 +46,7 @@ export default function RegRequestsPage(props) {
     // getRegisterRequests(); // Table used to be here. This call was needed to fill the table w/ initial data
   }, []);
   
-  const fadeInAnimationStyle = useSpring({to: {opacity: 1}, from: {opacity: -1}, config : {duration: 2500} })
+  // const fadeInAnimationStyle = useSpring({to: {opacity: 1}, from: {opacity: -1}, config : {duration: 2500} })
 
   // useEffect() runs after render. Render loading page first to ensure credentials are retrieved.
   if (loading === true) return <Loader message={""} />;
@@ -60,7 +60,7 @@ export default function RegRequestsPage(props) {
     return <Navigate replace to="/dashboard" />;
   }
   return (
-    <animated.div className="background-requests" style={fadeInAnimationStyle}>
+    <div className="background-requests" >
       <div className="banner">
         <img src={userBackground} alt="gear logo" className="gear-background" />
       </div>
@@ -76,7 +76,7 @@ export default function RegRequestsPage(props) {
           setToken={props.setToken}
         />
       </div>
-    </animated.div>
+    </div>
   );
 }
 
