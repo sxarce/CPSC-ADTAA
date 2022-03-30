@@ -39,7 +39,8 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
-import Stack from '@mui/material/Stack';
+import Stack from "@mui/material/Stack";
+import axios from "axios";
 
 const useStyles = makeStyles({
   root: {
@@ -86,6 +87,7 @@ const MenuProps = {
   },
 };
 
+// TODO: Put in a constants file and import here.
 const recognizedDisciplineAreas = [
   "Software Engineering",
   "Programming",
@@ -118,7 +120,7 @@ export default function CustomPaginationActionsTable() {
   });
   const [disciplineAreas, setDisciplineAreas] = React.useState([]);
 
-  console.log(tableData)
+  console.log(tableData);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -142,6 +144,20 @@ export default function CustomPaginationActionsTable() {
     borderTop: "1px solid #E9ECEF",
   };
 
+  function saveCurrentTable() {
+    console.log(tableData.lastName);
+    axios
+      .post(
+        "/add-instructor",
+        {
+          tableData: tableData,
+        },
+        { headers: { "Content-Type": "application/json" } }
+      )
+      .then((response) => console.log(response))
+      .catch((error) => console.log(error));
+  }
+
   function addInstructor(event) {
     // console.log(event);
     const rowsInput = {
@@ -152,23 +168,16 @@ export default function CustomPaginationActionsTable() {
     setTableData((prevTableData) => [...prevTableData, rowsInput]);
   }
   function saveInstructor(event) {
-    // console.log(event);
-    // console.log(
-    //   tableData.findIndex((instructor) => instructor.lastName === "")
-    // );
-    // console.log(disciplineAreas);
-    // console.log(instructorName);
-    // console.log(tableData);
-
     // for some reason, setTableData does not force a re-render
+    const indexOfNewInstructor = tableData.findIndex(
+      (instructor) =>
+        instructor.lastName === "" &&
+        instructor.firstName === "" &&
+        !instructor.expertise.length
+    );
+
     setTableData((prevTableData) => {
       let newTableData = prevTableData;
-      const indexOfNewInstructor = newTableData.findIndex(
-        (instructor) =>
-          instructor.lastName === "" &&
-          instructor.firstName === "" &&
-          !instructor.expertise.length
-      );
 
       newTableData[indexOfNewInstructor] = {
         lastName: instructorName.lastNameInput,
@@ -180,6 +189,7 @@ export default function CustomPaginationActionsTable() {
     });
 
     // console.log(tableData);
+    saveCurrentTable();
 
     // clear data.
     setInstructorName({
@@ -339,7 +349,7 @@ export default function CustomPaginationActionsTable() {
                     ) : (
                       <div className="list-items-discipline-areas">
                         {row.expertise.map((disciplineArea) => (
-                        <Chip label={disciplineArea} />
+                          <Chip label={disciplineArea} />
                         ))}
                       </div>
                     )}

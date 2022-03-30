@@ -66,7 +66,7 @@ export default function SetupPage(props) {
       />
 
       <div className="table-container" style={{maxHeight: "100vh"}}>
-        <InstructorSetupTable />
+        <InstructorSetupTable  />
        
         
       </div>

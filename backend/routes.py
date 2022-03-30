@@ -48,6 +48,11 @@ def send_confirmation_email(user_email):
 ################## routes ###################
 #############################################
 
+@app.route("/add-instructor", methods=['GET', 'POST'])
+def add_instructor():
+    # CURRENTLY, request.json is an array of the tableData. Algo prob.
+    print(f'{request.json}', file=sys.stderr)
+    return jsonify({'Request': 'OK'})
 
 @app.route("/confirm/<token>")
 def confirm_email(token):
@@ -229,7 +234,6 @@ def refresh_expiring_jwts(response):
 #     msg.body = "Hey Paul, sending you this email from my Flask app, lmk if it works"
 #     mail.send(msg)
 #     return "Message sent!"
-
 
 if __name__ == "__main__":
     app.run(debug=True)
