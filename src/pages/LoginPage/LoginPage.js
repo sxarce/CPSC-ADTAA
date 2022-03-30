@@ -128,6 +128,7 @@ const LoginPage = (props) => {
                   className="field"
                   type="text"
                   name="usernameInput"
+                  autoComplete="off"
                   value={formData.usernameInput}
                   onChange={handleChange}
                 />
@@ -143,6 +144,7 @@ const LoginPage = (props) => {
                   className="field"
                   type="password"
                   name="passwordInput"
+                  autoComplete="off"
                   value={formData.passwordInput}
                   onChange={handleChange}
                 />

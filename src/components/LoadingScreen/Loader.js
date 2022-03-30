@@ -4,20 +4,24 @@ import { animated, useSpring } from "react-spring";
 
 export default function Loader(props) {
   const fadeInAnimationStyle = useSpring({
-    to: [{ opacity: 0.2 }, {opacity: 0.8}, {opacity: 0}],
+    to: [{ opacity: 0.2 }, { opacity: 0.8 }, { opacity: 0 }],
     from: { opacity: 0 },
   });
 
   return (
-    <animated.div className={"loader-wrapper"} style={fadeInAnimationStyle}>
-      <p className="loading-text" style={{ color: "#FFF" }}>
+    <>
+      <p
+        className="loading-text"
+        style={{ color: "#000" }}
+      >
         {props.message}
       </p>
-
-      <span className="loader">
-        <span className="loader-inner"></span>
-      </span>
-    </animated.div>
+      <animated.div className={"loader-wrapper"} style={fadeInAnimationStyle}>
+        <span className="loader">
+          <span className="loader-inner"></span>
+        </span>
+      </animated.div>
+    </>
   );
 }
 

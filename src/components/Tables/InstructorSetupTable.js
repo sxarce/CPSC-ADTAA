@@ -31,38 +31,94 @@ import { TextField } from "@mui/material";
 // import { makeStyles } from "@mui/styles";
 import InputBase from "@mui/material/InputBase";
 import { alpha } from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
 
-const BootstrapInput = styled(InputBase)(({ theme }) => ({
-  "label + &": {
-    marginTop: theme.spacing(3),
-  },
-  "& .MuiInputBase-input": {
-    borderRadius: 4,
-    position: "relative",
-    backgroundColor: theme.palette.mode === "light" ? "#fcfcfb" : "#2b2b2b",
-    border: "1px solid #ced4da",
-    fontSize: "small",
-    width: "10vw",
-    padding: "10px 12px",
-    transition: theme.transitions.create([
-      "border-color",
-      "background-color",
-      "box-shadow",
-    ]),
-    // Use the system font instead of the default Roboto font.
-    fontFamily: ["Open sans"].join(","),
-    "&:focus": {
-      boxShadow: `${alpha("#000", 0.25)} 0 0 0 0.2rem`,
-      borderColor: "#000",
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import Chip from "@mui/material/Chip";
+import Stack from '@mui/material/Stack';
+
+const useStyles = makeStyles({
+  root: {
+    // "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+    //   borderColor: "grey"
+    // },
+    // "& .MuiOutlinedInput-input": {
+    //   color: "grey"
+    // },
+    // "& .MuiInputLabel-outlined": {
+    //   color: "grey",
+    // },
+    "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+      borderColor: "black",
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+      borderColor: "black",
+    },
+
+    "&:hover .MuiOutlinedInput-input": {
+      color: "black",
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
+      color: "black",
+    },
+
+    "&:hover .MuiInputLabel-outlined": {
+      color: "black",
+    },
+    "& .MuiInputLabel-outlined.Mui-focused": {
+      color: "black",
     },
   },
-}));
+});
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const recognizedDisciplineAreas = [
+  "Software Engineering",
+  "Programming",
+  "Artificial Intelligence",
+  "Algorithms",
+  "UI Design",
+  "Computer Architecture",
+  "Mobile apps development",
+  "Database structures and design",
+];
+
+function getStyles(name, disciplineAreas, theme) {
+  return {
+    fontWeight:
+      disciplineAreas.indexOf(name) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+    // fontSize: "x-small",
+  };
+}
 
 export default function CustomPaginationActionsTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
   const [tableData, setTableData] = React.useState([]);
-  console.log(tableData);
+  const [instructorName, setInstructorName] = React.useState({
+    lastNameInput: "",
+    firstNameInput: "",
+  });
+  const [disciplineAreas, setDisciplineAreas] = React.useState([]);
+
+  console.log(tableData)
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -91,59 +147,71 @@ export default function CustomPaginationActionsTable() {
     const rowsInput = {
       lastName: "",
       firstName: "",
-      expertise: "",
-      maxLoad: "",
+      expertise: [],
     };
     setTableData((prevTableData) => [...prevTableData, rowsInput]);
   }
   function saveInstructor(event) {
     // console.log(event);
-    console.log(
-      tableData.findIndex((instructor) => instructor.lastName === "")
-    );
-    let indexToEdit = tableData.findIndex(
-      (instructor) => instructor.lastName === ""
-    );
+    // console.log(
+    //   tableData.findIndex((instructor) => instructor.lastName === "")
+    // );
+    // console.log(disciplineAreas);
+    // console.log(instructorName);
+    // console.log(tableData);
+
+    // for some reason, setTableData does not force a re-render
     setTableData((prevTableData) => {
-      const index = prevTableData.findIndex(
-        (instructor) => instructor.lastName === ""
+      let newTableData = prevTableData;
+      const indexOfNewInstructor = newTableData.findIndex(
+        (instructor) =>
+          instructor.lastName === "" &&
+          instructor.firstName === "" &&
+          !instructor.expertise.length
       );
-      prevTableData[index] = {
-        lastName: formData.lastNameInput,
-        firstName: formData.firstNameInput,
-        expertise: formData.expertiseInput,
-        maxLoad: formData.maxLoadInput,
+
+      newTableData[indexOfNewInstructor] = {
+        lastName: instructorName.lastNameInput,
+        firstName: instructorName.firstNameInput,
+        expertise: disciplineAreas,
       };
-      return prevTableData;
+      console.log(newTableData);
+      return newTableData;
     });
 
-    setFormData({
+    // console.log(tableData);
+
+    // clear data.
+    setInstructorName({
       lastNameInput: "",
       firstNameInput: "",
-      expertiseInput: "",
-      maxLoadInput: "",
     });
+    setDisciplineAreas([]);
   }
 
-  const [formData, setFormData] = React.useState({
-    lastNameInput: "",
-    firstNameInput: "",
-    expertiseInput: "",
-    maxLoadInput: "",
-  });
-  console.log(formData);
-
-  function handleInputChange(e) {
+  function handleInstructorInputChange(e) {
     const { name, value } = e.target;
-    setFormData((prevFormData) => {
+    setInstructorName((prevFormData) => {
       return {
-        ...formData,
+        ...prevFormData,
         [name]: value,
       };
     });
   }
 
+  const handleSelectChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setDisciplineAreas(
+      // On autofill we get a stringified value.
+      typeof value === "string" ? value.split(",") : value
+    );
+  };
+
   const [isFormInvalid, setIsFormInvalid] = React.useState(false);
+  const textFieldsBorderStyle = useStyles();
+  const theme = useTheme();
 
   return (
     <TableContainer component={Paper} style={{ width: "65vw" }}>
@@ -169,7 +237,6 @@ export default function CustomPaginationActionsTable() {
               <TableCell style={HeaderStyle}>Last Name</TableCell>
               <TableCell style={HeaderStyle}>First Name</TableCell>
               <TableCell style={HeaderStyle}>Expertise</TableCell>
-              {/* <TableCell style={HeaderStyle}>Maximum load</TableCell> */}
               <TableCell
                 style={{ width: "5rem" }}
                 aria-label="btns-area"
@@ -184,71 +251,124 @@ export default function CustomPaginationActionsTable() {
                   page * rowsPerPage + rowsPerPage
                 )
               : tableData
-            ).map((row) => (
-              <TableRow key={row.name}>
-                <TableCell className="last-name-text">
-                  {row.lastName === "" ? (
-                    <TextField
-                      variant="outlined"
-                      name="lastNameInput"
-                      style={{ width: "90%" }}
-                      value={formData.lastNameInput}
-                      onChange={handleInputChange}
-                      autoFocus
-                    />
-                  ) : (
-                    row.lastName
-                  )}
-                </TableCell>
-                <TableCell>
-                  {row.firstName === "" ? (
-                    <TextField
-                      variant="outlined"
-                      name="firstNameInput"
-                      style={{ width: "90%" }}
-                      value={formData.firstNameInput}
-                      onChange={handleInputChange}
-                    />
-                  ) : (
-                    row.firstName
-                  )}
-                </TableCell>
-                <TableCell>
-                  {row.expertise === "" ? (
-                    <TextField
-                      variant="outlined"
-                      name="expertiseInput"
-                      style={{ width: "90%" }}
-                      value={formData.expertiseInput}
-                      onChange={handleInputChange}
-                    />
-                  ) : (
-                    row.expertise
-                  )}
-                </TableCell>
+            ).map((row) => {
+              console.log(row);
+              return (
+                <TableRow key={row.name}>
+                  <TableCell className="last-name-text">
+                    {row.lastName === "" ? (
+                      <TextField
+                        variant="outlined"
+                        name="lastNameInput"
+                        className={textFieldsBorderStyle.root}
+                        label="last name"
+                        style={{ width: "100%" }}
+                        value={instructorName.lastNameInput}
+                        onChange={handleInstructorInputChange}
+                        autoFocus
+                        // InputProps={{ style: { fontSize: "small" } }}
+                        // InputLabelProps={{ style: { fontSize: "small" } }}
+                      />
+                    ) : (
+                      row.lastName
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {row.firstName === "" ? (
+                      <TextField
+                        variant="outlined"
+                        name="firstNameInput"
+                        className={textFieldsBorderStyle.root}
+                        label="first name"
+                        style={{ width: "100%" }}
+                        value={instructorName.firstNameInput}
+                        onChange={handleInstructorInputChange}
+                        // InputProps={{ style: { fontSize: "small" } }}
+                        // InputLabelProps={{ style: { fontSize: "small" } }}
+                      />
+                    ) : (
+                      row.firstName
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {!row.expertise.length ? (
+                      <FormControl sx={{ width: 300 }}>
+                        <InputLabel id="demo-multiple-chip-label">
+                          Discipline areas
+                        </InputLabel>
+                        <Select
+                          labelId="demo-multiple-chip-label"
+                          label="Discipline areas"
+                          id="demo-multiple-chip"
+                          width="200"
+                          multiple
+                          value={disciplineAreas}
+                          onChange={handleSelectChange}
+                          input={
+                            <OutlinedInput
+                              id="select-multiple-chip"
+                              label="Discipline areas"
+                            />
+                          }
+                          renderValue={(selected) => (
+                            <Box
+                              sx={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                gap: 0.5,
+                              }}
+                            >
+                              {selected.map((value) => (
+                                <Chip key={value} label={value} />
+                              ))}
+                            </Box>
+                          )}
+                          MenuProps={MenuProps}
+                        >
+                          {recognizedDisciplineAreas.map((name) => (
+                            <MenuItem
+                              key={name}
+                              value={name}
+                              style={getStyles(name, disciplineAreas, theme)}
+                            >
+                              {name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    ) : (
+                      <div className="list-items-discipline-areas">
+                        {row.expertise.map((disciplineArea) => (
+                        <Chip label={disciplineArea} />
+                        ))}
+                      </div>
+                    )}
+                  </TableCell>
 
-                <TableCell>
-                  {row.lastName === "" ? (
-                    <IconButton
-                      className="save-btn"
-                      onClick={(e) => saveInstructor(e)}
-                    >
-                      {" "}
-                      <SaveIcon className="save-btn-icon" />
-                    </IconButton>
-                  ) : (
-                    <>
-                      <IconButton className="edit-btn">
-                        <EditIcon />
+                  <TableCell>
+                    {row.lastName === "" ? (
+                      <IconButton
+                        className="save-btn"
+                        disabled={isFormInvalid}
+                        onClick={(e) => saveInstructor(e)}
+                      >
+                        {" "}
+                        <SaveIcon className="save-btn-icon" />
                       </IconButton>
-                      <IconButton className="delete-btn">
-                        <DeleteIcon />
-                      </IconButton>
-                    </>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+                    ) : (
+                      <>
+                        <IconButton className="edit-btn">
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton className="delete-btn">
+                          <DeleteIcon />
+                        </IconButton>
+                      </>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
 
             {emptyRows > 0 && (
               <TableRow style={{ height: 53 * emptyRows }}>

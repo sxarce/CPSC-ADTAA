@@ -3,7 +3,7 @@
 /*  */
 
 tbody tr {
-  border-bottom: 1px solid #E9ECEF;
+  border-bottom: 1px solid #e9ecef;
 }
 .add-instructor-btn {
   margin: 1rem !important;
@@ -24,6 +24,18 @@ tbody tr {
 .last-name-text {
   font-weight: bold !important;
 }
+
+.list-items-discipline-areas {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+/* TODO: Make li into MUI chips */
+.list-items-discipline-areas li {
+  list-style-type: none;
+}
+
 /* 
 table.roster-table {
   border-collapse: collapse;
