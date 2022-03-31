@@ -42,6 +42,8 @@ import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import axios from "axios";
 
+import Loader from "../../components/LoadingScreen/Loader";
+
 const useStyles = makeStyles({
   root: {
     // "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
@@ -168,7 +170,7 @@ export default function CustomPaginationActionsTable() {
     setTableData((prevTableData) => [...prevTableData, rowsInput]);
   }
   function saveInstructor(event) {
-    // for some reason, setTableData does not force a re-render
+    // for some reason, setTableData does not force a re-render. Other state need to reset.
     const indexOfNewInstructor = tableData.findIndex(
       (instructor) =>
         instructor.lastName === "" &&
@@ -223,6 +225,33 @@ export default function CustomPaginationActionsTable() {
   const textFieldsBorderStyle = useStyles();
   const theme = useTheme();
 
+  function getInstructorRoster() {
+    axios
+      .get("get-instructors-roster")
+      .then((response) => {
+        let retrievedTableData = response.data.TableData;
+        // console.log(retrievedTableData);
+        // backend returns more than what is necessary. (instructor_id might come in handy though)
+        // This was done via serialization through Marshmallow.Schema which exposed extra fields such as id.
+        // Error occurs when schema fields are left to one element (Must be a list or tuple)
+        // Potential solution: tuple("<name_of_field_here>")
+
+        setTableData(
+          retrievedTableData.map((instructor) => {
+            return {
+              lastName: instructor.lastName,
+              firstName: instructor.firstName,
+              expertise: instructor.disciplineAreas.map((disciplineArea) => {
+                return disciplineArea.name;
+              }),
+            };
+          })
+        );
+      })
+      .catch((error) => console.log(error));
+  }
+  React.useEffect(() => getInstructorRoster(), []);
+
   return (
     <TableContainer component={Paper} style={{ width: "65vw" }}>
       <ThemeProvider theme={theme}>
@@ -262,7 +291,7 @@ export default function CustomPaginationActionsTable() {
                 )
               : tableData
             ).map((row) => {
-              console.log(row);
+              // console.log(row);
               return (
                 <TableRow key={row.name}>
                   <TableCell className="last-name-text">

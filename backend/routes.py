@@ -1,7 +1,11 @@
 from flask import current_app, flash, jsonify, request, redirect
 from flask_cors import cross_origin
 from app import create_app, db, mail
+
+
 from models import User, users_schema, user_schema
+from models import Instructor, instructor_schema, instructors_schema
+from models import InstructorDisciplineArea, instructorDisciplineArea_schema, instructorDisciplineAreas_schema
 from flask_login import login_user
 
 import sys
@@ -48,11 +52,45 @@ def send_confirmation_email(user_email):
 ################## routes ###################
 #############################################
 
+
+@app.route("/get-instructors-roster")
+def get_instructors():
+    instructorRoster = Instructor.query.all()
+
+    # Solves: Object is not JSON serializable. Serialize instructors. Then serialize each of their disciplineAreas.
+    serialized_instructor_roster = instructors_schema.dump(
+        instructorRoster)  
+    for instructor in serialized_instructor_roster:
+        instructor['disciplineAreas'] = instructorDisciplineAreas_schema.dump(
+            instructor['disciplineAreas'])
+
+    # print(f'{serialized_instructor_roster}', file=sys.stderr)
+    return {"Request": "OK", "TableData": serialized_instructor_roster}
+
+
 @app.route("/add-instructor", methods=['GET', 'POST'])
 def add_instructor():
-    # CURRENTLY, request.json is an array of the tableData. Algo prob.
-    print(f'{request.json}', file=sys.stderr)
-    return jsonify({'Request': 'OK'})
+    # print(f'{request.json["tableData"]}', file=sys.stderr)
+
+    tableData = request.json["tableData"]
+
+    instructorToAdd = tableData[len(tableData) - 1]
+    # print(f'{instructorToAdd}', file=sys.stderr)
+
+    new_instructor = Instructor(
+        lastName=instructorToAdd['lastName'], firstName=instructorToAdd['firstName'])
+    db.session.add(new_instructor)
+
+    for disciplineArea in instructorToAdd['expertise']:
+        new_discipline_area = InstructorDisciplineArea(
+            name=disciplineArea, owning_instructor=new_instructor)
+        db.session.add(new_discipline_area)
+
+    db.session.commit()
+
+    # return jsonify({"Request" : "OK"})
+    return jsonify({'Message': f'Instructor <{new_instructor.firstName} {new_instructor.lastName}> added!'})
+
 
 @app.route("/confirm/<token>")
 def confirm_email(token):
@@ -234,6 +272,7 @@ def refresh_expiring_jwts(response):
 #     msg.body = "Hey Paul, sending you this email from my Flask app, lmk if it works"
 #     mail.send(msg)
 #     return "Message sent!"
+
 
 if __name__ == "__main__":
     app.run(debug=True)

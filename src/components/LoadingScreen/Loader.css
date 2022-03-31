@@ -20,7 +20,8 @@ body {
     top: 0;
     left: 0;
     /* background-color: #6f2539; */
-    background-color: #Fff;
+    /* background-color: #Fff; */
+    background-color: transparent;
 }
 .loader {
   display: inline-block;

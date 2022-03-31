@@ -44,16 +44,16 @@ class Instructor(db.Model):
     firstName = db.Column(db.String(30), nullable=False)
     disciplineAreas = db.relationship(
         'InstructorDisciplineArea', backref='owning_instructor', lazy=True)
-    maxLoad = db.Column(db.Integer, nullable=False, default=0)
+    maxLoad = db.Column(db.Integer, nullable=False, default=4)
 
     def __repr__(self):
-        return f'INSTRUCTOR -> name: {self.name}, disciplineAreas: {self.disciplineAreas}'
+        return f'INSTRUCTOR -> NAME: {self.firstName} {self.lastName}, disciplineAreas: {self.disciplineAreas}'
 
 
 class InstructorSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ("id", "lastName", "firstName", "disciplineAreas")
+        fields = ("lastName", "firstName", "disciplineAreas")
 
 
 instructor_schema = InstructorSchema()

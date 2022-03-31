@@ -29,6 +29,8 @@
     
     width: max-content;
     height: max-content;
+    min-width: 65vw;
+    min-height: 65vh;
     padding: 1rem;
     z-index: 1;
     
