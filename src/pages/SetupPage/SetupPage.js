@@ -34,9 +34,8 @@ export default function SetupPage(props) {
           console.log(error.response);
           console.log(error.response.status);
           console.log(error.response.headers);
-          setCredentials(null)
+          setCredentials(null);
           localStorage.removeItem("token");
-          
         }
       });
   }, []);
@@ -55,6 +54,7 @@ export default function SetupPage(props) {
   }
   return (
     <div className="background-setup">
+    
       <div className="banner">
         <img src={gearBackground} alt="gear logo" className="gear-background" />
       </div>
@@ -65,11 +65,10 @@ export default function SetupPage(props) {
         email={credentials.user_email}
       />
 
-      <div className="table-container" style={{maxHeight: "100vh"}}>
-        <InstructorSetupTable  />
-       
-        
+      <div className="table-container" style={{ maxHeight: "100vh" }}>
+        <InstructorSetupTable />
       </div>
+    
     </div>
   );
 }

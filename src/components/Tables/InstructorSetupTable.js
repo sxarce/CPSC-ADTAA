@@ -221,7 +221,7 @@ export default function CustomPaginationActionsTable() {
     );
   };
 
-  const [isFormInvalid, setIsFormInvalid] = React.useState(false);
+  const [isFormInvalid, setIsFormInvalid] = React.useState(false); // Will use this for save validation.
   const textFieldsBorderStyle = useStyles();
   const theme = useTheme();
 
@@ -241,9 +241,9 @@ export default function CustomPaginationActionsTable() {
             return {
               lastName: instructor.lastName,
               firstName: instructor.firstName,
-              expertise: instructor.disciplineAreas.map((disciplineArea) => {
-                return disciplineArea.name;
-              }),
+              expertise: instructor.disciplineAreas.map(
+                (disciplineArea) => disciplineArea.name
+              ),
             };
           })
         );
@@ -253,7 +253,7 @@ export default function CustomPaginationActionsTable() {
   React.useEffect(() => getInstructorRoster(), []);
 
   return (
-    <TableContainer component={Paper} style={{ width: "65vw" }}>
+    <TableContainer component={Paper} style={{ width: "77vw" }}>
       <ThemeProvider theme={theme}>
         <Table aria-label="Instructor table">
           <TableHead>
@@ -339,6 +339,7 @@ export default function CustomPaginationActionsTable() {
                           labelId="demo-multiple-chip-label"
                           label="Discipline areas"
                           id="demo-multiple-chip"
+                          // error={true}
                           width="200"
                           multiple
                           value={disciplineAreas}
@@ -388,7 +389,6 @@ export default function CustomPaginationActionsTable() {
                     {row.lastName === "" ? (
                       <IconButton
                         className="save-btn"
-                        disabled={isFormInvalid}
                         onClick={(e) => saveInstructor(e)}
                       >
                         {" "}
@@ -527,79 +527,3 @@ const theme = createTheme({
     fontFamily: ["Open sans"],
   },
 });
-
-{
-  /* SAMPLE DATA */
-}
-{
-  /* <TableCell style={{ fontWeight: "bold" }}>Carreon</TableCell>
-            <TableCell>Mitchel</TableCell>
-            <TableCell>discipline areas</TableCell>
-            <TableCell>0</TableCell>
-            <TableCell style={{ width: "5rem" }}>
-              <IconButton>
-                <EditIcon />
-              </IconButton>
-            </TableCell> */
-}
-
-{
-  /* <table className="roster-table">
-<thead>
-  <tr className="table-title">
-    <th colSpan={3} style={{ fontWeight: "normal" }}>
-      Current Roster
-    </th>
-    <th style={{ textAlign: "end", paddingRight: "0.75rem" }}>
-      Instructors
-    </th>
-  </tr>
-  <tr className="table-headers">
-    <th>Last Name</th>
-    <th>First Name</th>
-    <th>Expertise</th>
-    <th>Maximum Load</th>
-  </tr>
-</thead>
-
-<tbody>
-  <tr className="table-data">
-    <td>Doe</td>
-    <td>John</td>
-    <td>
-      <ul>
-        <li> Software Development</li>
-        <li> Cryptography</li>
-      </ul>
-    </td>
-    <td>60%</td>
-  </tr>
-</tbody>
-
-<tfoot>
-  <tr>
-    <td colSpan={4}>
-      <button className="add-instructor-btn">
-        <img src={plusIcon} alt="plus" />
-      </button>
-    </td>
-  </tr>
-</tfoot>
-</table> */
-}
-
-// const rows = [
-//   createData("Cupcake", 305, 3.7),
-//   createData("Donut", 452, 25.0),
-//   createData("Eclair", 262, 16.0),
-//   createData("Frozen yoghurt", 159, 6.0),
-//   createData("Gingerbread", 356, 16.0),
-//   createData("Honeycomb", 408, 3.2),
-//   createData("Ice cream sandwich", 237, 9.0),
-//   createData("Jelly Bean", 375, 0.0),
-//   createData("KitKat", 518, 26.0),
-//   createData("Lollipop", 392, 0.2),
-//   createData("Marshmallow", 318, 0),
-//   createData("Nougat", 360, 19.0),
-//   createData("Oreo", 437, 18.0),
-// ].sort((a, b) => (a.calories < b.calories ? -1 : 1));

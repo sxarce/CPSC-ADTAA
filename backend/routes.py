@@ -65,6 +65,7 @@ def get_instructors():
             instructor['disciplineAreas'])
 
     # print(f'{serialized_instructor_roster}', file=sys.stderr)
+    # NOTE: This might be an initial step when designing the assistant algorithm.
     return {"Request": "OK", "TableData": serialized_instructor_roster}
 
 

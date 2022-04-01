@@ -108,7 +108,7 @@ export default function RegistrationRequestsTable(props) {
   };
 
   return (
-    <TableContainer component={Paper} style={{ width: "65vw" }}>
+    <TableContainer component={Paper} style={{ width: "77vw" }}>
       <ThemeProvider theme={theme}>
         <Table aria-label="custom pagination table">
           <TableHead>

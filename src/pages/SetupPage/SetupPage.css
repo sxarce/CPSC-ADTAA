@@ -1,44 +1,68 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;700&display=swap");
 
 .background-setup {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    
-    /* for table container */
-    /* display: flex;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+
+  /* for table container */
+  /* display: flex;
     justify-content: center; */
 }
 
 /* BANNER */
 .banner {
-    background: linear-gradient(90deg, #732D40 0%, #A87D89 100%);
-    position: absolute;
-    top: 0rem;
-    height: 20%;
-    min-width: 100vw;
+  background: linear-gradient(90deg, #732d40 0%, #a87d89 100%);
+  position: absolute;
+  top: 0rem;
+  height: 23%;
+  min-width: 100vw;
 }
 .gear-background {
-    position: absolute;
-    right: 0rem;
-    top: 0rem;
+  position: absolute;
+  right: 0rem;
+  top: 0rem;
 }
 
+/* 1050px and below 1050px width */
+/* @media all and (max-width: 1150px) {
+  .table-container {
+    display: none;
+  }
+} */
 
+@media all and (max-height: 620px) {
+  .table-container {
+    display: none;
+  }
+}
+
+/* 900px and above 900px height */
+@media all and (min-height: 900px) {
+  .table-container {
+    top: 15% !important;
+    border: 1px solid blue !important;
+  }
+  .banner img {
+    height: 17vh;
+  }
+}
+
+.banner img {
+  height: 15vh;
+}
 .table-container {
-    
-    width: max-content;
-    height: max-content;
-    min-width: 65vw;
-    min-height: 65vh;
-    padding: 1rem;
-    z-index: 1;
-    
-    
-    position: absolute;
-    top: 12%;
-    left: 25%;
+  width: max-content;
+  height: max-content;
+  min-width: 65vw;
+  min-height: 65vh;
+  /* padding: 1rem; */
+  z-index: 1;
 
-    border: 1px solid green;
-    /* align-self: center; */
+  position: absolute;
+  top: 8%;
+  left: 20%;
+
+  border: 1px solid green;
+  /* align-self: center; */
 }
