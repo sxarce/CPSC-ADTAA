@@ -83,17 +83,17 @@ export default function RegisterPage() {
   const userRef = useRef();
   const errRef = useRef();
 
-  const [validUsername, setValidUsername] = useState("false");
-  const [userFocus, setUserFocus] = useState("false");
+  const [validUsername, setValidUsername] = useState(false);
+  const [userFocus, setUserFocus] = useState(false);
 
-  const [validEmail, setValidEmail] = useState("false");
-  const [emailFocus, setEmailFocus] = useState("false");
+  const [validEmail, setValidEmail] = useState(false);
+  const [emailFocus, setEmailFocus] = useState(false);
 
-  const [validPwd, setValidPwd] = useState("false");
-  const [pwdFocus, setPwdFocus] = useState("false");
+  const [validPwd, setValidPwd] = useState(false);
+  const [pwdFocus, setPwdFocus] = useState(false);
 
-  const [validMatch, setValidMatch] = useState("false");
-  const [matchFocus, setMatchFocus] = useState("false");
+  const [validMatch, setValidMatch] = useState(false);
+  const [matchFocus, setMatchFocus] = useState(false);
 
   const [errMsg, setErrMsg] = useState("");
   // const [success, setSuccess] = useState("");

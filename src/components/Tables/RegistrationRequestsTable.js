@@ -169,12 +169,14 @@ export default function RegistrationRequestsTable(props) {
                 <TableCell>
                   <Button
                     className="btn-approve"
+                    variant="contained"
                     onClick={() => setRegistrationStatus(true, row.email)}
                   >
                     <img src={checkIcon} alt="check mark" />
                   </Button>
                   <Button
                     className="btn-deny"
+                    variant="contained"
                     onClick={() => setRegistrationStatus(false, row.email)}
                   >
                     <img src={closeIcon} alt="close mark" />

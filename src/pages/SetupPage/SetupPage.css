@@ -4,6 +4,7 @@
   position: relative;
   width: 100vw;
   height: 100vh;
+  
 
   /* for table container */
   /* display: flex;
@@ -44,7 +45,7 @@
     border: 1px solid blue !important;
   }
   .banner img {
-    height: 17vh;
+    height: 17vh !important;
   }
 }
 
@@ -54,8 +55,8 @@
 .table-container {
   width: max-content;
   height: max-content;
-  min-width: 65vw;
-  min-height: 65vh;
+  /* min-width: 65vw;
+  min-height: 65vh; */
   /* padding: 1rem; */
   z-index: 1;
 
