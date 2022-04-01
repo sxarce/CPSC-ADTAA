@@ -52,8 +52,26 @@ def send_confirmation_email(user_email):
 ################## routes ###################
 #############################################
 
+@app.route("/delete-instructor", methods=['GET', 'POST'])
+@jwt_required()
+def delete_instructor():
+    # print(f'{request.json["instructorLastName"]}', file=sys.stderr)
+    instructorLastName = request.json['instructorLastName']
+    instructorFirstName = request.json['instructorFirstName']
+    
+    instructorToDelete = Instructor.query.filter_by(lastName=instructorLastName, firstName=instructorFirstName).first()
+    # print(f'{instructorToDelete.id}', file=sys.stderr)
+
+    for disciplineArea in instructorToDelete.disciplineAreas:
+        db.session.delete(disciplineArea)
+
+    db.session.delete(instructorToDelete)
+    db.session.commit()
+
+    return {"Message" : "Instructor deleted"}
 
 @app.route("/get-instructors-roster")
+@jwt_required()
 def get_instructors():
     instructorRoster = Instructor.query.all()
 
@@ -70,6 +88,7 @@ def get_instructors():
 
 
 @app.route("/add-instructor", methods=['GET', 'POST'])
+@jwt_required()
 def add_instructor():
     # print(f'{request.json["tableData"]}', file=sys.stderr)
 

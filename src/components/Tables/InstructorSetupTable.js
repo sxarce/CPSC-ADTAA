@@ -111,7 +111,7 @@ function getStyles(name, disciplineAreas, theme) {
   };
 }
 
-export default function CustomPaginationActionsTable() {
+export default function CustomPaginationActionsTable(props) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -123,12 +123,6 @@ export default function CustomPaginationActionsTable() {
   const [disciplineAreas, setDisciplineAreas] = React.useState([]);
 
   console.log(tableData);
-
-  // DELETE INSTRUCTORS WITH EMPTY FIELDS.
-  // React.useEffect(() => {
-  //   setTableData(tableData.filter((elem) => elem.lastName !== "" || elem.firstName !== "" || !elem['expertise'].length));
-  //   // console.log(tableData)
-  // }, []);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -152,6 +146,43 @@ export default function CustomPaginationActionsTable() {
     borderTop: "1px solid #E9ECEF",
   };
 
+  function deleteInstructor(event, lastName, firstName) {
+    axios
+      .post(
+        "/delete-instructor",
+        JSON.stringify({
+          instructorLastName: lastName,
+          instructorFirstName: firstName,
+        }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + props.token,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+        const data = response.data;
+        data.access_token && props.setToken(data.access_token);
+      })
+      .catch((error) => {
+        console.log(error);
+        localStorage.removeItem("token");
+      });
+
+    setTableData((prevTableData) => {
+      const indexToDelete = tableData.findIndex(
+        (element) =>
+          element.lastName === lastName && element.firstName === firstName
+      );
+      prevTableData.splice(indexToDelete, 1);
+      return prevTableData;
+    });
+
+    console.log(tableData);
+  }
+
   function saveCurrentTable() {
     // console.log(tableData.lastName);
     axios
@@ -160,7 +191,12 @@ export default function CustomPaginationActionsTable() {
         {
           tableData: tableData,
         },
-        { headers: { "Content-Type": "application/json" } }
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + props.token,
+          },
+        }
       )
       .then((response) => console.log(response))
       .catch((error) => console.log(error));
@@ -175,48 +211,6 @@ export default function CustomPaginationActionsTable() {
     };
 
     setTableData((prevTableData) => [...prevTableData, rowsInput]);
-  }
-
-  // FORM VALIDATION
-  // const [isFormInvalid, setIsFormInvalid] = React.useState(false); // didnt work for some reason :(
-  const [invalidFields, setInvalidFields] = React.useState({
-    lastNameField: false,
-    firstNameField: false,
-    disciplineAreaField: false,
-  });
-  function hasValidInput() {
-    let isValid = true;
-    if (
-      instructorName.lastNameInput === "" ||
-      instructorName.firstNameInput === "" ||
-      !disciplineAreas.length
-    ) {
-      isValid = false;
-    } else {
-      isValid = true;
-    }
-
-    setErrorFields();
-
-    return isValid;
-  }
-  function setErrorFields() {
-    let invalidFields = {
-      lastNameField: false,
-      firstNameField: false,
-      disciplineAreaField: false,
-    };
-    if (instructorName.lastNameInput === "") {
-      invalidFields["lastNameField"] = true;
-    }
-    if (instructorName.firstNameInput === "") {
-      invalidFields["firstNameField"] = true;
-    }
-    if (!disciplineAreas.length) {
-      invalidFields["disciplineAreaField"] = true;
-    }
-
-    setInvalidFields(invalidFields);
   }
 
   function saveInstructor(event) {
@@ -249,12 +243,6 @@ export default function CustomPaginationActionsTable() {
       firstNameInput: "",
     });
     setDisciplineAreas([]);
-
-    setInvalidFields({
-      lastNameField: false,
-      firstNameField: false,
-      disciplineAreaField: false,
-    });
   }
 
   function handleInstructorInputChange(e) {
@@ -266,23 +254,7 @@ export default function CustomPaginationActionsTable() {
       };
     });
 
-    // For invalid fields.
-    if (name === "lastNameInput")
-      setInvalidFields((prevInvalidFields) => {
-        return {
-          ...prevInvalidFields,
-          lastNameField: false,
-        };
-      });
-
-    if (name === "firstNameInput") {
-      setInvalidFields((prevInvalidFields) => {
-        return {
-          ...prevInvalidFields,
-          firstNameField: false,
-        };
-      });
-    }
+    console.log(instructorName);
   }
 
   const handleSelectChange = (event) => {
@@ -293,13 +265,6 @@ export default function CustomPaginationActionsTable() {
       // On autofill we get a stringified value.
       typeof value === "string" ? value.split(",") : value
     );
-
-    // For invalid fields.
-    if (event.target.name === "disciplineAreasInput") {
-      setInvalidFields((prevInvalidFields) => {
-        return { ...prevInvalidFields, disciplineAreaField: false };
-      });
-    }
   };
 
   // Will use this for save validation.
@@ -308,7 +273,9 @@ export default function CustomPaginationActionsTable() {
 
   function getInstructorRoster() {
     axios
-      .get("get-instructors-roster")
+      .get("get-instructors-roster", {
+        headers: { Authorization: "Bearer " + props.token },
+      })
       .then((response) => {
         let retrievedTableData = response.data.TableData;
         // console.log(retrievedTableData);
@@ -386,11 +353,6 @@ export default function CustomPaginationActionsTable() {
                         value={instructorName.lastNameInput}
                         onChange={handleInstructorInputChange}
                         autoFocus
-                        // InputProps={{ style: { fontSize: "small" } }}
-                        // InputLabelProps={{ style: { fontSize: "small" } }}
-
-                        // error={!instructorName.lastNameInput}
-                        error={invalidFields.lastNameField}
                       />
                     ) : (
                       row.lastName
@@ -406,11 +368,6 @@ export default function CustomPaginationActionsTable() {
                         style={{ width: "100%" }}
                         value={instructorName.firstNameInput}
                         onChange={handleInstructorInputChange}
-                        // InputProps={{ style: { fontSize: "small" } }}
-                        // InputLabelProps={{ style: { fontSize: "small" } }}
-
-                        // error={instructorName.firstNameInput === ""}
-                        error={invalidFields.firstNameField}
                       />
                     ) : (
                       row.firstName
@@ -419,10 +376,7 @@ export default function CustomPaginationActionsTable() {
                   <TableCell>
                     {!row.expertise.length ? (
                       <FormControl sx={{ width: 300 }}>
-                        <InputLabel
-                          id="demo-multiple-chip-label"
-                          error={invalidFields.disciplineAreaField}
-                        >
+                        <InputLabel id="demo-multiple-chip-label">
                           Discipline areas
                         </InputLabel>
                         <Select
@@ -454,8 +408,6 @@ export default function CustomPaginationActionsTable() {
                             </Box>
                           )}
                           MenuProps={MenuProps}
-                          // error={!disciplineAreas.length}
-                          error={invalidFields.disciplineAreaField}
                         >
                           {recognizedDisciplineAreas.map((name) => (
                             <MenuItem
@@ -482,12 +434,9 @@ export default function CustomPaginationActionsTable() {
                       <IconButton
                         className="save-btn"
                         onClick={(e) => {
-                          if (hasValidInput()) {
-                            saveInstructor(e);
-                          }
+                          saveInstructor(e);
                         }}
                       >
-                        {" "}
                         <SaveIcon className="save-btn-icon" />
                       </IconButton>
                     ) : (
@@ -495,7 +444,12 @@ export default function CustomPaginationActionsTable() {
                         <IconButton className="edit-btn">
                           <EditIcon />
                         </IconButton>
-                        <IconButton className="delete-btn">
+                        <IconButton
+                          className="delete-btn"
+                          onClick={(e) => {
+                            deleteInstructor(e, row.lastName, row.firstName);
+                          }}
+                        >
                           <DeleteIcon />
                         </IconButton>
                       </>
