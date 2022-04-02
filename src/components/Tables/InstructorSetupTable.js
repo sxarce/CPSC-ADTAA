@@ -267,10 +267,14 @@ export default function CustomPaginationActionsTable(props) {
       .then((response) => {
         let retrievedTableData = response.data.TableData;
         // console.log(retrievedTableData);
-        // backend returns more than what is necessary. (instructor_id might come in handy though)
-        // This was done via serialization through Marshmallow.Schema which exposed extra fields such as id.
-        // Error occurs when schema fields are left to one element (Must be a list or tuple)
-        // Potential solution: tuple("<name_of_field_here>")
+
+        /* 
+          EXPLANATION FOR multiple use of Array.map() as seen below ---->
+            backend returns more than what is necessary. (instructor_id might come in handy though)
+            This was done via serialization through Marshmallow.Schema which exposed extra fields such as id.
+            Error occurs when schema fields are left to one element (Must be a list or tuple)
+            Potential solution: tuple("<name_of_field_here>")
+        */
 
         setTableData(
           retrievedTableData.map((instructor) => {

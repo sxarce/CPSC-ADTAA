@@ -14,6 +14,9 @@ import axios from "axios";
 // import { makeStyles } from "@mui/styles";
 
 import { animated, useSpring } from "react-spring";
+import IconButton from "@mui/material/IconButton";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 const LoginPage = (props) => {
   // TEST ONLY: sends ONE email upon visiting the website.
@@ -65,6 +68,7 @@ const LoginPage = (props) => {
     passwordInput: "",
     rememberBool: false,
   });
+  const [passwordShown, setPasswordShown] = useState(false);
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
@@ -104,6 +108,9 @@ const LoginPage = (props) => {
     from: { opacity: -1 },
     config: { duration: 2500 },
   });
+
+  
+
   return (
     <animated.div className="background" style={fadeInAnimationStyle}>
       <img className="left-img" src={leftImg} alt="left design" />
@@ -142,13 +149,28 @@ const LoginPage = (props) => {
                 <br />
                 <input
                   className="field"
-                  type="password"
+                  // type="password"
+                  type={passwordShown ? "text" : "password"}
                   name="passwordInput"
                   autoComplete="off"
                   value={formData.passwordInput}
                   onChange={handleChange}
                 />
               </div>
+              {/* <span className="toggle-password-btn">@</span> */}
+              {!passwordShown ? (
+                <span className="toggle-password-btn">
+                  <IconButton onClick={() => setPasswordShown(!passwordShown)}>
+                    <VisibilityIcon fontSize="small" />
+                  </IconButton>
+                </span>
+              ) : (
+                <span className="toggle-password-btn">
+                  <IconButton onClick={() => setPasswordShown(!passwordShown)}>
+                    <VisibilityOffIcon fontSize="small" />
+                  </IconButton>
+                </span>
+              )}
             </div>
             <div className="sign-in-areas">
               <input
