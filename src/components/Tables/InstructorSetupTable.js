@@ -29,9 +29,6 @@ import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
 
 import { TextField } from "@mui/material";
 // import { makeStyles } from "@mui/styles";
-import InputBase from "@mui/material/InputBase";
-import { alpha } from "@mui/material/styles";
-import { makeStyles } from "@mui/styles";
 
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
@@ -39,44 +36,8 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
-import Stack from "@mui/material/Stack";
+
 import axios from "axios";
-
-import Loader from "../../components/LoadingScreen/Loader";
-
-const useStyles = makeStyles({
-  root: {
-    // "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-    //   borderColor: "grey"
-    // },
-    // "& .MuiOutlinedInput-input": {
-    //   color: "grey"
-    // },
-    // "& .MuiInputLabel-outlined": {
-    //   color: "grey",
-    // },
-    "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-      borderColor: "black",
-    },
-    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "black",
-    },
-
-    "&:hover .MuiOutlinedInput-input": {
-      color: "black",
-    },
-    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-      color: "black",
-    },
-
-    "&:hover .MuiInputLabel-outlined": {
-      color: "black",
-    },
-    "& .MuiInputLabel-outlined.Mui-focused": {
-      color: "black",
-    },
-  },
-});
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -122,7 +83,35 @@ export default function CustomPaginationActionsTable(props) {
   });
   const [disciplineAreas, setDisciplineAreas] = React.useState([]);
 
-  console.log(tableData);
+  // <FORM VALIDATION>
+  const [validFirstName, setValidFirstName] = React.useState(false);
+  const [firstNameFocus, setFirstNameFocus] = React.useState(false);
+
+  const [validLastName, setValidLastName] = React.useState(false);
+  const [lastNameFocus, setLastNameFocus] = React.useState(false);
+
+  const [validDisciplineAreas, setValidDisciplineAreas] = React.useState(false);
+  const [disciplineAreasFocus, setDisciplineAreasFocus] = React.useState(false);
+
+  // Last name validation
+  React.useEffect(() => {
+    const resultLastName = instructorName.lastNameInput === "" ? false : true;
+    setValidLastName(resultLastName);
+  }, [instructorName.lastNameInput]);
+
+  // First name validation
+  React.useEffect(() => {
+    const resultFirstName = instructorName.firstNameInput === "" ? false : true;
+    setValidFirstName(resultFirstName);
+  }, [instructorName.firstNameInput]);
+
+  // Discipline areas validation
+  React.useEffect(() => {
+    const resultDisciplineAreas = disciplineAreas.length <= 0 ? false : true;
+    setValidDisciplineAreas(resultDisciplineAreas);
+  }, [disciplineAreas]);
+
+  // </FORM VALIDATION>
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -267,8 +256,7 @@ export default function CustomPaginationActionsTable(props) {
     );
   };
 
-  // Will use this for save validation.
-  const textFieldsBorderStyle = useStyles();
+  // const textFieldsBorderStyle = useStyles();
   const theme = useTheme();
 
   function getInstructorRoster() {
@@ -347,12 +335,15 @@ export default function CustomPaginationActionsTable(props) {
                       <TextField
                         variant="outlined"
                         name="lastNameInput"
-                        className={textFieldsBorderStyle.root}
                         label="last name"
                         style={{ width: "100%" }}
                         value={instructorName.lastNameInput}
                         onChange={handleInstructorInputChange}
                         autoFocus
+                        onFocus={() => setLastNameFocus(true)}
+                        onBlur={() => setLastNameFocus(false)}
+                        error={!validLastName && lastNameFocus}
+                        autoComplete="off"
                       />
                     ) : (
                       row.lastName
@@ -363,11 +354,15 @@ export default function CustomPaginationActionsTable(props) {
                       <TextField
                         variant="outlined"
                         name="firstNameInput"
-                        className={textFieldsBorderStyle.root}
+                        // className={textFieldsBorderStyle.root}
                         label="first name"
                         style={{ width: "100%" }}
                         value={instructorName.firstNameInput}
                         onChange={handleInstructorInputChange}
+                        onFocus={() => setFirstNameFocus(true)}
+                        onBlur={() => setFirstNameFocus(false)}
+                        error={!validFirstName && firstNameFocus}
+                        autoComplete="off"
                       />
                     ) : (
                       row.firstName
@@ -376,7 +371,10 @@ export default function CustomPaginationActionsTable(props) {
                   <TableCell>
                     {!row.expertise.length ? (
                       <FormControl sx={{ width: 300 }}>
-                        <InputLabel id="demo-multiple-chip-label">
+                        <InputLabel
+                          id="demo-multiple-chip-label"
+                          error={!validDisciplineAreas && disciplineAreasFocus}
+                        >
                           Discipline areas
                         </InputLabel>
                         <Select
@@ -408,6 +406,9 @@ export default function CustomPaginationActionsTable(props) {
                             </Box>
                           )}
                           MenuProps={MenuProps}
+                          onFocus={() => setDisciplineAreasFocus(true)}
+                          onBlur={() => setDisciplineAreasFocus(false)}
+                          error={!validDisciplineAreas && disciplineAreasFocus}
                         >
                           {recognizedDisciplineAreas.map((name) => (
                             <MenuItem
@@ -432,6 +433,11 @@ export default function CustomPaginationActionsTable(props) {
                   <TableCell>
                     {row.lastName === "" ? (
                       <IconButton
+                        disabled={
+                          !validLastName ||
+                          !validFirstName ||
+                          !validDisciplineAreas
+                        }
                         className="save-btn"
                         onClick={(e) => {
                           saveInstructor(e);

@@ -9,7 +9,8 @@ tbody tr {
   margin: 1rem !important;
   border-radius: 0.5rem;
   padding: 0.35rem 1rem;
-  background: #28a745 !important;
+  /* background: #28a745 !important; */
+  background: #732D40 !important;
   border-style: none;
 }
 .add-instructor-btn:disabled {
@@ -17,9 +18,9 @@ tbody tr {
   /* color: #000 !important; */
 }
 
-/* .save-btn:enabled {
-  color: rgb(43, 155, 43);
-} */
+.save-btn:enabled {
+  color: #732D40;
+}
 
 .last-name-text {
   font-weight: bold !important;
