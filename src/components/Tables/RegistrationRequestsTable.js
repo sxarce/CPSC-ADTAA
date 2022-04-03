@@ -23,6 +23,12 @@ import { Button } from "@mui/material";
 
 import React from "react";
 import axios from "axios";
+import "./RegistrationRequestsTable.css";
+
+import Chip from "@mui/material/Chip";
+import FaceIcon from "@mui/icons-material/Face";
+import ShieldIcon from "@mui/icons-material/Shield";
+import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 
 // <RegistrationRequestsTable token={props.token}, setToken={setToken} />
 export default function RegistrationRequestsTable(props) {
@@ -135,7 +141,7 @@ export default function RegistrationRequestsTable(props) {
               <TableCell align="center" style={HeaderStyle}>
                 Requested Access Level
               </TableCell>
-              <TableCell style={HeaderStyle}></TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
 
@@ -163,10 +169,42 @@ export default function RegistrationRequestsTable(props) {
                   {row.username}
                 </TableCell>
 
+                {/* Reason for chips: Placeholder as button. Ability to modify access level later on maybe? */}
+                {/* Chosen icons and color for distinction between access levels  */}
                 <TableCell align="center" style={{ fontSize: "small" }}>
-                  {row.accessLevel}
+                  {row.accessLevel === "ASSISTANT" ? (
+                    <Chip
+                      variant="outlined"
+                      icon={<FaceIcon />}
+                      label={
+                        row.accessLevel.charAt(0) +
+                        row.accessLevel.slice(1).toLowerCase()
+                      }
+                      style={{ fontSize: "x-small" }}
+                    />
+                  ) : row.accessLevel === "ADMIN" ? (
+                    <Chip
+                      variant="filled"
+                      icon={<SupervisorAccountIcon />}
+                      label={
+                        row.accessLevel.charAt(0) +
+                        row.accessLevel.slice(1).toLowerCase()
+                      }
+                      style={{ fontSize: "x-small" }}
+                    />
+                  ) : (
+                    <Chip
+                      variant="filled"
+                      icon={<ShieldIcon style={{ color: "#B07888" }} />}
+                      label={
+                        row.accessLevel.charAt(0) +
+                        row.accessLevel.slice(1).toLowerCase()
+                      }
+                      style={{ fontSize: "x-small" }}
+                    />
+                  )}
                 </TableCell>
-                <TableCell>
+                <TableCell align="center">
                   <Button
                     className="btn-approve"
                     variant="contained"

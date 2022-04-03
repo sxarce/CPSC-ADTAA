@@ -204,6 +204,7 @@ export default function CustomPaginationActionsTable(props) {
 
   function saveInstructor(event) {
     // for some reason, setTableData does not force a re-render. Other state need to reset.
+    // this might be due to the fact that setState in useState hook is async.
     const indexOfNewInstructor = tableData.findIndex(
       (instructor) =>
         instructor.lastName === "" &&
