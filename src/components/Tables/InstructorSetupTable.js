@@ -37,6 +37,8 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 
+import Tooltip from "@mui/material/Tooltip";
+
 import axios from "axios";
 
 const ITEM_HEIGHT = 48;
@@ -455,14 +457,16 @@ export default function CustomPaginationActionsTable(props) {
                         <IconButton className="edit-btn">
                           <EditIcon />
                         </IconButton>
-                        <IconButton
-                          className="delete-btn"
-                          onClick={(e) => {
-                            deleteInstructor(e, row.lastName, row.firstName);
-                          }}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
+                        <Tooltip title="Delete">
+                          <IconButton
+                            className="delete-btn"
+                            onClick={(e) => {
+                              deleteInstructor(e, row.lastName, row.firstName);
+                            }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
                       </>
                     )}
                   </TableCell>
@@ -479,18 +483,20 @@ export default function CustomPaginationActionsTable(props) {
 
           <TableFooter>
             <TableRow>
-              <Button
-                className="add-instructor-btn"
-                variant="contained"
-                onClick={(event) => addInstructor(event)}
-                disabled={
-                  tableData.some((instructor) => instructor.lastName === "")
-                    ? true
-                    : false
-                }
-              >
-                <AddIcon />
-              </Button>
+              <Tooltip title="Add new instructor">
+                <Button
+                  className="add-instructor-btn"
+                  variant="contained"
+                  onClick={(event) => addInstructor(event)}
+                  disabled={
+                    tableData.some((instructor) => instructor.lastName === "")
+                      ? true
+                      : false
+                  }
+                >
+                  <AddIcon />
+                </Button>
+              </Tooltip>
               <TablePagination
                 rowsPerPageOptions={[3, 5]}
                 colSpan={3}

@@ -30,6 +30,8 @@ import FaceIcon from "@mui/icons-material/Face";
 import ShieldIcon from "@mui/icons-material/Shield";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 
+import Tooltip from "@mui/material/Tooltip";
+
 // <RegistrationRequestsTable token={props.token}, setToken={setToken} />
 export default function RegistrationRequestsTable(props) {
   const [tableData, setTableData] = React.useState([]);
@@ -180,7 +182,7 @@ export default function RegistrationRequestsTable(props) {
                         row.accessLevel.charAt(0) +
                         row.accessLevel.slice(1).toLowerCase()
                       }
-                      style={{ fontSize: "x-small" }}
+                      style={{ fontSize: "small" }}
                     />
                   ) : row.accessLevel === "ADMIN" ? (
                     <Chip
@@ -190,7 +192,7 @@ export default function RegistrationRequestsTable(props) {
                         row.accessLevel.charAt(0) +
                         row.accessLevel.slice(1).toLowerCase()
                       }
-                      style={{ fontSize: "x-small" }}
+                      style={{ fontSize: "small" }}
                     />
                   ) : (
                     <Chip
@@ -200,25 +202,29 @@ export default function RegistrationRequestsTable(props) {
                         row.accessLevel.charAt(0) +
                         row.accessLevel.slice(1).toLowerCase()
                       }
-                      style={{ fontSize: "x-small" }}
+                      style={{ fontSize: "small" }}
                     />
                   )}
                 </TableCell>
                 <TableCell align="center">
-                  <Button
-                    className="btn-approve"
-                    variant="contained"
-                    onClick={() => setRegistrationStatus(true, row.email)}
-                  >
-                    <img src={checkIcon} alt="check mark" />
-                  </Button>
-                  <Button
-                    className="btn-deny"
-                    variant="contained"
-                    onClick={() => setRegistrationStatus(false, row.email)}
-                  >
-                    <img src={closeIcon} alt="close mark" />
-                  </Button>
+                  <Tooltip title="Approve">
+                    <Button
+                      className="btn-approve"
+                      variant="contained"
+                      onClick={() => setRegistrationStatus(true, row.email)}
+                    >
+                      <img src={checkIcon} alt="check mark" />
+                    </Button>
+                  </Tooltip>
+                  <Tooltip title="Deny request">
+                    <Button
+                      className="btn-deny"
+                      variant="contained"
+                      onClick={() => setRegistrationStatus(false, row.email)}
+                    >
+                      <img src={closeIcon} alt="close mark" />
+                    </Button>
+                  </Tooltip>
                 </TableCell>
               </TableRow>
             ))}
@@ -233,7 +239,7 @@ export default function RegistrationRequestsTable(props) {
           <TableFooter>
             <TableRow>
               <TablePagination
-                rowsPerPageOptions={[3, 5, { label: "All", value: -1 }]}
+                rowsPerPageOptions={[3, 5]}
                 colSpan={3}
                 count={tableData.length}
                 rowsPerPage={rowsPerPage}
