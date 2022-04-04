@@ -41,6 +41,8 @@ import Tooltip from "@mui/material/Tooltip";
 
 import axios from "axios";
 
+import AutorenewIcon from "@mui/icons-material/Autorenew";
+
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -199,6 +201,7 @@ export default function CustomPaginationActionsTable(props) {
   function addInstructor(event) {
     // console.log(event);
     const rowsInput = {
+      id: -1,
       lastName: "",
       firstName: "",
       expertise: [],
@@ -207,14 +210,49 @@ export default function CustomPaginationActionsTable(props) {
     setTableData((prevTableData) => [...prevTableData, rowsInput]);
   }
 
-  // saveInstructor is badly written.
-  // It combines two responsibilities in one and runs in conjunction with a helper method called saveCurrentTable that also does the same.
-  function saveInstructor(event) {
-    // for some reason, setTableData does not force a re-render. Other state need to reset.
-    // this might be due to the fact that setState in useState hook is async.
-    // Solution: Promise.resolve().then() -----> this behaves as if it's doing all setStates() synchronously.
-    // SOURCE: https://stackoverflow.com/questions/53048495/does-react-batch-state-update-functions-when-using-hooks
+  const [actionSave, setActionSave] = React.useState(false);
+  React.useEffect(() => {
+    // PROBLEM DESCRIPTION:
+    // Sometimes and not always, after clicking the editBTN then the saveBTN (W/O clicking the addBTN). 
+    // Its corresponding Select field will show up but empty. The intended behavior is for it not to show up and show chips instead.
+    // Behavior is always fine upon clicking the editBTN. TextFields and Select show up with expected values.
+    // The problem only shows up upon clicking the saveBTN.
+    // ASSUMPTIONS: 
+    // 1. The PROBLEM must be isolated within saveInstructor() which saveBTN executes onClick.
+    // 1.1. The PROBLEM must be async-related since the behavior is inconsistent (sometimes successful, sometimes fails).
+    // 1.2. Since it is only possible to see the select field when "(!row.expertise.length || editInstructorID === row.id)", 
+    // the PROBLEM must lie on editInstructorID since no changes, at this time,
+    // are made on row.expertise.length (refers to an element in tableData)
+    // 2. It must be the case that: disciplineAreas state has been set empty, then rendered (causing an empty TextField).
+    //  Only afterwards, did setEditInstructorID trigger (so it was probably batched in a different group and waiting for its render).
+    // 2.1. In successsul times, it must be the case that: setEditInstructorID ran (s.t. this !== row.id) and disciplineAreas state has been set empty. 
+    // Then rendered in the same batch.
+    // 2.2. Since we don't know exactly how it batches the execution of these async setStates. I think the most feasible solution (but inefficient)
+    //  is to make each state change s.t. each one triggers a re-render (not batched).
 
+    // SOLUTION:
+    // A. We know that useState is async. To force a render for each state change, we can wrap code 
+    // (pass as an arrow function) in a Promise.resolve().then()
+    // B. To execute code based on a state, we can wrap code in a useEffect(). So that, for every change of this state (actionSave),
+    // the code is ran.
+
+    Promise.resolve().then(() => {
+      getInstructorRoster();
+
+      // clear state for inputs. back to defaults.
+      setInstructorName({
+        lastNameInput: "",
+        firstNameInput: "",
+      });
+      setDisciplineAreas([]);
+
+      // clear states for editing.
+      setEditMode(false);
+      setEditInstructorID(-1);
+    });
+  }, [actionSave]);
+
+  function saveInstructor(event) {
     let indexOfNewInstructor = tableData.findIndex(
       (instructor) =>
         instructor.lastName === "" &&
@@ -229,18 +267,6 @@ export default function CustomPaginationActionsTable(props) {
       );
     }
     console.log(indexOfNewInstructor);
-
-    // EXPLANATION FOR EDIT MODE:
-    // 1. Upon clicking the editBTN (pencil icon), the editInstructorID state changes. This controls conditional rendering (TextField vs. Text) and the actual logic in the "add-instructor" backend_route.
-    // 2. A useEffect() hook calls editInstructor() and setEditMode() whenever the editInstructorID changes.
-    // 3. setEditMode() triggers disable and enable of addInstructorBTN.
-    // 4. editInstructor() changes the input states (instructorName and disciplineAreas) which is a way to dynamically set the default value of TextFields (since <TextField value={inputState} />)
-    // 5. Finally, the saveBTN calls THIS FUNCTION you are in right now!
-    // WHHHYY?
-    // 5.1 Need to update "tableData" first since saveCurrentTable() and the "add-instructor" backend_route it goes to uses information from "tableData"
-    // 5.2 It then calls getInstructorRoster() to update tableData from DB. This was added to retrieve the correct instructor_id that is automatically generated by SQLAlchemy.
-    // 5.3 The id is not used in anything else EXCEPT IN editing rows. Without the correct instructorID, adding an instructor and clicking the corresponding
-    // editBTN will provide an undefined value for editInstructorID which messes up Step 1.
 
     Promise.resolve().then(() => {
       setTableData((prevTableData) => {
@@ -257,44 +283,8 @@ export default function CustomPaginationActionsTable(props) {
 
       // console.log(tableData);
       saveCurrentTable(indexOfNewInstructor);
-      getInstructorRoster();
-
-      // clear state for inputs. back to defaults.
-      setInstructorName({
-        lastNameInput: "",
-        firstNameInput: "",
-      });
-      setDisciplineAreas([]);
-
-      // clear states for editing.
-      setEditMode(false);
-      setEditInstructorID(-1);
+      setActionSave(!actionSave);
     });
-    // setTableData((prevTableData) => {
-    //   let newTableData = prevTableData;
-
-    //   newTableData[indexOfNewInstructor] = {
-    //     lastName: instructorName.lastNameInput,
-    //     firstName: instructorName.firstNameInput,
-    //     expertise: disciplineAreas,
-    //   };
-    //   // console.log(newTableData);
-    //   return newTableData;
-    // });
-
-    // // console.log(tableData);
-    // saveCurrentTable(indexOfNewInstructor);
-
-    // // clear state for inputs. back to defaults.
-    // setInstructorName({
-    //   lastNameInput: "",
-    //   firstNameInput: "",
-    // });
-    // setDisciplineAreas([]);
-
-    // // clear edit
-    // setEditMode(false)
-    // setEditInstructorID(-1)
   }
 
   function handleInstructorInputChange(e) {
@@ -386,11 +376,7 @@ export default function CustomPaginationActionsTable(props) {
 
     // console.log(tableData[indexToEdit].expertise)
     setDisciplineAreas(tableData[indexToEdit].expertise);
-
-    // console.log(indexToEdit);
   }
-
-  // console.log(disciplineAreas)
 
   return (
     <TableContainer component={Paper} style={{ width: "77vw" }}>
@@ -431,7 +417,6 @@ export default function CustomPaginationActionsTable(props) {
                 )
               : tableData
             ).map((row) => {
-              // console.log(row);
               return (
                 <TableRow key={row.name}>
                   <TableCell className="last-name-text">
@@ -458,7 +443,6 @@ export default function CustomPaginationActionsTable(props) {
                       <TextField
                         variant="outlined"
                         name="firstNameInput"
-                        // className={textFieldsBorderStyle.root}
                         label="first name"
                         style={{ width: "100%" }}
                         value={instructorName.firstNameInput}
@@ -535,20 +519,22 @@ export default function CustomPaginationActionsTable(props) {
                   </TableCell>
 
                   <TableCell>
-                    {row.lastName === "" || editInstructorID === row.id ? (
-                      <IconButton
-                        disabled={
-                          !validLastName ||
-                          !validFirstName ||
-                          !validDisciplineAreas
-                        }
-                        className="save-btn"
-                        onClick={(e) => {
-                          saveInstructor(e);
-                        }}
-                      >
-                        <SaveIcon className="save-btn-icon" />
-                      </IconButton>
+                    {row.id === -1 || editInstructorID === row.id ? (
+                      <Tooltip title="Save">
+                        <IconButton
+                          disabled={
+                            !validLastName ||
+                            !validFirstName ||
+                            !validDisciplineAreas
+                          }
+                          className="save-btn"
+                          onClick={(e) => {
+                            saveInstructor(e);
+                          }}
+                        >
+                          <SaveIcon className="save-btn-icon" />
+                        </IconButton>
+                      </Tooltip>
                     ) : (
                       <>
                         <Tooltip title="Edit">
@@ -590,21 +576,26 @@ export default function CustomPaginationActionsTable(props) {
 
           <TableFooter>
             <TableRow>
-              <Tooltip title="Add new instructor">
-                <Button
-                  className="add-instructor-btn"
-                  variant="contained"
-                  onClick={(event) => addInstructor(event)}
-                  disabled={
-                    editMode ||
-                    tableData.some((instructor) => instructor.lastName === "")
-                      ? true
-                      : false
-                  }
-                >
-                  <AddIcon />
-                </Button>
+              <Button
+                className="add-instructor-btn"
+                variant="contained"
+                onClick={(event) => addInstructor(event)}
+                disabled={
+                  editMode ||
+                  tableData.some((instructor) => instructor.lastName === "")
+                    ? true
+                    : false
+                }
+              >
+                <AddIcon />
+              </Button>
+
+              <Tooltip title="Refresh table">
+                <IconButton onClick={getInstructorRoster}>
+                  <AutorenewIcon />
+                </IconButton>
               </Tooltip>
+
               <TablePagination
                 rowsPerPageOptions={[3, 5]}
                 colSpan={3}
