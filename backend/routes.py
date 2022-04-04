@@ -52,14 +52,16 @@ def send_confirmation_email(user_email):
 ################## routes ###################
 #############################################
 
+
 @app.route("/delete-instructor", methods=['GET', 'POST'])
 @jwt_required()
 def delete_instructor():
     # print(f'{request.json["instructorLastName"]}', file=sys.stderr)
     instructorLastName = request.json['instructorLastName']
     instructorFirstName = request.json['instructorFirstName']
-    
-    instructorToDelete = Instructor.query.filter_by(lastName=instructorLastName, firstName=instructorFirstName).first()
+
+    instructorToDelete = Instructor.query.filter_by(
+        lastName=instructorLastName, firstName=instructorFirstName).first()
     # print(f'{instructorToDelete.id}', file=sys.stderr)
 
     for disciplineArea in instructorToDelete.disciplineAreas:
@@ -68,7 +70,8 @@ def delete_instructor():
     db.session.delete(instructorToDelete)
     db.session.commit()
 
-    return {"Message" : "Instructor deleted"}
+    return {"Message": "Instructor deleted"}
+
 
 @app.route("/get-instructors-roster")
 @jwt_required()
@@ -77,7 +80,7 @@ def get_instructors():
 
     # Solves: Object is not JSON serializable. Serialize instructors. Then serialize each of their disciplineAreas.
     serialized_instructor_roster = instructors_schema.dump(
-        instructorRoster)  
+        instructorRoster)
     for instructor in serialized_instructor_roster:
         instructor['disciplineAreas'] = instructorDisciplineAreas_schema.dump(
             instructor['disciplineAreas'])
@@ -86,30 +89,66 @@ def get_instructors():
     # NOTE: This might be an initial step when designing the assistant algorithm.
     return {"Request": "OK", "TableData": serialized_instructor_roster}
 
-
+# TODO: FIX: This add-instructor() route will eventually generate disciplineAreas with ID's that are greater than a million.
 @app.route("/add-instructor", methods=['GET', 'POST'])
 @jwt_required()
 def add_instructor():
     # print(f'{request.json["tableData"]}', file=sys.stderr)
 
     tableData = request.json["tableData"]
+    editInstructorID = request.json["editInstructorID"]
+    # print(f'{editInstructorID}', file=sys.stderr)
 
-    instructorToAdd = tableData[len(tableData) - 1]
+    # If (ADDING INSTRUCTOR)
+    if editInstructorID == -1:
+        instructorToAdd = tableData[len(tableData) - 1]
+
+        new_instructor = Instructor(
+            lastName=instructorToAdd['lastName'], firstName=instructorToAdd['firstName'])
+        db.session.add(new_instructor)
+
+        for disciplineArea in instructorToAdd['expertise']:
+            new_discipline_area = InstructorDisciplineArea(
+                name=disciplineArea, owning_instructor=new_instructor)
+            db.session.add(new_discipline_area)
+    # else (EDITING INSTRUCTOR)
+    else:
+        instructorToEdit = Instructor.query.filter_by(
+            id=editInstructorID).first()
+
+        modifiedInstructor = tableData[request.json['instructorToEditIndex']]
+
+        for disciplineArea in instructorToEdit.disciplineAreas:
+            db.session.delete(disciplineArea)
+
+        db.session.commit()
+
+        # Make changes to existing instructor
+        instructorToEdit.lastName = modifiedInstructor['lastName']
+        instructorToEdit.firstName = modifiedInstructor['firstName']
+
+        for disciplineArea in modifiedInstructor['expertise']:
+            new_discipline_area = InstructorDisciplineArea(
+                name=disciplineArea, owning_instructor=instructorToEdit)
+            db.session.add(new_discipline_area)
+
     # print(f'{instructorToAdd}', file=sys.stderr)
 
-    new_instructor = Instructor(
-        lastName=instructorToAdd['lastName'], firstName=instructorToAdd['firstName'])
-    db.session.add(new_instructor)
+    # ORIGINAL CONTENT BEFORE EDIT FUNCTIONALITY ---------->
+    # new_instructor = Instructor(
+    #     lastName=instructorToAdd['lastName'], firstName=instructorToAdd['firstName'])
+    # db.session.add(new_instructor)
 
-    for disciplineArea in instructorToAdd['expertise']:
-        new_discipline_area = InstructorDisciplineArea(
-            name=disciplineArea, owning_instructor=new_instructor)
-        db.session.add(new_discipline_area)
+    # for disciplineArea in instructorToAdd['expertise']:
+    #     new_discipline_area = InstructorDisciplineArea(
+    #         name=disciplineArea, owning_instructor=new_instructor)
+    #     db.session.add(new_discipline_area)
 
     db.session.commit()
 
     # return jsonify({"Request" : "OK"})
-    return jsonify({'Message': f'Instructor <{new_instructor.firstName} {new_instructor.lastName}> added!'})
+    # return jsonify({'Message': f'Instructor <{new_instructor.firstName} {new_instructor.lastName}> added/modified!'})
+    return jsonify({'Message': f'Instructor added/modified!'})
 
 
 @app.route("/confirm/<token>")

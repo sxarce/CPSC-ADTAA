@@ -53,7 +53,7 @@ class Instructor(db.Model):
 class InstructorSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ("lastName", "firstName", "disciplineAreas")
+        fields = ("id", "lastName", "firstName", "disciplineAreas")
 
 
 instructor_schema = InstructorSchema()
