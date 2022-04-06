@@ -8,9 +8,14 @@
   min-width: 13%;
   display: flex;
   flex-direction: column;
-  box-shadow: 5px 10px 21px -6px #5b525a;
+  box-shadow: 2px 7px 15px -6px #5b525a;
   /* min-height: 100vh; */
+  transition: 0.5s;
   
+}
+.sidebar:hover {
+  background: #d8c6ca;
+  box-shadow: 5px 10px 21px -6px #5b525a;
 }
 .sidebar-items {
   /* width: 100%; */

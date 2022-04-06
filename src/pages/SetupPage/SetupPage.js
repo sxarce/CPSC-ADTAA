@@ -2,6 +2,7 @@ import React from "react";
 import "./SetupPage.css";
 import Sidebar from "../../components/Sidebar";
 import InstructorSetupTable from "../../components/Tables/InstructorSetupTable";
+import CourseSetupTable from "../../components/Tables/CourseSetupTable";
 import gearBackground from "../../assets/svg/background_gear.svg";
 
 import axios from "axios";
@@ -54,7 +55,6 @@ export default function SetupPage(props) {
   }
   return (
     <div className="background-setup">
-    
       <div className="banner">
         <img src={gearBackground} alt="gear logo" className="gear-background" />
       </div>
@@ -65,10 +65,14 @@ export default function SetupPage(props) {
         email={credentials.user_email}
       />
 
-      <div className="table-container" style={{ maxHeight: "100vh" }}>
+      <div className="table-container">
         <InstructorSetupTable token={props.token} setToken={props.setToken} />
+        <br />
+        <br />
+        <br />
+
+        <CourseSetupTable token={props.token} setToken={props.setToken} />
       </div>
-    
     </div>
   );
 }

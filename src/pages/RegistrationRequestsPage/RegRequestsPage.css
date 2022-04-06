@@ -4,6 +4,7 @@
   position: relative;
   width: 100vw;
   height: 100vh;
+  background-color: rgb(231, 235, 240);
 
   /* for table container */
   /* display: flex;

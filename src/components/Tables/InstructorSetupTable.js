@@ -42,6 +42,7 @@ import Tooltip from "@mui/material/Tooltip";
 import axios from "axios";
 
 import AutorenewIcon from "@mui/icons-material/Autorenew";
+import { BorderColor } from "@mui/icons-material";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -86,6 +87,7 @@ export default function CustomPaginationActionsTable(props) {
     lastNameInput: "",
     firstNameInput: "",
   });
+  // console.log(instructorName)
   const [disciplineAreas, setDisciplineAreas] = React.useState([]);
 
   // <FORM VALIDATION>
@@ -213,25 +215,25 @@ export default function CustomPaginationActionsTable(props) {
   const [actionSave, setActionSave] = React.useState(false);
   React.useEffect(() => {
     // PROBLEM DESCRIPTION:
-    // Sometimes and not always, after clicking the editBTN then the saveBTN (W/O clicking the addBTN). 
+    // Sometimes and not always, after clicking the editBTN then the saveBTN (W/O clicking the addBTN).
     // Its corresponding Select field will show up but empty. The intended behavior is for it not to show up and show chips instead.
     // Behavior is always fine upon clicking the editBTN. TextFields and Select show up with expected values.
     // The problem only shows up upon clicking the saveBTN.
-    // ASSUMPTIONS: 
+    // ASSUMPTIONS:
     // 1. The PROBLEM must be isolated within saveInstructor() which saveBTN executes onClick.
     // 1.1. The PROBLEM must be async-related since the behavior is inconsistent (sometimes successful, sometimes fails).
-    // 1.2. Since it is only possible to see the select field when "(!row.expertise.length || editInstructorID === row.id)", 
+    // 1.2. Since it is only possible to see the select field when "(!row.expertise.length || editInstructorID === row.id)",
     // the PROBLEM must lie on editInstructorID since no changes, at this time,
     // are made on row.expertise.length (refers to an element in tableData)
     // 2. It must be the case that: disciplineAreas state has been set empty, then rendered (causing an empty TextField).
     //  Only afterwards, did setEditInstructorID trigger (so it was probably batched in a different group and waiting for its render).
-    // 2.1. In successsul times, it must be the case that: setEditInstructorID ran (s.t. this !== row.id) and disciplineAreas state has been set empty. 
+    // 2.1. In successsul times, it must be the case that: setEditInstructorID ran (s.t. this !== row.id) and disciplineAreas state has been set empty.
     // Then rendered in the same batch.
     // 2.2. Since we don't know exactly how it batches the execution of these async setStates. I think the most feasible solution (but inefficient)
     //  is to make each state change s.t. each one triggers a re-render (not batched).
 
     // SOLUTION:
-    // A. We know that useState is async. To force a render for each state change, we can wrap code 
+    // A. We know that useState is async. To force a render for each state change, we can wrap code
     // (pass as an arrow function) in a Promise.resolve().then()
     // B. To execute code based on a state, we can wrap code in a useEffect(). So that, for every change of this state (actionSave),
     // the code is ran.
@@ -314,7 +316,7 @@ export default function CustomPaginationActionsTable(props) {
 
   function getInstructorRoster() {
     axios
-      .get("get-instructors-roster", {
+      .get("/get-instructors-roster", {
         headers: { Authorization: "Bearer " + props.token },
       })
       .then((response) => {
@@ -328,19 +330,21 @@ export default function CustomPaginationActionsTable(props) {
             Error occurs when schema fields are left to one element (Must be a list or tuple)
             Potential solution: tuple("<name_of_field_here>")
         */
-
-        setTableData(
-          retrievedTableData.map((instructor) => {
-            return {
-              id: instructor.id,
-              lastName: instructor.lastName,
-              firstName: instructor.firstName,
-              expertise: instructor.disciplineAreas.map(
-                (disciplineArea) => disciplineArea.name
-              ),
-            };
-          })
-        );
+        if (retrievedTableData) {
+          // Added recently. If table not empty.
+          setTableData(
+            retrievedTableData.map((instructor) => {
+              return {
+                id: instructor.id,
+                lastName: instructor.lastName,
+                firstName: instructor.firstName,
+                expertise: instructor.disciplineAreas.map(
+                  (disciplineArea) => disciplineArea.name
+                ),
+              };
+            })
+          );
+        }
       })
       .catch((error) => console.log(error));
   }
@@ -379,7 +383,11 @@ export default function CustomPaginationActionsTable(props) {
   }
 
   return (
-    <TableContainer component={Paper} style={{ width: "77vw" }}>
+    <TableContainer
+      component={Paper}
+      style={{ width: "77vw" }}
+      className="instructor-card-table"
+    >
       <ThemeProvider theme={theme}>
         <Table aria-label="Instructor table">
           <TableHead>
@@ -390,11 +398,16 @@ export default function CustomPaginationActionsTable(props) {
                   fontWeight: "bold",
                   fontSize: "0.9rem",
                   padding: "1rem 1rem 1.3rem 1rem",
+                  borderBottom: "none",
                 }}
               >
                 Current Roster
               </TableCell>
-              <TableCell align="right" colSpan={2}>
+              <TableCell
+                align="right"
+                colSpan={2}
+                style={{ borderBottom: "none" }}
+              >
                 Instructors
               </TableCell>
             </TableRow>
@@ -403,7 +416,11 @@ export default function CustomPaginationActionsTable(props) {
               <TableCell style={HeaderStyle}>First Name</TableCell>
               <TableCell style={HeaderStyle}>Expertise</TableCell>
               <TableCell
-                style={{ width: "5rem" }}
+                style={{
+                  width: "5rem",
+                  borderBottom: "none",
+                  borderTop: "none",
+                }}
                 aria-label="btns-area"
               ></TableCell>
             </TableRow>
@@ -418,7 +435,7 @@ export default function CustomPaginationActionsTable(props) {
               : tableData
             ).map((row) => {
               return (
-                <TableRow key={row.name}>
+                <TableRow key={row.name} style={{ border: "none" }}>
                   <TableCell className="last-name-text">
                     {row.lastName === "" || editInstructorID === row.id ? (
                       <TextField
@@ -601,6 +618,7 @@ export default function CustomPaginationActionsTable(props) {
                 colSpan={3}
                 count={tableData.length}
                 rowsPerPage={rowsPerPage}
+                style={{ border: "none" }}
                 page={page}
                 SelectProps={{
                   inputProps: {

@@ -1,3 +1,4 @@
+from enum import unique
 from os import access
 from app import db, ma
 from datetime import datetime
@@ -37,6 +38,10 @@ class UserSchema(ma.Schema):
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
+###########################################################
+###################### INSTRUCTOR #########################
+###########################################################
+
 
 class Instructor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -53,7 +58,7 @@ class Instructor(db.Model):
 class InstructorSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ("id", "lastName", "firstName", "disciplineAreas")
+        fields = ("id", "lastName", "firstName", "disciplineAreas", "maxLoad")
 
 
 instructor_schema = InstructorSchema()
@@ -75,6 +80,48 @@ class InstructorDisciplineAreaSchema(ma.Schema):
 
 instructorDisciplineArea_schema = InstructorDisciplineAreaSchema()
 instructorDisciplineAreas_schema = InstructorDisciplineAreaSchema(many=True)
+
+########################################################
+###################### COURSES #########################
+########################################################
+
+
+class Course(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+    number = db.Column(db.Integer, nullable=False, unique=True)
+    deptCode = db.Column(db.String(10), nullable=False)
+    disciplineAreas = db.relationship(
+        'CourseDisciplineArea', backref='owning_course', lazy=True)
+
+    def __repr__(self):
+        return f'COURSE -> NAME: {self.name}, NUMBER: {self.number}, DEPTCODE= {self.deptCode}, disciplineAreas: {self.disciplineAreas}'
+
+
+class CourseSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "name", "number", "deptCode", "disciplineAreas")
+
+
+course_schema = CourseSchema()
+courses_schema = CourseSchema(many=True)
+
+
+class CourseDisciplineArea(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey(
+        'course.id'), nullable=False)
+
+
+class CourseDisciplineAreaSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "name", "course_id")
+
+
+courseDisciplineArea_schema = CourseDisciplineAreaSchema()
+courseDisciplineAreas_schema = CourseDisciplineAreaSchema(many=True)
+
 # class Articles(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
 #     title = db.Column(db.String(100),nullable=False)

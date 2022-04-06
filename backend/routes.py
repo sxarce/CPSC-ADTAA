@@ -6,6 +6,8 @@ from app import create_app, db, mail
 from models import User, users_schema, user_schema
 from models import Instructor, instructor_schema, instructors_schema
 from models import InstructorDisciplineArea, instructorDisciplineArea_schema, instructorDisciplineAreas_schema
+from models import Course, course_schema, courses_schema
+from models import CourseDisciplineArea, courseDisciplineArea_schema, courseDisciplineAreas_schema
 from flask_login import login_user
 
 import sys
@@ -72,15 +74,36 @@ def delete_instructor():
 
     return {"Message": "Instructor deleted"}
 
+@app.route("/delete-course", methods=['GET', 'POST'])
+@jwt_required()
+def delete_course():
+    courseName = request.json['courseName']
+    courseNumber = request.json['courseNumber']
+    
+    courseToDelete = Course.query.filter_by(name=courseName, number=courseNumber).first()
+    print(f'{courseToDelete}', file=sys.stderr)
+
+    for disciplineArea in courseToDelete.disciplineAreas:
+        db.session.delete(disciplineArea)
+
+    db.session.delete(courseToDelete)
+    db.session.commit()
+
+    return {"Message" : "Course deleted"}
+
 
 @app.route("/get-instructors-roster")
 @jwt_required()
 def get_instructors():
     instructorRoster = Instructor.query.all()
 
+    if not instructorRoster:
+        return {"Request": "OK", "TableData": ""}
+
     # Solves: Object is not JSON serializable. Serialize instructors. Then serialize each of their disciplineAreas.
     serialized_instructor_roster = instructors_schema.dump(
         instructorRoster)
+
     for instructor in serialized_instructor_roster:
         instructor['disciplineAreas'] = instructorDisciplineAreas_schema.dump(
             instructor['disciplineAreas'])
@@ -89,10 +112,30 @@ def get_instructors():
     # NOTE: This might be an initial step when designing the assistant algorithm.
     return {"Request": "OK", "TableData": serialized_instructor_roster}
 
-# TODO: FIX: This add-instructor() route will eventually generate disciplineAreas with ID's that are greater than a million.
+
+@app.route("/get-course-list")
+@jwt_required()
+def get_courses():
+    courseList = Course.query.all()  # returns empty list if table is empty.
+
+    # If no courses available
+    if not courseList:
+        return {"Request": "OK", "TableData": courseList}
+
+    serialized_course_list = courses_schema.dump(
+        courseList)
+
+    for course in serialized_course_list:
+        course['disciplineAreas'] = courseDisciplineAreas_schema.dump(
+            course['disciplineAreas'])
+
+    return {"Request": "OK", "TableData": serialized_course_list}
+
+
 @app.route("/add-instructor", methods=['GET', 'POST'])
 @jwt_required()
 def add_instructor():
+    # TODO: FIX: This add-instructor() route will eventually generate disciplineAreas with ID's that are greater than a million.
     # print(f'{request.json["tableData"]}', file=sys.stderr)
 
     tableData = request.json["tableData"]
@@ -132,23 +175,56 @@ def add_instructor():
                 name=disciplineArea, owning_instructor=instructorToEdit)
             db.session.add(new_discipline_area)
 
-    # print(f'{instructorToAdd}', file=sys.stderr)
+    db.session.commit()
 
-    # ORIGINAL CONTENT BEFORE EDIT FUNCTIONALITY ---------->
-    # new_instructor = Instructor(
-    #     lastName=instructorToAdd['lastName'], firstName=instructorToAdd['firstName'])
-    # db.session.add(new_instructor)
+    return jsonify({'Message': f'Instructor added/modified!'})
 
-    # for disciplineArea in instructorToAdd['expertise']:
-    #     new_discipline_area = InstructorDisciplineArea(
-    #         name=disciplineArea, owning_instructor=new_instructor)
-    #     db.session.add(new_discipline_area)
+
+@app.route("/add-course", methods=['GET', 'POST'])
+@jwt_required()
+def add_course():
+
+    tableData = request.json["tableData"]
+    editCourseID = request.json["editCourseID"]
+    print(f'{tableData}', file=sys.stderr)
+
+    if editCourseID == -1:
+        courseToAdd = tableData[len(tableData) - 1]
+
+        new_course = Course(
+            name=courseToAdd['courseName'], number=courseToAdd['courseNumber'],
+            deptCode=courseToAdd['courseDeptCode'])
+        db.session.add(new_course)
+
+        for disciplineArea in courseToAdd['requiredExpertise']:
+            new_discipline_area = CourseDisciplineArea(
+                name=disciplineArea, owning_course=new_course)
+            db.session.add(new_discipline_area)
+
+    else:
+        courseToEdit = Course.query.filter_by(
+            id=editCourseID).first()
+
+        modifiedCourse = tableData[request.json['courseToEditIndex']]
+
+        for disciplineArea in courseToEdit.disciplineAreas:
+            db.session.delete(disciplineArea)
+
+        db.session.commit()
+
+        # Make changes to existing course
+        courseToEdit.name = modifiedCourse['courseName']
+        courseToEdit.number = modifiedCourse['courseNumber']
+        courseToEdit.deptCode = modifiedCourse['courseDeptCode']
+
+        for disciplineArea in modifiedCourse['requiredExpertise']:
+            new_discipline_area = CourseDisciplineArea(
+                name=disciplineArea, owning_course=courseToEdit)
+            db.session.add(new_discipline_area)
 
     db.session.commit()
 
-    # return jsonify({"Request" : "OK"})
-    # return jsonify({'Message': f'Instructor <{new_instructor.firstName} {new_instructor.lastName}> added/modified!'})
-    return jsonify({'Message': f'Instructor added/modified!'})
+    return jsonify({'Message': f'Course added/modified!'})
 
 
 @app.route("/confirm/<token>")

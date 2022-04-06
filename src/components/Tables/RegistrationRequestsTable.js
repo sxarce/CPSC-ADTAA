@@ -116,7 +116,7 @@ export default function RegistrationRequestsTable(props) {
   };
 
   return (
-    <TableContainer component={Paper} style={{ width: "77vw" }}>
+    <TableContainer component={Paper} style={{ width: "77vw" }} className="regReqs-card-table">
       <ThemeProvider theme={theme}>
         <Table aria-label="custom pagination table">
           <TableHead>
@@ -240,7 +240,7 @@ export default function RegistrationRequestsTable(props) {
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[3, 5]}
-                colSpan={3}
+                colSpan={4}
                 count={tableData.length}
                 rowsPerPage={rowsPerPage}
                 page={page}

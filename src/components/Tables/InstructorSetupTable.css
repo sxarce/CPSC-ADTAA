@@ -2,15 +2,16 @@
 
 /*  */
 
-tbody tr {
+/* tbody tr {
   border-bottom: 1px solid #e9ecef;
-}
+  
+} */
 .add-instructor-btn {
   margin: 1rem !important;
   border-radius: 0.5rem;
   padding: 0.35rem 1rem;
   /* background: #28a745 !important; */
-  background: #732D40 !important;
+  background: #732d40 !important;
   border-style: none;
 }
 .add-instructor-btn:disabled {
@@ -19,7 +20,7 @@ tbody tr {
 }
 
 .save-btn:enabled {
-  color: #732D40;
+  color: #732d40;
 }
 
 .last-name-text {
@@ -39,6 +40,13 @@ tbody tr {
 /* TODO: Make li into MUI chips */
 .list-items-discipline-areas li {
   list-style-type: none;
+}
+
+.instructor-card-table:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+.instructor-card-table {
+  transition: 0.7s;
 }
 
 /* 
