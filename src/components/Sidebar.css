@@ -10,7 +10,7 @@
   flex-direction: column;
   box-shadow: 2px 7px 15px -6px #5b525a;
   /* min-height: 100vh; */
-  transition: 0.5s;
+  transition: 0.3s;
   
 }
 .sidebar:hover {

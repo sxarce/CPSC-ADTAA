@@ -55,7 +55,7 @@ export default function SetupPage(props) {
   }
   return (
     <div className="background-setup">
-      <div className="banner">
+      <div className="banner-setup">
         <img src={gearBackground} alt="gear logo" className="gear-background" />
       </div>
 
@@ -65,7 +65,7 @@ export default function SetupPage(props) {
         email={credentials.user_email}
       />
 
-      <div className="table-container">
+      <div className="table-container-setup">
         <InstructorSetupTable token={props.token} setToken={props.setToken} />
         <br />
         <br />

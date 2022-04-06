@@ -1,4 +1,3 @@
-from enum import unique
 from os import access
 from app import db, ma
 from datetime import datetime
