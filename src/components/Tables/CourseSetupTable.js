@@ -222,8 +222,6 @@ export default function CustomPaginationActionsTable(props) {
   const [actionSave, setActionSave] = React.useState(false);
   React.useEffect(() => {
     Promise.resolve().then(() => {
-      getCourseList();
-
       // clear state for inputs. back to defaults.
       setCourseInfo({
         courseNameInput: "",
@@ -235,6 +233,8 @@ export default function CustomPaginationActionsTable(props) {
       // clear states for editing.
       setEditMode(false);
       setEditCourseID(-1);
+
+      getCourseList();
     });
   }, [actionSave]);
 

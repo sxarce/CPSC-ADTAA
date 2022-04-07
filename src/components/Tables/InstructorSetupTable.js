@@ -239,8 +239,6 @@ export default function CustomPaginationActionsTable(props) {
     // the code is ran.
 
     Promise.resolve().then(() => {
-      getInstructorRoster();
-
       // clear state for inputs. back to defaults.
       setInstructorName({
         lastNameInput: "",
@@ -251,6 +249,8 @@ export default function CustomPaginationActionsTable(props) {
       // clear states for editing.
       setEditMode(false);
       setEditInstructorID(-1);
+
+      getInstructorRoster();
     });
   }, [actionSave]);
 
