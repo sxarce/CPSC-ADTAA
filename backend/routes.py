@@ -164,7 +164,7 @@ def add_instructor():
         for disciplineArea in instructorToEdit.disciplineAreas:
             db.session.delete(disciplineArea)
 
-        db.session.commit()
+        # db.session.commit() # THE CULPRIT!!! database error displays empty textfield
 
         # Make changes to existing instructor
         instructorToEdit.lastName = modifiedInstructor['lastName']
@@ -210,7 +210,7 @@ def add_course():
         for disciplineArea in courseToEdit.disciplineAreas:
             db.session.delete(disciplineArea)
 
-        db.session.commit()
+        # db.session.commit() # THE CULPRIT!!! database error displays empty textfield
 
         # Make changes to existing course
         courseToEdit.name = modifiedCourse['courseName']
