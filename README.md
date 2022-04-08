@@ -1,7 +1,7 @@
 
-**Setting up (Windows)** (Updated 3/27/22)
+**Setting up (Windows)** (Updated 4/8/22)
 
-Inside VSCode, open 2 terminals. One for backend (```cd backend```), one for frontend.
+Inside VSCode, open 2 terminals. One for frontend (```cd frontend```), one for backend.
 
 In "Backend terminal":
 - Create a virtual environment (venv) and activate it
@@ -29,9 +29,9 @@ npm start
 ```
 
 ------------------------------------------
-**Setting up (MacOS)** (Updated 3/28/22)
+**Setting up (MacOS)** (Updated 4/8/22)
 
-Inside VSCode, open 2 terminals. One for backend (```cd backend```), one for frontend.
+Inside VSCode, open 2 terminals. One for frontend (```cd frontend```), one for backend.
 
 In "Backend terminal":
 - Create a virtual environment (venv) and activate it
