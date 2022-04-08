@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 export default function Sidebar(props) {
   console.log(props.accessLevel);
   return (
-    <div className="sidebar">
+    <div className="sidebar" onClick={() => {window.scrollTo(0, 0)}}>
       <ul className="sidebar-items">
         <li>
           <img src={monitorImg} alt="monitor icon" />

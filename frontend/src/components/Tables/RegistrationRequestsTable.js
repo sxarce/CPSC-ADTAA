@@ -32,6 +32,8 @@ import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 
 import Tooltip from "@mui/material/Tooltip";
 
+import AutorenewIcon from "@mui/icons-material/Autorenew";
+
 // <RegistrationRequestsTable token={props.token}, setToken={setToken} />
 export default function RegistrationRequestsTable(props) {
   const [tableData, setTableData] = React.useState([]);
@@ -116,7 +118,11 @@ export default function RegistrationRequestsTable(props) {
   };
 
   return (
-    <TableContainer component={Paper} style={{ width: "77vw" }} className="regReqs-card-table">
+    <TableContainer
+      component={Paper}
+      style={{ width: "77vw" }}
+      className="regReqs-card-table"
+    >
       <ThemeProvider theme={theme}>
         <Table aria-label="custom pagination table">
           <TableHead>
@@ -238,6 +244,11 @@ export default function RegistrationRequestsTable(props) {
 
           <TableFooter>
             <TableRow>
+              <Tooltip title="Refresh table">
+                <IconButton onClick={getRegisterRequests} style={{padding: "1rem"}}>
+                  <AutorenewIcon />
+                </IconButton>
+              </Tooltip>
               <TablePagination
                 rowsPerPageOptions={[3, 5]}
                 colSpan={4}
