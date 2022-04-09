@@ -27,6 +27,11 @@
     display: none;
   }
 }
+@media all and (max-width: 1400px) {
+  .table-container-setup {
+    display: none;
+  }
+}
 
 /* 900px and above 900px height */
 @media all and (min-height: 900px) {
@@ -35,7 +40,11 @@
   }
 
   .banner-setup img {
-    height: 19vh !important;
+    height: 19.3vh !important;
+  }
+  .table-container-setup {
+    left: 17% !important;
+    top: 7.5% !important;
   }
 }
 

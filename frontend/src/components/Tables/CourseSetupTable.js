@@ -43,6 +43,8 @@ import Tooltip from "@mui/material/Tooltip";
 import axios from "axios";
 
 import AutorenewIcon from "@mui/icons-material/Autorenew";
+import MoreTimeOutlinedIcon from "@mui/icons-material/MoreTimeOutlined";
+import { useNavigate } from "react-router-dom";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -352,6 +354,13 @@ export default function CustomPaginationActionsTable(props) {
     setDisciplineAreas(tableData[indexToEdit].requiredExpertise);
   }
 
+  // TODO: Change to navigate to new page.
+  let navigate = useNavigate();
+  function goToAssignSectionsPage() {
+    let path = "/setup/assign-sections";
+    navigate(path);
+  }
+
   return (
     <TableContainer
       component={Paper}
@@ -578,29 +587,40 @@ export default function CustomPaginationActionsTable(props) {
 
           <TableFooter>
             <TableRow>
-              <Button
-                className="add-course-btn"
-                variant="contained"
-                onClick={(event) => addCourse(event)}
-                // disabled={
-                //   editMode ||
-                //   tableData.some((instructor) => instructor.lastName === "")
-                //     ? true
-                //     : false
-                // }
-              >
-                <AddIcon />
-              </Button>
+              <TableCell colspan={2} style={{ padding: "0rem" }}>
+                <Button
+                  className="add-course-btn"
+                  variant="contained"
+                  onClick={(event) => addCourse(event)}
+                  disabled={
+                    editMode || tableData.some((course) => course.id === -1)
+                      ? true
+                      : false
+                  }
+                >
+                  <AddIcon />
+                </Button>
 
-              <Tooltip title="Refresh table">
-                <IconButton onClick={getCourseList}>
-                  <AutorenewIcon />
-                </IconButton>
-              </Tooltip>
+                <Tooltip title="Refresh table">
+                  <IconButton onClick={getCourseList}>
+                    <AutorenewIcon />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Assign sections">
+                  <IconButton
+                    onClick={goToAssignSectionsPage}
+                    className="go-to-assign-sections-btn"                    
+                    disabled={tableData.length > 0 ? false : true}
+                  >
+                    <MoreTimeOutlinedIcon />
+                  </IconButton>
+                </Tooltip>
+              </TableCell>
 
               <TablePagination
                 rowsPerPageOptions={[3, 5]}
-                colSpan={4}
+                colSpan={3}
                 count={tableData.length}
                 rowsPerPage={rowsPerPage}
                 style={{ border: "none" }}

@@ -18,6 +18,7 @@ import {
 } from "react-router-dom";
 import RegisterPage from "./pages/RegistrationPage/RegisterPage";
 import SetupPage from "./pages/SetupPage/SetupPage";
+import SetupSectionsPage from "./pages/SetupSectionsPage/SetupSectionsPage";
 
 import useToken from "./components/Token/useToken";
 // import Header from "./components/Token/Header";
@@ -55,13 +56,6 @@ export default function App() {
           element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />}
         />
 
-        {/* Below Route (exact path="/" Navigate to="registration-requests") is for testing only */}
-        {/* <Route
-          exact
-          path="/"
-          element={<Navigate to={"/registration-requests"} />}
-        /> */}
-
         {isLoggedIn
           ? [
               <Route
@@ -71,6 +65,12 @@ export default function App() {
               <Route
                 path={"/setup"}
                 element={<SetupPage token={token} setToken={setToken} />}
+              />,
+              <Route
+                path={"/setup/assign-sections"}
+                element={
+                  <SetupSectionsPage token={token} setToken={setToken} />
+                }
               />,
               <Route
                 exact
@@ -85,7 +85,6 @@ export default function App() {
                 element={<LoginPage setToken={setToken} />}
               />,
               <Route exact path="/register" element={<RegisterPage />} />,
-              
             ]}
 
         <Route path={"*"} element={<Navigate replace to={"/"} />} />

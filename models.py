@@ -1,4 +1,6 @@
 from os import access
+
+from sqlalchemy import true
 from app import db, ma
 from datetime import datetime
 
@@ -86,12 +88,14 @@ instructorDisciplineAreas_schema = InstructorDisciplineAreaSchema(many=True)
 
 
 class Course(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True) # TODO: placeholder for reference number
     name = db.Column(db.String(50), nullable=False, unique=True)
     number = db.Column(db.Integer, nullable=False, unique=True)
     deptCode = db.Column(db.String(10), nullable=False)
     disciplineAreas = db.relationship(
         'CourseDisciplineArea', backref='owning_course', lazy=True)
+    
+    sections = db.relationship('Section', backref='owning_course', lazy=True)
 
     def __repr__(self):
         return f'COURSE -> NAME: {self.name}, NUMBER: {self.number}, DEPTCODE= {self.deptCode}, disciplineAreas: {self.disciplineAreas}'
@@ -120,6 +124,24 @@ class CourseDisciplineAreaSchema(ma.Schema):
 
 courseDisciplineArea_schema = CourseDisciplineAreaSchema()
 courseDisciplineAreas_schema = CourseDisciplineAreaSchema(many=True)
+
+
+
+class Section(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.Integer, nullable=False) # section.number
+    period_days = db.Column(db.String(10), nullable=False)
+    period_time = db.Column(db.Time, nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+    
+class SectionSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "number", "period_days", "period_time", "course_id")
+
+
+section_schema = SectionSchema()
+sections_schema = SectionSchema(many=True)
+
 
 # class Articles(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)

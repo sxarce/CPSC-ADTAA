@@ -11,40 +11,76 @@ import userLogo from "../assets/svg/user-logo-bottom.svg";
 import keyLogo from "../assets/svg/key-logo-bottom.svg";
 
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 export default function Sidebar(props) {
+  let navigate = useNavigate();
+  function goToDashboard(e) {
+    let path = "/dashboard";
+    navigate(path);
+  }
+  function goToAssistantPage(e) {
+    let path = "/assisstant";
+    navigate(path);
+  }
+  function goToSetupPage(e) {
+    let path = "/setup";
+    navigate(path);
+  }
+  function goToEditPage(e) {
+    let path = "/edit";
+    navigate(path);
+  }
+  function goToRegReqsPage(e) {
+    let path = "/registration-requests";
+    navigate(path);
+  }
+
   console.log(props.accessLevel);
   return (
-    <div className="sidebar" onClick={() => {window.scrollTo(0, 0)}}>
+    <div
+      className="sidebar"
+      onClick={() => {
+        window.scrollTo(0, 0);
+      }}
+    >
       <ul className="sidebar-items">
-        <li>
+        <li onClick={goToDashboard}>
           <img src={monitorImg} alt="monitor icon" />
-          <Link to="/dashboard">Dashboard</Link>
+          {/* <Link to="/dashboard">Dashboard</Link>           */}
+          <p>Dashboard</p>
         </li>
         <li
           className={`${
             props.page === "assistant" ? "sidebar-current-page" : ""
           }`}
+          onClick={goToAssistantPage}
         >
           <img src={assistImg} alt="icon of people carrying box" />
-          <Link to="/assistant">Assistant</Link>
+          {/* <Link to="/assistant">Assistant</Link> */}
+          <p>Assistant</p>
         </li>
         {(props.accessLevel === "ROOT" || props.accessLevel === "ADMIN") && (
           <>
             <li
               className={`${
-                props.page === "setup" ? "sidebar-current-page" : ""
+                props.page === "setup" || props.page === "setup-sections" ? "sidebar-current-page" : ""
               }`}
+              onClick={goToSetupPage}
             >
               <img src={gearImg} alt="gear icon" />
-              <Link to="/setup">Setup</Link>
+              {/* <Link to="/setup">Setup</Link> */}
+             {props.page !== "setup-sections" ? <p>Setup</p> : <p><i>Assigning sections</i></p>}
             </li>
             <li
               className={`${
                 props.page === "edit" ? "sidebar-current-page" : ""
               }`}
+              onClick={goToEditPage}
             >
               <img src={pencilImg} alt="pencil icon" />
-              <Link to="/edit">Edit</Link>
+              {/* <Link to="/edit">Edit</Link> */}
+              <p>Edit</p>
             </li>
           </>
         )}
@@ -53,9 +89,11 @@ export default function Sidebar(props) {
             className={`${
               props.page === "regRequests" ? "sidebar-current-page" : ""
             }`}
+            onClick={goToRegReqsPage}
           >
             <img src={personImg} alt="person icon" />
-            <Link to="/registration-requests">Registration requests</Link>
+            {/* <Link to="/registration-requests">Registration requests</Link> */}
+            <p>Registration requests</p>
           </li>
         )}
       </ul>
@@ -66,11 +104,15 @@ export default function Sidebar(props) {
       <section className="user-credentials">
         <div>
           <img src={keyLogo} alt="user email logo" />
-          <p><i>{props.accessLevel}</i></p>
+          <p>
+            <i>{props.accessLevel}</i>
+          </p>
         </div>
         <div>
           <img src={userLogo} alt="user email logo" />
-          <p><i>{props.email}</i></p>
+          <p>
+            <i>{props.email}</i>
+          </p>
         </div>
       </section>
       <hr className="solid-line-sidebar-divider" />

@@ -27,6 +27,11 @@
     display: none;
   }
 }
+@media all and (max-width: 1400px) {
+  .table-container-requests {
+    display: none;
+  }
+}
 
 /* 900px and above 900px height */
 @media all and (min-height: 900px) {
@@ -35,6 +40,9 @@
   }
   .banner-requests img {
     height: 22vh !important;
+  }
+  .table-container-requests {
+    left: 17% !important;
   }
 }
 .banner-requests img {
