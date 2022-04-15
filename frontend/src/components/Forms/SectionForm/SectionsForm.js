@@ -88,17 +88,14 @@ export default function SectionsForm(props) {
     event.preventDefault();
 
     if (validate()) {
-      window.alert("Submitted!");
-      
-
       // add jwt_required() in route. then add corresponding header { Authentication } to post()
       axios
         .post("/add-section", formData)
         .then((response) => {
-          console.log(response)
+          console.log(response);
 
           // update records/tableData
-          props.setRecords(response.data.TableData)
+          props.setRecords(response.data.TableData);
         })
         .catch((error) => console.log(error));
 

@@ -39,8 +39,8 @@
     height: 19.3vh !important;
   }
   .table-container-setup-sections {
-    left: 17% !important;
-    top: 7.5% !important;
+    left: 14% !important;
+    top: 6.5% !important;
   }
 }
 
@@ -50,14 +50,14 @@
 .table-container-setup-sections {
   /* width: max-content;
   height: max-content; */
-  width: 85vw;
+  width: 83vw;
   height: 80vh;
   z-index: 1;
 
   position: absolute;
   top: 5%;
   
-  left: 15%;
+  left: 16%;
 
   /* border: 1px solid green; */
   /* align-self: center; */

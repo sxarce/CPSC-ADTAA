@@ -88,8 +88,15 @@ def delete_course():
         name=courseName, number=courseNumber).first()
     print(f'{courseToDelete}', file=sys.stderr)
 
+    # delete DISCIPLINEAREAS associated with COURSE
     for disciplineArea in courseToDelete.disciplineAreas:
         db.session.delete(disciplineArea)
+
+    # delete SECTIONS associated with COURSE
+    # for section in courseToDelete.sections:
+    #     for meetingPeriod in section.meetingPeriods:
+    #         db.session.delete(meetingPeriod)
+    #     db.session.delete(section)
 
     db.session.delete(courseToDelete)
     db.session.commit()
@@ -245,38 +252,40 @@ def convert_utc_to_cst(utc_time):
 # @jwt_required()
 def add_section():
     # CONVERT JS toJSON() string to datetime (similar to email_confirmed_on)
-    # courseNumber = request.json['courseNumber']
-    # sectionNumber = request.json['sectionNumber']
-    # numMeetingPeriods = request.json['numMeetingPeriods']
+    courseNumber = request.json['courseNumber']
+    sectionNumber = request.json['sectionNumber']
+    numMeetingPeriods = request.json['numMeetingPeriods']
 
-    # periodDays = [
-    #     {"meetingPeriodDay": request.json['meetingPeriod1Day'],
-    #      "meetingPeriodStart": convert_utc_to_cst(request.json['meetingPeriod1Start']),
-    #         "meetingPeriodEnd": convert_utc_to_cst(request.json['meetingPeriod1End'])},
+    periodDays = [
+        {"meetingPeriodDay": request.json['meetingPeriod1Day'],
+         "meetingPeriodStart": convert_utc_to_cst(request.json['meetingPeriod1Start']),
+            "meetingPeriodEnd": convert_utc_to_cst(request.json['meetingPeriod1End'])},
 
-    #     {"meetingPeriodDay": request.json['meetingPeriod2Day'],
-    #      "meetingPeriodStart": convert_utc_to_cst(request.json['meetingPeriod2Start']),
-    #         "meetingPeriodEnd":convert_utc_to_cst(request.json['meetingPeriod2End'])},
+        {"meetingPeriodDay": request.json['meetingPeriod2Day'],
+         "meetingPeriodStart": convert_utc_to_cst(request.json['meetingPeriod2Start']),
+            "meetingPeriodEnd":convert_utc_to_cst(request.json['meetingPeriod2End'])},
 
-    #     {"meetingPeriodDay": request.json['meetingPeriod3Day'],
-    #      "meetingPeriodStart": convert_utc_to_cst(request.json['meetingPeriod3Start']),
-    #         "meetingPeriodEnd": convert_utc_to_cst(request.json['meetingPeriod3End'])},
-    # ]
+        {"meetingPeriodDay": request.json['meetingPeriod3Day'],
+         "meetingPeriodStart": convert_utc_to_cst(request.json['meetingPeriod3Start']),
+            "meetingPeriodEnd": convert_utc_to_cst(request.json['meetingPeriod3End'])},
+    ]
 
-    # owner = Course.query.filter_by(number=courseNumber).first()
+    owner = Course.query.filter_by(number=courseNumber).first()
 
-    # new_section = Section(sectionNumber=sectionNumber, owning_course=owner)
-    # db.session.add(new_section)
-    # for i in range(int(numMeetingPeriods)):
-    #     new_meeting_period = MeetingPeriod(
-    #         startTime=periodDays[i]['meetingPeriodStart'],
-    #         endTime=periodDays[i]['meetingPeriodEnd'],
-    #         meetDay=periodDays[i]['meetingPeriodDay'],
-    #         owning_section=new_section,
-    #     )
-    #     db.session.add(new_meeting_period)
+    new_section = Section(sectionNumber=sectionNumber, owning_course=owner)
+    db.session.add(new_section)
 
-    # db.session.commit()
+    # iterate based on numMeetingPeriods. request.json includes all input for meeting periods. 
+    for i in range(int(numMeetingPeriods)):
+        new_meeting_period = MeetingPeriod(
+            startTime=periodDays[i]['meetingPeriodStart'],
+            endTime=periodDays[i]['meetingPeriodEnd'],
+            meetDay=periodDays[i]['meetingPeriodDay'],
+            owning_section=new_section,
+        )
+        db.session.add(new_meeting_period)
+
+    db.session.commit()
 
     # DEBUG
     # print(f'C#: {courseNumber}, S#: {sectionNumber}, #MeetingPeriods: {numMeetingPeriods}', file=sys.stderr)
@@ -287,20 +296,8 @@ def add_section():
     # print(
     #     f'meetingPeriod3Day: {meetingPeriod3Day}, meetingPeriod3Start: {meetingPeriod3Start}, meetingPeriod3End: {meetingPeriod3End}', file=sys.stderr)
 
-    # sectionsList = Section.query.all()
-    # serialized_sections_list = sections_schema.dump(sectionsList)
-
-    # for section in serialized_sections_list:
-    #     owning_course = Course.query.filter_by(id=section['course_id']).first()
-    #     section['courseNumber'] = owning_course.number
-
-    # for section in serialized_sections_list:
-    #     section['meetingPeriods'] = meetingPeriods_schema.dump(
-    #         section['meetingPeriods'])
-
-    # print(f'{serialized_sections_list}', file=sys.stderr)
-    # return {"Add_section": "Route reached!", "TableData" : serialized_sections_list}
     return get_sections()
+
 
 @app.route("/get-sections")
 def get_sections():
@@ -315,7 +312,8 @@ def get_sections():
         section['meetingPeriods'] = meetingPeriods_schema.dump(
             section['meetingPeriods'])
 
-    return {"Message": "Sections retrieved!", "TableData" : serialized_sections_list}
+    return {"Message": "Sections retrieved!", "TableData": serialized_sections_list}
+
 
 @ app.route("/confirm/<token>")
 def confirm_email(token):

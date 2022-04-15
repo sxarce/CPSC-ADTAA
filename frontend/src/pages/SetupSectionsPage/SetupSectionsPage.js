@@ -20,6 +20,7 @@ import {
   Paper,
   Toolbar,
   InputAdornment,
+  Tooltip,
 } from "@mui/material";
 import Controls from "../../components/Forms/SectionForm/controls/Controls";
 import SearchIcon from "@mui/icons-material/Search";
@@ -27,6 +28,9 @@ import AddIcon from "@mui/icons-material/Add";
 import { makeStyles } from "@mui/styles";
 import Popup from "../../components/Forms/Popup";
 import { format } from "date-fns";
+import SettingsIcon from "@mui/icons-material/Settings";
+import IconButton from "@mui/material/IconButton";
+import { useNavigate } from "react-router-dom";
 
 export default function SetupPage(props) {
   const [loading, setLoading] = React.useState(true); // For <Loader />
@@ -177,6 +181,12 @@ export default function SetupPage(props) {
     // console.log(target.value)
   }
 
+  let navigate = useNavigate();
+  function goToSetupPage() {
+    let path = "/setup";
+    navigate(path);
+  }
+
   if (loading === true) return <Loader message={""} />;
   else if (credentials === undefined || credentials === null) {
     return (
@@ -234,9 +244,15 @@ export default function SetupPage(props) {
             <TableBody>
               {recordsAfterPagingAndSorting().map((elem) => (
                 <TableRow key={elem.id}>
-                  <TableCell style={{width: "6vw"}}>{elem.courseNumber}</TableCell>
-                  <TableCell style={{width: "6vw"}}>{elem.sectionNumber}</TableCell>
-                  <TableCell style={{width: "7vw"}}>{elem.meetingPeriods.length}</TableCell>
+                  <TableCell style={{ width: "6vw" }}>
+                    {elem.courseNumber}
+                  </TableCell>
+                  <TableCell style={{ width: "6vw" }}>
+                    {elem.sectionNumber}
+                  </TableCell>
+                  <TableCell style={{ width: "7vw" }}>
+                    {elem.meetingPeriods.length}
+                  </TableCell>
                   {elem.meetingPeriods.map((meetingPeriod) => (
                     <>
                       <TableCell>{meetingPeriod.meetDay}</TableCell>
@@ -269,7 +285,21 @@ export default function SetupPage(props) {
               ))}
             </TableBody>
           </TableContainer>
-          <TablePagination />
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: "10px",
+            }}
+          >
+            <Tooltip title="Assign courses and instructors">
+              <IconButton onClick={goToSetupPage} style={{ color: "#732d40" }}>
+                <SettingsIcon />
+              </IconButton>
+            </Tooltip>
+            <TablePagination />
+          </div>
         </Paper>
         <Popup
           title="Add section"
