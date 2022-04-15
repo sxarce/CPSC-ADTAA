@@ -93,10 +93,10 @@ def delete_course():
         db.session.delete(disciplineArea)
 
     # delete SECTIONS associated with COURSE
-    # for section in courseToDelete.sections:
-    #     for meetingPeriod in section.meetingPeriods:
-    #         db.session.delete(meetingPeriod)
-    #     db.session.delete(section)
+    for section in courseToDelete.sections:
+        for meetingPeriod in section.meetingPeriods:
+            db.session.delete(meetingPeriod)
+        db.session.delete(section)
 
     db.session.delete(courseToDelete)
     db.session.commit()

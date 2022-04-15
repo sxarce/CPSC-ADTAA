@@ -244,13 +244,13 @@ export default function SetupPage(props) {
             <TableBody>
               {recordsAfterPagingAndSorting().map((elem) => (
                 <TableRow key={elem.id}>
-                  <TableCell style={{ width: "6vw" }}>
+                  <TableCell style={{ width: "0px", fontWeight: "bold" }}>
                     {elem.courseNumber}
                   </TableCell>
-                  <TableCell style={{ width: "6vw" }}>
+                  <TableCell style={{ width: "0px" }}>
                     {elem.sectionNumber}
                   </TableCell>
-                  <TableCell style={{ width: "7vw" }}>
+                  <TableCell style={{ width: "0px" }}>
                     {elem.meetingPeriods.length}
                   </TableCell>
                   {elem.meetingPeriods.map((meetingPeriod) => (
