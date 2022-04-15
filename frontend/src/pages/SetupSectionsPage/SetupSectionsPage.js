@@ -31,6 +31,7 @@ import { format } from "date-fns";
 import SettingsIcon from "@mui/icons-material/Settings";
 import IconButton from "@mui/material/IconButton";
 import { useNavigate } from "react-router-dom";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function SetupPage(props) {
   const [loading, setLoading] = React.useState(true); // For <Loader />
@@ -187,6 +188,20 @@ export default function SetupPage(props) {
     navigate(path);
   }
 
+  const addOrEdit = (formData, resetForm) => {
+    axios
+      .post("/add-section", formData)
+      .then((response) => {
+        console.log(response);
+
+        // update records/tableData
+        setRecords(response.data.TableData);
+      })
+      .catch((error) => console.log(error));
+    resetForm();
+    setOpenPopup(false);
+  };
+
   if (loading === true) return <Loader message={""} />;
   else if (credentials === undefined || credentials === null) {
     return (
@@ -271,16 +286,6 @@ export default function SetupPage(props) {
                       <TableCell></TableCell>
                     </>
                   )}
-                  {/* <TableCell>{elem.numMeetingPeriods}</TableCell> */}
-                  {/* <TableCell>{elem.meetingPeriod1Day}</TableCell>
-                  <TableCell>{elem.meetingPeriod1Start}</TableCell>
-                  <TableCell>{elem.meetingPeriod1End}</TableCell>
-                  <TableCell>{elem.meetingPeriod2Day}</TableCell>
-                  <TableCell>{elem.meetingPeriod2Start}</TableCell>
-                  <TableCell>{elem.meetingPeriod2End}</TableCell>
-                  <TableCell>{elem.meetingPeriod3Day}</TableCell>
-                  <TableCell>{elem.meetingPeriod3Start}</TableCell>
-                  <TableCell>{elem.meetingPeriod3End}</TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
@@ -295,7 +300,7 @@ export default function SetupPage(props) {
           >
             <Tooltip title="Assign courses and instructors">
               <IconButton onClick={goToSetupPage} style={{ color: "#732d40" }}>
-                <SettingsIcon />
+                <ArrowBackIcon />
               </IconButton>
             </Tooltip>
             <TablePagination />
@@ -309,7 +314,7 @@ export default function SetupPage(props) {
           <SectionsForm
             token={props.token}
             setToken={props.setToken}
-            setRecords={setRecords}
+            addOrEdit={addOrEdit}
           />
         </Popup>
       </div>

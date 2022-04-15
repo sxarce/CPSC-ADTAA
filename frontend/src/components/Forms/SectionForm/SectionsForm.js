@@ -83,23 +83,13 @@ export default function SectionsForm(props) {
     resetForm,
     handleInputChange,
   } = useSectionForm(initialValues, true, validate);
+  const { addOrEdit } = props;
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault(); // avoid refresh upon submit-btn-click
 
     if (validate()) {
-      // add jwt_required() in route. then add corresponding header { Authentication } to post()
-      axios
-        .post("/add-section", formData)
-        .then((response) => {
-          console.log(response);
-
-          // update records/tableData
-          props.setRecords(response.data.TableData);
-        })
-        .catch((error) => console.log(error));
-
-      resetForm();
+      addOrEdit(formData, resetForm)
     }
   };
 

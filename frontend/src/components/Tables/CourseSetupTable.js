@@ -39,6 +39,7 @@ import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 
 import Tooltip from "@mui/material/Tooltip";
+import CustomToolTip from "../Forms/SectionForm/controls/CustomToolTip";
 
 import axios from "axios";
 
@@ -235,6 +236,7 @@ export default function CustomPaginationActionsTable(props) {
       // clear states for editing.
       setEditMode(false);
       setEditCourseID(-1);
+      setAddMode(false);
 
       getCourseList();
     });
@@ -331,6 +333,7 @@ export default function CustomPaginationActionsTable(props) {
 
   const [editCourseID, setEditCourseID] = React.useState(-1);
   const [editMode, setEditMode] = React.useState(false);
+  const [addMode, setAddMode] = React.useState(false);
 
   React.useEffect(() => {
     if (editCourseID === -1) {
@@ -551,8 +554,9 @@ export default function CustomPaginationActionsTable(props) {
                       </Tooltip>
                     ) : (
                       <>
-                        <Tooltip title="Edit">
+                        <CustomToolTip title="Edit">
                           <IconButton
+                            disabled={addMode}
                             className="edit-btn"
                             onClick={() => {
                               setEditCourseID(row.id);
@@ -560,7 +564,8 @@ export default function CustomPaginationActionsTable(props) {
                           >
                             <EditIcon />
                           </IconButton>
-                        </Tooltip>
+                        </CustomToolTip>
+
                         <Tooltip title="Delete">
                           <IconButton
                             className="delete-btn"
@@ -591,7 +596,12 @@ export default function CustomPaginationActionsTable(props) {
                 <Button
                   className="add-course-btn"
                   variant="contained"
-                  onClick={(event) => addCourse(event)}
+                  onClick={(event) => {
+                    Promise.resolve().then(() => {
+                      setAddMode(true);
+                      addCourse(event);
+                    });
+                  }}
                   disabled={
                     editMode || tableData.some((course) => course.id === -1)
                       ? true
@@ -602,7 +612,24 @@ export default function CustomPaginationActionsTable(props) {
                 </Button>
 
                 <Tooltip title="Refresh table">
-                  <IconButton onClick={getCourseList}>
+                  <IconButton
+                    onClick={() => {
+                      Promise.resolve().then(() => {
+                        setCourseInfo({
+                          courseNameInput: "",
+                          courseNumberInput: "",
+                          courseDeptCodeInput: "CPSC",
+                        });
+                        setDisciplineAreas([]);
+
+                        setEditMode(false);
+                        setEditCourseID(-1);
+                        setAddMode(false);
+
+                        getCourseList();
+                      });
+                    }}
+                  >
                     <AutorenewIcon />
                   </IconButton>
                 </Tooltip>
@@ -610,7 +637,7 @@ export default function CustomPaginationActionsTable(props) {
                 <Tooltip title="Assign sections">
                   <IconButton
                     onClick={goToAssignSectionsPage}
-                    className="go-to-assign-sections-btn"                    
+                    className="go-to-assign-sections-btn"
                     disabled={tableData.length > 0 ? false : true}
                   >
                     <MoreTimeOutlinedIcon />

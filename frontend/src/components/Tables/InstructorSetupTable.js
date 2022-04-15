@@ -38,6 +38,7 @@ import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 
 import Tooltip from "@mui/material/Tooltip";
+import CustomToolTip from "../Forms/SectionForm/controls/CustomToolTip";
 
 import axios from "axios";
 
@@ -249,6 +250,7 @@ export default function CustomPaginationActionsTable(props) {
       // clear states for editing.
       setEditMode(false);
       setEditInstructorID(-1);
+      setAddMode(false);
 
       getInstructorRoster();
     });
@@ -352,6 +354,7 @@ export default function CustomPaginationActionsTable(props) {
 
   const [editInstructorID, setEditInstructorID] = React.useState(-1);
   const [editMode, setEditMode] = React.useState(false);
+  const [addMode, setAddMode] = React.useState(false);
 
   // EDITING ROWS . States for editMode and editInstructorID
   console.log(`EditMode: ${editMode}, editInstructorID: ${editInstructorID}`);
@@ -554,19 +557,17 @@ export default function CustomPaginationActionsTable(props) {
                       </Tooltip>
                     ) : (
                       <>
-                        <Tooltip title="Edit">
+                        <CustomToolTip title="Edit">
                           <IconButton
                             className="edit-btn"
-                            // onClick={(e) => {
-                            //   editInstructor(e, row.id);
-                            // }}
+                            disabled={addMode}
                             onClick={() => {
                               setEditInstructorID(row.id);
                             }}
                           >
                             <EditIcon />
                           </IconButton>
-                        </Tooltip>
+                        </CustomToolTip>
                         <Tooltip title="Delete">
                           <IconButton
                             className="delete-btn"
@@ -596,7 +597,12 @@ export default function CustomPaginationActionsTable(props) {
               <Button
                 className="add-instructor-btn"
                 variant="contained"
-                onClick={(event) => addInstructor(event)}
+                onClick={(event) => {
+                  Promise.resolve().then(() => {
+                    setAddMode(true);
+                    addInstructor(event);
+                  });
+                }}
                 disabled={
                   editMode ||
                   tableData.some((instructor) => instructor.lastName === "")
@@ -608,7 +614,23 @@ export default function CustomPaginationActionsTable(props) {
               </Button>
 
               <Tooltip title="Refresh table">
-                <IconButton onClick={getInstructorRoster}>
+                <IconButton
+                  onClick={() => {
+                    Promise.resolve().then(() => {
+                      setInstructorName({
+                        lastNameInput: "",
+                        firstNameInput: "",
+                      });
+                      setDisciplineAreas([]);
+
+                      setEditMode(false);
+                      setEditInstructorID(-1);
+                      setAddMode(false);
+
+                      getInstructorRoster();
+                    });
+                  }}
+                >
                   <AutorenewIcon />
                 </IconButton>
               </Tooltip>
