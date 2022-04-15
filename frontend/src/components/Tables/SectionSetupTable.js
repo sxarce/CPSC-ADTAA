@@ -24,8 +24,8 @@ import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button } from "@mui/material";
 
-// import "./InstructorSetupTable.css";
-import "./CourseSetupTable.css";
+import "./SectionSetupTable.css";
+
 import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
 
 import { TextField } from "@mui/material";
@@ -43,36 +43,39 @@ import Tooltip from "@mui/material/Tooltip";
 import axios from "axios";
 
 import AutorenewIcon from "@mui/icons-material/Autorenew";
-import MoreTimeOutlinedIcon from "@mui/icons-material/MoreTimeOutlined";
 import { useNavigate } from "react-router-dom";
+
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+
+import add from "date-fns/add";
+import differenceInMinutes from "date-fns/differenceInMinutes";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
-const MenuProps = {
+
+const MenuPropsMeetingDays = {
   PaperProps: {
     style: {
       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
+      width: "13vw", // Width of dropdown menu. never goes below field_width.
     },
   },
 };
 
-// TODO: Put in a constants file and import here.
-const recognizedDisciplineAreas = [
-  "Software Engineering",
-  "Programming",
-  "Artificial Intelligence",
-  "Algorithms",
-  "UI Design",
-  "Computer Architecture",
-  "Mobile apps development",
-  "Database structures and design",
+const validMeetingDays = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
 ];
 
-function getStyles(name, disciplineAreas, theme) {
+function getStyles(meetingDay, meetingDaysInput, theme) {
   return {
     fontWeight:
-      disciplineAreas.indexOf(name) === -1
+      meetingDaysInput.indexOf(meetingDay) === -1
         ? theme.typography.fontWeightRegular
         : theme.typography.fontWeightMedium,
     // fontSize: "x-small",
@@ -83,53 +86,30 @@ export default function CustomPaginationActionsTable(props) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+  const [availableCourses, setAvailableCourses] = React.useState([]);
+
   const [tableData, setTableData] = React.useState([]);
-  // console.log(tableData);
-  const [courseInfo, setCourseInfo] = React.useState({
-    courseNameInput: "",
+  //   console.log(tableData)
+
+  // INPUT
+  const [sectionInfo, setSectionInfo] = React.useState({
     courseNumberInput: "",
-    courseDeptCodeInput: "CPSC",
+    sectionNumberInput: "",
   });
-  console.log(courseInfo);
-  const [disciplineAreas, setDisciplineAreas] = React.useState([]);
+  //   console.log(sectionInfo)
 
-  // <FORM VALIDATION>
-  const [validCourseName, setValidCourseName] = React.useState(false);
-  const [courseNameFocus, setCourseNameFocus] = React.useState(false);
+  const [meetingDaysInput, setMeetingDaysInput] = React.useState([]);
+  //   console.log(meetingDaysInput)
 
-  const [validCourseNumber, setValidCourseNumber] = React.useState(false);
-  const [courseNumberFocus, setCourseNumberFocus] = React.useState(false);
+  const [startMeetingTimeInput, setStartMeetingTimeInput] = React.useState(
+    new Date("2008-08-16T09:25:00")
+  );
+  //   console.log(startMeetingTimeInput);
 
-  const [validCourseDeptCode, setValidCourseDeptCode] = React.useState(false);
-  const [courseDeptFocus, setCourseDeptFocus] = React.useState(false);
-
-  const [validDisciplineAreas, setValidDisciplineAreas] = React.useState(false);
-  const [disciplineAreasFocus, setDisciplineAreasFocus] = React.useState(false);
-
-  React.useEffect(() => {
-    const resultCourseName = courseInfo.courseNameInput === "" ? false : true;
-    setValidCourseName(resultCourseName);
-  }, [courseInfo.courseNameInput]);
-
-  React.useEffect(() => {
-    const resultCourseNumber =
-      courseInfo.courseNumberInput === "" ? false : true;
-    setValidCourseNumber(resultCourseNumber);
-  }, [courseInfo.courseNumberInput]);
-
-  React.useEffect(() => {
-    const resultCourseDeptCode =
-      courseInfo.courseDeptCodeInput === "" ? false : true;
-    console.log(courseInfo.courseDeptCodeInput);
-    setValidCourseDeptCode(resultCourseDeptCode);
-  }, [courseInfo.courseDeptCodeInput]);
-
-  React.useEffect(() => {
-    const resultDisciplineAreas = disciplineAreas.length <= 0 ? false : true;
-    setValidDisciplineAreas(resultDisciplineAreas);
-  }, [disciplineAreas]);
-
-  // </FORM VALIDATION>
+  const [endMeetingTimeInput, setEndMeetingTimeInput] = React.useState(
+    new Date("2008-08-16T10:40:00")
+  );
+  //   console.log(endMeetingTimeInput);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -153,69 +133,70 @@ export default function CustomPaginationActionsTable(props) {
     borderTop: "1px solid #E9ECEF",
   };
 
-  function deleteCourse(event, name, number) {
-    axios
-      .post(
-        "/delete-course",
-        JSON.stringify({
-          courseName: name,
-          courseNumber: number,
-        }),
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + props.token,
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response);
-        const data = response.data;
-        data.access_token && props.setToken(data.access_token);
-      })
-      .catch((error) => {
-        console.log(error);
-        localStorage.removeItem("token");
-      });
+  //   function deleteCourse(event, name, number) {
+  //     axios
+  //       .post(
+  //         "/delete-course",
+  //         JSON.stringify({
+  //           courseName: name,
+  //           courseNumber: number,
+  //         }),
+  //         {
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Authorization: "Bearer " + props.token,
+  //           },
+  //         }
+  //       )
+  //       .then((response) => {
+  //         console.log(response);
+  //         const data = response.data;
+  //         data.access_token && props.setToken(data.access_token);
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //         localStorage.removeItem("token");
+  //       });
 
-    setTableData((prevTableData) => {
-      const indexToDelete = tableData.findIndex(
-        (course) => course.courseName === name && course.courseNumber === number
-      );
-      prevTableData.splice(indexToDelete, 1);
-      return prevTableData;
-    });
+  //     setTableData((prevTableData) => {
+  //       const indexToDelete = tableData.findIndex(
+  //         (course) => course.courseName === name && course.courseNumber === number
+  //       );
+  //       prevTableData.splice(indexToDelete, 1);
+  //       return prevTableData;
+  //     });
 
-    console.log(tableData);
-  }
+  //     console.log(tableData);
+  //   }
 
-  function saveCurrentTable(courseIndex) {
-    axios
-      .post(
-        "/add-course",
-        {
-          tableData: tableData,
-          editCourseID: editCourseID,
-          courseToEditIndex: courseIndex,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + props.token,
-          },
-        }
-      )
-      .then((response) => console.log(response))
-      .catch((error) => console.log(error));
-  }
+  //   function saveCurrentTable(courseIndex) {
+  //     axios
+  //       .post(
+  //         "/add-course",
+  //         {
+  //           tableData: tableData,
+  //           editCourseID: editCourseID,
+  //           courseToEditIndex: courseIndex,
+  //         },
+  //         {
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Authorization: "Bearer " + props.token,
+  //           },
+  //         }
+  //       )
+  //       .then((response) => console.log(response))
+  //       .catch((error) => console.log(error));
+  //   }
 
-  function addCourse(event) {
+  function addSection(event) {
     const rowsInput = {
       id: -1,
-      courseName: "",
       courseNumber: "",
-      courseDeptCode: "",
-      requiredExpertise: [],
+      sectionNumber: "",
+      meetingDays: [],
+      startMeetingTime: new Date("2008-08-16T09:25:00"),
+      endMeetingTime: new Date("2008-08-16T09:25:00"),
     };
 
     setTableData((prevTableData) => [...prevTableData, rowsInput]);
@@ -225,61 +206,58 @@ export default function CustomPaginationActionsTable(props) {
   React.useEffect(() => {
     Promise.resolve().then(() => {
       // clear state for inputs. back to defaults.
-      setCourseInfo({
-        courseNameInput: "",
+      setSectionInfo({
         courseNumberInput: "",
-        courseDeptCodeInput: "CPSC",
+        sectionNumberInput: "",
       });
-      setDisciplineAreas([]);
+      setMeetingDaysInput([]);
+      setStartMeetingTimeInput(new Date("2008-08-16T09:25:00"));
+      setEndMeetingTimeInput(new Date("2008-08-16T10:40:00"));
 
       // clear states for editing.
       setEditMode(false);
-      setEditCourseID(-1);
+      setEditSectionID(-1);
 
-      getCourseList();
+      // getCourseList();
     });
   }, [actionSave]);
 
-  function saveCourse(event) {
-    let indexOfNewCourse = tableData.findIndex(
-      (course) =>
-        course.courseName === "" &&
-        course.courseNumber === "" &&
-        course.courseDeptCode === "" &&
-        !course.requiredExpertise.length
-    );
+  function saveSection(event) {
+    let indexOfNewSection = tableData.findIndex((section) => section.id === -1);
 
     // If editing instructor (findIndex returns -1 if element not found. NOT related to default value of editInstructorID)
-    if (indexOfNewCourse === -1) {
-      indexOfNewCourse = tableData.findIndex(
-        (course) => course.id === editCourseID
+    if (indexOfNewSection === -1) {
+      indexOfNewSection = tableData.findIndex(
+        (section) => section.id === editSectionID
       );
     }
-    console.log(indexOfNewCourse);
+    // console.log(indexOfNewSection);
 
     Promise.resolve().then(() => {
       setTableData((prevTableData) => {
         let newTableData = prevTableData;
 
-        newTableData[indexOfNewCourse] = {
-          courseName: courseInfo.courseNameInput,
-          courseNumber: courseInfo.courseNumberInput,
-          courseDeptCode: courseInfo.courseDeptCodeInput,
-          requiredExpertise: disciplineAreas,
+        newTableData[indexOfNewSection] = {
+          courseNumber: sectionInfo.courseNumberInput,
+          sectionNumber: sectionInfo.sectionNumberInput,
+          meetingDaysInput: meetingDaysInput,
+          startMeetingTime: startMeetingTimeInput,
+          endMeetingTime: endMeetingTimeInput,
         };
 
         return newTableData;
       });
 
-      // console.log(tableData);
-      saveCurrentTable(indexOfNewCourse);
-      setActionSave(!actionSave);
+      console.log(tableData);
+      //   saveCurrentTable(indexOfNewSection);
+      //   setActionSave(!actionSave);
     });
   }
 
-  function handleCourseInputChange(e) {
+  // ONCHANGE functions
+  function handleSectionInfoChange(e) {
     const { name, value } = e.target;
-    setCourseInfo((prevCourseInfo) => {
+    setSectionInfo((prevCourseInfo) => {
       return {
         ...prevCourseInfo,
         [name]: value,
@@ -287,20 +265,49 @@ export default function CustomPaginationActionsTable(props) {
     });
   }
 
-  const handleSelectChange = (event) => {
+  const handleMeetDaysSelectChange = (event) => {
     const {
       target: { value },
     } = event;
-    setDisciplineAreas(
+
+    setMeetingDaysInput(
       // On autofill we get a stringified value.
       typeof value === "string" ? value.split(",") : value
     );
   };
 
+  const handleStartMeetTimeChange = (newStartMeetingTime) => {
+    setStartMeetingTimeInput(newStartMeetingTime);
+    let endTime = null;
+    switch (meetingDaysInput.length) {
+      case 1:
+      case 3:
+        endTime = add(newStartMeetingTime, { minutes: 50 });
+        setEndMeetingTimeInput(endTime);
+        break;
+      case 2:
+      default:
+        endTime = add(newStartMeetingTime, { hours: 1, minutes: 15 });
+        setEndMeetingTimeInput(endTime);
+        break;
+    }
+    // if (meetingDaysInput.length === 2) {
+    //   var endTime = add(newStartMeetingTime, { hours: 1, minutes: 15 });
+    //   setEndMeetingTimeInput(endTime);
+    // } else {
+    //   endTime = add(newStartMeetingTime, { minutes: 50 });
+    //   setEndMeetingTimeInput(endTime);
+    // }
+  };
+
+  const handleEndMeetTimeChange = (newEndMeetingTime) => {
+    setEndMeetingTimeInput(newEndMeetingTime);
+  };
+
   // const textFieldsBorderStyle = useStyles();
   const theme = useTheme();
 
-  function getCourseList() {
+  function getAvailableCourses() {
     axios
       .get("/get-course-list", {
         headers: { Authorization: "Bearer " + props.token },
@@ -309,63 +316,43 @@ export default function CustomPaginationActionsTable(props) {
         let retrievedTableData = response.data.TableData;
 
         if (retrievedTableData) {
-          // Added. If table not empty.
-          setTableData(
-            retrievedTableData.map((course) => {
-              return {
-                id: course.id,
-                courseName: course.name,
-                courseNumber: course.number,
-                courseDeptCode: course.deptCode,
-                requiredExpertise: course.disciplineAreas.map(
-                  (disciplineArea) => disciplineArea.name
-                ),
-              };
-            })
-          );
+          setAvailableCourses(retrievedTableData);
         }
       })
       .catch((error) => console.log(error));
   }
-  React.useEffect(() => getCourseList(), []);
+  React.useEffect(() => getAvailableCourses(), []);
 
-  const [editCourseID, setEditCourseID] = React.useState(-1);
+  const [editSectionID, setEditSectionID] = React.useState(-1);
   const [editMode, setEditMode] = React.useState(false);
 
   React.useEffect(() => {
-    if (editCourseID === -1) {
+    if (editSectionID === -1) {
     } else {
       setEditMode(true);
-      editCourse(editCourseID);
+      //   editCourse(editSectionID);
     }
-  }, [editCourseID]);
+  }, [editSectionID]);
 
-  function editCourse(course_id) {
-    let indexToEdit = tableData.findIndex((course) => course.id === course_id);
+  //   function editCourse(course_id) {
+  //     let indexToEdit = tableData.findIndex((course) => course.id === course_id);
 
-    setCourseInfo((prevCourseInfo) => {
-      return {
-        courseNameInput: tableData[indexToEdit].courseName,
-        courseNumberInput: tableData[indexToEdit].courseNumber,
-        courseDeptCodeInput: tableData[indexToEdit].courseDeptCode,
-      };
-    });
+  //     setSectionInfo((prevCourseInfo) => {
+  //       return {
+  //         courseNumberInput: tableData[indexToEdit].courseName,
+  //         sectionNumberInput: tableData[indexToEdit].courseNumber,
+  //         meetingDaysInput: tableData[indexToEdit].courseDeptCode,
+  //       };
+  //     });
 
-    setDisciplineAreas(tableData[indexToEdit].requiredExpertise);
-  }
-
-  // TODO: Change to navigate to new page.
-  let navigate = useNavigate();
-  function goToAssignSectionsPage() {
-    let path = "/assign-sections";
-    navigate(path);
-  }
+  //     setMeetingDaysInput(tableData[indexToEdit].requiredExpertise);
+  //   }
 
   return (
     <TableContainer
       component={Paper}
       style={{ width: "77vw" }}
-      className="course-card-table"
+      className="section-card-table"
     >
       <ThemeProvider theme={theme}>
         <Table aria-label="Course table">
@@ -380,17 +367,15 @@ export default function CustomPaginationActionsTable(props) {
                   borderBottom: "none",
                 }}
               >
-                Offered Courses
+                Assign sections
               </TableCell>
-              {/* <TableCell align="right" colSpan={2}>
-                Button here!
-              </TableCell> */}
             </TableRow>
             <TableRow style={HeaderBackgroundStyle}>
-              <TableCell style={HeaderStyle}>Course Name</TableCell>
               <TableCell style={HeaderStyle}>Course #</TableCell>
-              <TableCell style={HeaderStyle}>Department Code</TableCell>
-              <TableCell style={HeaderStyle}>Required expertise</TableCell>
+              <TableCell style={HeaderStyle}>Section #</TableCell>
+              <TableCell style={HeaderStyle}>Meeting Days</TableCell>
+              <TableCell style={HeaderStyle}>Start Times</TableCell>
+              <TableCell style={HeaderStyle}>End Times</TableCell>
               <TableCell
                 style={{
                   width: "5rem",
@@ -412,85 +397,73 @@ export default function CustomPaginationActionsTable(props) {
             ).map((row) => {
               return (
                 <TableRow key={row.name} style={{ border: "none" }}>
-                  <TableCell>
-                    {row.courseName === "" || editCourseID === row.id ? (
-                      <TextField
-                        variant="outlined"
-                        name="courseNameInput"
-                        label="course name"
-                        style={{ width: "100%" }}
-                        value={courseInfo.courseNameInput}
-                        onChange={handleCourseInputChange}
-                        autoFocus
-                        onFocus={() => setCourseNameFocus(true)}
-                        onBlur={() => setCourseNameFocus(false)}
-                        error={!validCourseName && courseNameFocus}
-                        autoComplete="off"
-                      />
-                    ) : (
-                      row.courseName
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {row.courseNumber === "" || editCourseID === row.id ? (
-                      <TextField
-                        variant="outlined"
-                        name="courseNumberInput"
-                        type="number"
-                        label="course #"
-                        style={{ width: "100%" }}
-                        value={courseInfo.courseNumberInput}
-                        onChange={handleCourseInputChange}
-                        onFocus={() => setCourseNumberFocus(true)}
-                        onBlur={() => setCourseNumberFocus(false)}
-                        error={!validCourseNumber && courseNumberFocus}
-                        autoComplete="off"
-                      />
+                  <TableCell style={{ width: "15vw" }}>
+                    {row.courseNumber === "" || editSectionID === row.id ? (
+                      <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">
+                          course #
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          name="courseNumberInput"
+                          value={sectionInfo.courseNumberInput}
+                          label="course #"
+                          onChange={handleSectionInfoChange}
+                        >
+                          {availableCourses.map((course) => (
+                            <MenuItem key={course.id} value={course.number}>
+                              {`${course.name} (${course.number})`}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                     ) : (
                       row.courseNumber
                     )}
                   </TableCell>
-                  <TableCell>
-                    {row.courseDeptCode === "" || editCourseID === row.id ? (
+
+                  <TableCell style={{ width: 150 }}>
+                    {row.sectionNumber === "" || editSectionID === row.id ? (
                       <TextField
                         variant="outlined"
-                        name="courseDeptCodeInput"
-                        label="dept. code"
-                        style={{ width: "100%" }}
-                        value={courseInfo.courseDeptCodeInput}
-                        onChange={handleCourseInputChange}
-                        onFocus={() => setCourseDeptFocus(true)}
-                        onBlur={() => setCourseDeptFocus(false)}
-                        error={!validCourseDeptCode && courseDeptFocus}
+                        name="sectionNumberInput"
+                        type="number"
+                        label="section #"
+                        fullWidth
+                        value={sectionInfo.sectionNumberInput}
+                        onChange={handleSectionInfoChange}
+                        // onFocus={() => setCourseNumberFocus(true)}
+                        // onBlur={() => setCourseNumberFocus(false)}
+                        // error={!validCourseNumber && courseNumberFocus}
                         autoComplete="off"
                       />
                     ) : (
-                      row.courseDeptCode
+                      row.sectionNumber
                     )}
                   </TableCell>
-                  <TableCell>
-                    {!row.requiredExpertise.length ||
-                    editCourseID === row.id ? (
-                      <FormControl sx={{ width: 300 }}>
+
+                  <TableCell style={{ width: "13vw" }}>
+                    {!row.meetingDays.length || editSectionID === row.id ? (
+                      <FormControl fullWidth>
                         <InputLabel
                           id="demo-multiple-chip-label"
-                          error={!validDisciplineAreas && disciplineAreasFocus}
+                          //   error={!validDisciplineAreas && disciplineAreasFocus}
                         >
-                          Discipline areas
+                          Meeting days
                         </InputLabel>
                         <Select
                           labelId="demo-multiple-chip-label"
-                          label="Discipline areas"
+                          label="Meeting days"
                           id="demo-multiple-chip"
-                          name="disciplineAreasInput"
-                          width="200"
+                          name="meetingDaysInput"
                           multiple
-                          value={disciplineAreas}
-                          onChange={handleSelectChange}
+                          value={meetingDaysInput}
+                          onChange={handleMeetDaysSelectChange}
                           input={
                             <OutlinedInput
                               id="select-multiple-chip"
-                              label="Discipline areas"
+                              label="Meeting days"
                             />
                           }
                           renderValue={(selected) => (
@@ -502,48 +475,95 @@ export default function CustomPaginationActionsTable(props) {
                               }}
                             >
                               {selected.map((value) => (
-                                <Chip key={value} label={value} />
+                                <Chip
+                                  size="small"
+                                  key={value}
+                                  label={
+                                    value.substring(0, 2) !== "Th"
+                                      ? value.charAt(0)
+                                      : value.substring(0, 2)
+                                  }
+                                />
                               ))}
                             </Box>
                           )}
-                          MenuProps={MenuProps}
-                          onFocus={() => setDisciplineAreasFocus(true)}
-                          onBlur={() => setDisciplineAreasFocus(false)}
-                          error={!validDisciplineAreas && disciplineAreasFocus}
+                          MenuProps={MenuPropsMeetingDays}
+                          //   onFocus={() => setDisciplineAreasFocus(true)}
+                          //   onBlur={() => setDisciplineAreasFocus(false)}
+                          //   error={!validDisciplineAreas && disciplineAreasFocus}
                         >
-                          {recognizedDisciplineAreas.map((name) => (
+                          {validMeetingDays.map((meetingDay) => (
                             <MenuItem
-                              key={name}
-                              value={name}
-                              style={getStyles(name, disciplineAreas, theme)}
+                              key={meetingDay}
+                              value={meetingDay}
+                              style={getStyles(
+                                meetingDay,
+                                meetingDaysInput,
+                                theme
+                              )}
+                              disabled={
+                                meetingDaysInput.length >= 3 &&
+                                !meetingDaysInput.find(
+                                  (selectedMeetingDay) =>
+                                    selectedMeetingDay === meetingDay
+                                )
+                              }
                             >
-                              {name}
+                              {meetingDay}
                             </MenuItem>
                           ))}
                         </Select>
                       </FormControl>
                     ) : (
                       <div className="list-items-discipline-areas">
-                        {row.requiredExpertise.map((disciplineArea) => (
-                          <Chip label={disciplineArea} />
+                        {row.meetingDays.map((meetingDay) => (
+                          <Chip label={meetingDay} />
                         ))}
                       </div>
                     )}
                   </TableCell>
 
                   <TableCell>
-                    {row.id === -1 || editCourseID === row.id ? (
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <TimePicker
+                        label="Start time"
+                        value={startMeetingTimeInput}
+                        onChange={handleStartMeetTimeChange}
+                        renderInput={(params) => (
+                          <TextField {...params} fullWidth />
+                        )}
+                        disabled={meetingDaysInput.length <= 0}
+                      />
+                    </LocalizationProvider>
+                  </TableCell>
+
+                  <TableCell>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <TimePicker
+                        label="End time"
+                        value={endMeetingTimeInput}
+                        onChange={handleEndMeetTimeChange}
+                        renderInput={(params) => (
+                          <TextField {...params} fullWidth />
+                        )}
+                        disabled={meetingDaysInput.length <= 0}
+                      />
+                    </LocalizationProvider>
+                  </TableCell>
+
+                  <TableCell>
+                    {row.id === -1 || editSectionID === row.id ? (
                       <Tooltip title="Save">
                         <IconButton
-                          disabled={
-                            !validCourseName ||
-                            !validCourseNumber ||
-                            !validCourseDeptCode ||
-                            !validDisciplineAreas
-                          }
+                          //   disabled={
+                          //     !validCourseName ||
+                          //     !validCourseNumber ||
+                          //     !validCourseDeptCode ||
+                          //     !validDisciplineAreas
+                          //   }
                           className="save-btn"
                           onClick={(e) => {
-                            saveCourse(e);
+                            saveSection(e);
                           }}
                         >
                           <SaveIcon className="save-btn-icon" />
@@ -554,9 +574,9 @@ export default function CustomPaginationActionsTable(props) {
                         <Tooltip title="Edit">
                           <IconButton
                             className="edit-btn"
-                            onClick={() => {
-                              setEditCourseID(row.id);
-                            }}
+                            // onClick={() => {
+                            //   setEditCourseID(row.id);
+                            // }}
                           >
                             <EditIcon />
                           </IconButton>
@@ -564,9 +584,9 @@ export default function CustomPaginationActionsTable(props) {
                         <Tooltip title="Delete">
                           <IconButton
                             className="delete-btn"
-                            onClick={(e) => {
-                              deleteCourse(e, row.courseName, row.courseNumber);
-                            }}
+                            // onClick={(e) => {
+                            //   deleteCourse(e, row.courseName, row.courseNumber);
+                            // }}
                           >
                             <DeleteIcon />
                           </IconButton>
@@ -589,9 +609,9 @@ export default function CustomPaginationActionsTable(props) {
             <TableRow>
               <TableCell colspan={2} style={{ padding: "0rem" }}>
                 <Button
-                  className="add-course-btn"
+                  className="add-section-btn"
                   variant="contained"
-                  onClick={(event) => addCourse(event)}
+                  onClick={(event) => addSection(event)}
                   disabled={
                     editMode || tableData.some((course) => course.id === -1)
                       ? true
@@ -602,18 +622,10 @@ export default function CustomPaginationActionsTable(props) {
                 </Button>
 
                 <Tooltip title="Refresh table">
-                  <IconButton onClick={getCourseList}>
-                    <AutorenewIcon />
-                  </IconButton>
-                </Tooltip>
-
-                <Tooltip title="Assign sections">
                   <IconButton
-                    onClick={goToAssignSectionsPage}
-                    className="go-to-assign-sections-btn"                    
-                    disabled={tableData.length > 0 ? false : true}
+                  //   onClick={getCourseList}
                   >
-                    <MoreTimeOutlinedIcon />
+                    <AutorenewIcon />
                   </IconButton>
                 </Tooltip>
               </TableCell>

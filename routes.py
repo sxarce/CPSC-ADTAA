@@ -8,6 +8,8 @@ from models import Instructor, instructor_schema, instructors_schema
 from models import InstructorDisciplineArea, instructorDisciplineArea_schema, instructorDisciplineAreas_schema
 from models import Course, course_schema, courses_schema
 from models import CourseDisciplineArea, courseDisciplineArea_schema, courseDisciplineAreas_schema
+from models import Section, section_schema, sections_schema
+from models import MeetingPeriod, meetingPeriod_schema, meetingPeriods_schema
 from flask_login import login_user
 
 import sys
@@ -19,6 +21,7 @@ from flask_jwt_extended import unset_jwt_cookies, get_jwt
 
 import json
 from datetime import timedelta, timezone, datetime
+from dateutil import tz
 from flask_jwt_extended import JWTManager
 
 from flask_mail import Message
@@ -74,13 +77,15 @@ def delete_instructor():
 
     return {"Message": "Instructor deleted"}
 
+
 @app.route("/delete-course", methods=['GET', 'POST'])
 @jwt_required()
 def delete_course():
     courseName = request.json['courseName']
     courseNumber = request.json['courseNumber']
-    
-    courseToDelete = Course.query.filter_by(name=courseName, number=courseNumber).first()
+
+    courseToDelete = Course.query.filter_by(
+        name=courseName, number=courseNumber).first()
     print(f'{courseToDelete}', file=sys.stderr)
 
     for disciplineArea in courseToDelete.disciplineAreas:
@@ -89,7 +94,7 @@ def delete_course():
     db.session.delete(courseToDelete)
     db.session.commit()
 
-    return {"Message" : "Course deleted"}
+    return {"Message": "Course deleted"}
 
 
 @app.route("/get-instructors-roster")
@@ -227,7 +232,92 @@ def add_course():
     return jsonify({'Message': f'Course added/modified!'})
 
 
-@app.route("/confirm/<token>")
+def convert_utc_to_cst(utc_time):
+    from_zone = tz.gettz('UTC')
+    to_zone = tz.gettz('America/Chicago')
+
+    utc = datetime.strptime(utc_time, '%Y-%m-%dT%H:%M:%S.%fZ')
+    utc = utc.replace(tzinfo=from_zone)
+    return utc.astimezone(to_zone)
+
+
+@app.route("/add-section", methods=['GET', 'POST'])
+# @jwt_required()
+def add_section():
+    # CONVERT JS toJSON() string to datetime (similar to email_confirmed_on)
+    # courseNumber = request.json['courseNumber']
+    # sectionNumber = request.json['sectionNumber']
+    # numMeetingPeriods = request.json['numMeetingPeriods']
+
+    # periodDays = [
+    #     {"meetingPeriodDay": request.json['meetingPeriod1Day'],
+    #      "meetingPeriodStart": convert_utc_to_cst(request.json['meetingPeriod1Start']),
+    #         "meetingPeriodEnd": convert_utc_to_cst(request.json['meetingPeriod1End'])},
+
+    #     {"meetingPeriodDay": request.json['meetingPeriod2Day'],
+    #      "meetingPeriodStart": convert_utc_to_cst(request.json['meetingPeriod2Start']),
+    #         "meetingPeriodEnd":convert_utc_to_cst(request.json['meetingPeriod2End'])},
+
+    #     {"meetingPeriodDay": request.json['meetingPeriod3Day'],
+    #      "meetingPeriodStart": convert_utc_to_cst(request.json['meetingPeriod3Start']),
+    #         "meetingPeriodEnd": convert_utc_to_cst(request.json['meetingPeriod3End'])},
+    # ]
+
+    # owner = Course.query.filter_by(number=courseNumber).first()
+
+    # new_section = Section(sectionNumber=sectionNumber, owning_course=owner)
+    # db.session.add(new_section)
+    # for i in range(int(numMeetingPeriods)):
+    #     new_meeting_period = MeetingPeriod(
+    #         startTime=periodDays[i]['meetingPeriodStart'],
+    #         endTime=periodDays[i]['meetingPeriodEnd'],
+    #         meetDay=periodDays[i]['meetingPeriodDay'],
+    #         owning_section=new_section,
+    #     )
+    #     db.session.add(new_meeting_period)
+
+    # db.session.commit()
+
+    # DEBUG
+    # print(f'C#: {courseNumber}, S#: {sectionNumber}, #MeetingPeriods: {numMeetingPeriods}', file=sys.stderr)
+    # print(
+    #     f'meetingPeriod1Day: {meetingPeriod1Day}, meetingPeriod1Start: {meetingPeriod1Start}, meetingPeriod1End: {meetingPeriod1End}', file=sys.stderr)
+    # print(
+    #     f'meetingPeriod2Day: {meetingPeriod2Day}, meetingPeriod2Start: {meetingPeriod2Start}, meetingPeriod2End: {meetingPeriod2End}', file=sys.stderr)
+    # print(
+    #     f'meetingPeriod3Day: {meetingPeriod3Day}, meetingPeriod3Start: {meetingPeriod3Start}, meetingPeriod3End: {meetingPeriod3End}', file=sys.stderr)
+
+    # sectionsList = Section.query.all()
+    # serialized_sections_list = sections_schema.dump(sectionsList)
+
+    # for section in serialized_sections_list:
+    #     owning_course = Course.query.filter_by(id=section['course_id']).first()
+    #     section['courseNumber'] = owning_course.number
+
+    # for section in serialized_sections_list:
+    #     section['meetingPeriods'] = meetingPeriods_schema.dump(
+    #         section['meetingPeriods'])
+
+    # print(f'{serialized_sections_list}', file=sys.stderr)
+    # return {"Add_section": "Route reached!", "TableData" : serialized_sections_list}
+    return get_sections()
+
+@app.route("/get-sections")
+def get_sections():
+    sectionsList = Section.query.all()
+    serialized_sections_list = sections_schema.dump(sectionsList)
+
+    for section in serialized_sections_list:
+        owning_course = Course.query.filter_by(id=section['course_id']).first()
+        section['courseNumber'] = owning_course.number
+
+    for section in serialized_sections_list:
+        section['meetingPeriods'] = meetingPeriods_schema.dump(
+            section['meetingPeriods'])
+
+    return {"Message": "Sections retrieved!", "TableData" : serialized_sections_list}
+
+@ app.route("/confirm/<token>")
 def confirm_email(token):
     try:
         confirm_serializer = URLSafeTimedSerializer(
@@ -260,8 +350,8 @@ def confirm_email(token):
     # return '<p> email confirmed </p>'
 
 
-@app.route("/register-user", methods=["POST"], strict_slashes=False)
-@cross_origin()
+@ app.route("/register-user", methods=["POST"], strict_slashes=False)
+@ cross_origin()
 def register_user():
     username = request.json['username']
     email = request.json['email']
@@ -281,8 +371,8 @@ def register_user():
     return user_schema.jsonify(new_user)
 
 
-@app.route("/login-user", methods=['GET', 'POST'])
-@cross_origin()
+@ app.route("/login-user", methods=['GET', 'POST'])
+@ cross_origin()
 def login_user():  # create_token()
     usernameInput = request.json['username']
     passwordInput = request.json['password']
@@ -303,8 +393,8 @@ def login_user():  # create_token()
 
 
 # TODO: This is an example. DO NOT DELETE.
-@app.route("/protected", methods=["GET"])
-@jwt_required()
+@ app.route("/protected", methods=["GET"])
+@ jwt_required()
 def protected():
     # Access the identity of the current user with get_jwt_identity
     current_user = get_jwt_identity()
@@ -315,15 +405,15 @@ def protected():
 # TODO: not used. Alternative: localStorage.removeItem("token")
 
 
-@app.route("/logout", methods=["POST"])
+@ app.route("/logout", methods=["POST"])
 def logout():
     response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
     return response
 
 
-@app.route("/set-registration-status", methods=['POST'])
-@jwt_required()
+@ app.route("/set-registration-status", methods=['POST'])
+@ jwt_required()
 def set_registration_status():
     email = request.json['email']
     isApproved = request.json['isApproved']
@@ -345,8 +435,8 @@ def set_registration_status():
     # return get_registration_requests()
 
 
-@app.route("/get-registration-requests", methods=['GET'])
-@jwt_required()
+@ app.route("/get-registration-requests", methods=['GET'])
+@ jwt_required()
 def get_registration_requests():
     users = User.query.filter(User.email_confirmed ==
                               True, User.isValid == False).all()
@@ -362,8 +452,8 @@ def get_registration_requests():
 
 
 # gives email and accesslevel to render on UI
-@app.route("/credentials", methods=['GET'])
-@jwt_required()
+@ app.route("/credentials", methods=['GET'])
+@ jwt_required()
 def credentials():
     username = get_jwt_identity()
     current_user = User.query.filter_by(username=username).first()
@@ -382,7 +472,7 @@ def credentials():
 jwt = JWTManager(app)
 
 
-@app.after_request
+@ app.after_request
 def refresh_expiring_jwts(response):
     try:
         exp_timestamp = get_jwt()["exp"]

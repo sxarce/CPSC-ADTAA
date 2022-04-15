@@ -88,13 +88,14 @@ instructorDisciplineAreas_schema = InstructorDisciplineAreaSchema(many=True)
 
 
 class Course(db.Model):
-    id = db.Column(db.Integer, primary_key=True) # TODO: placeholder for reference number
+    # TODO: placeholder for reference number
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
     number = db.Column(db.Integer, nullable=False, unique=True)
     deptCode = db.Column(db.String(10), nullable=False)
     disciplineAreas = db.relationship(
         'CourseDisciplineArea', backref='owning_course', lazy=True)
-    
+
     sections = db.relationship('Section', backref='owning_course', lazy=True)
 
     def __repr__(self):
@@ -126,21 +127,46 @@ courseDisciplineArea_schema = CourseDisciplineAreaSchema()
 courseDisciplineAreas_schema = CourseDisciplineAreaSchema(many=True)
 
 
-
 class Section(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    number = db.Column(db.Integer, nullable=False) # section.number
-    period_days = db.Column(db.String(10), nullable=False)
-    period_time = db.Column(db.Time, nullable=False)
-    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
-    
+    sectionNumber = db.Column(db.Integer,
+                              nullable=False)  # section.number
+    course_id = db.Column(db.Integer, db.ForeignKey(
+        'course.id'), nullable=False)  # one-to-one
+
+    meetingPeriods = db.relationship(
+        'MeetingPeriod', backref='owning_section', lazy=True)
+
+    __table_args__ = (db.UniqueConstraint('course_id', 'sectionNumber'), )
+    # UniqueConstraint: Each sectionNumber must be unique for each course_id.
+    # COMMA at end is impt. needs to be a tuple. Otherwise, compile error
+
+
 class SectionSchema(ma.Schema):
     class Meta:
-        fields = ("id", "number", "period_days", "period_time", "course_id")
+        fields = ("id", "sectionNumber", "course_id", "meetingPeriods")
 
 
 section_schema = SectionSchema()
 sections_schema = SectionSchema(many=True)
+
+
+class MeetingPeriod(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    startTime = db.Column(db.DateTime, nullable=False)
+    endTime = db.Column(db.DateTime, nullable=False)
+    meetDay = db.Column(db.String(15), nullable=False)
+    section_id = db.Column(db.Integer, db.ForeignKey(
+        'section.id'), nullable=False)
+
+
+class MeetingPeriodSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "startTime", "endTime", "meetDay", "section_id")
+
+
+meetingPeriod_schema = MeetingPeriodSchema()
+meetingPeriods_schema = MeetingPeriodSchema(many=True)
 
 
 # class Articles(db.Model):

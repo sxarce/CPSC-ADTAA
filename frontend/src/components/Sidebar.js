@@ -9,6 +9,7 @@ import personImg from "../assets/svg/sidebar/sidebar_person.svg";
 import ualrLogo from "../assets/svg/sidebar/sidebar_ualr.svg";
 import userLogo from "../assets/svg/user-logo-bottom.svg";
 import keyLogo from "../assets/svg/key-logo-bottom.svg";
+import powerLogo from "../assets/svg/power-off-solid.svg"
 
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -37,6 +38,7 @@ export default function Sidebar(props) {
   }
 
   console.log(props.accessLevel);
+
   return (
     <div
       className="sidebar"
@@ -64,13 +66,21 @@ export default function Sidebar(props) {
           <>
             <li
               className={`${
-                props.page === "setup" || props.page === "setup-sections" ? "sidebar-current-page" : ""
+                props.page === "setup" || props.page === "setup-sections"
+                  ? "sidebar-current-page"
+                  : ""
               }`}
               onClick={goToSetupPage}
             >
               <img src={gearImg} alt="gear icon" />
               {/* <Link to="/setup">Setup</Link> */}
-             {props.page !== "setup-sections" ? <p>Setup</p> : <p><i>Assigning sections</i></p>}
+              {props.page !== "setup-sections" ? (
+                <p>Setup</p>
+              ) : (
+                <p>
+                  <i>Assigning sections</i>
+                </p>
+              )}
             </li>
             <li
               className={`${
@@ -96,6 +106,10 @@ export default function Sidebar(props) {
             <p>Registration requests</p>
           </li>
         )}
+        <li onClick={() => props.logout()}>
+          <img src={powerLogo} alt="logout" />
+          <p>Logout</p>
+        </li>
       </ul>
 
       <hr className="solid-line-sidebar-divider" />
@@ -115,6 +129,7 @@ export default function Sidebar(props) {
           </p>
         </div>
       </section>
+
       <hr className="solid-line-sidebar-divider" />
     </div>
   );

@@ -69,6 +69,7 @@ export default function RegRequestsPage(props) {
         page="regRequests"
         accessLevel={credentials.user_access_level}
         email={credentials.user_email}
+        logout={props.removeToken}
       />
       <div className="table-container-requests">
         <RegistrationRequestsTable

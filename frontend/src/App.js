@@ -64,18 +64,18 @@ export default function App() {
               />,
               <Route
                 path={"/setup"}
-                element={<SetupPage token={token} setToken={setToken} />}
+                element={<SetupPage token={token} setToken={setToken} removeToken={removeToken} />}
               />,
               <Route
-                path={"/setup/assign-sections"}
+                path={"/assign-sections"}
                 element={
-                  <SetupSectionsPage token={token} setToken={setToken} />
+                  <SetupSectionsPage token={token} setToken={setToken} removeToken={removeToken} />
                 }
               />,
               <Route
                 exact
                 path="/registration-requests"
-                element={<RegRequestsPage token={token} setToken={setToken} />}
+                element={<RegRequestsPage token={token} setToken={setToken} removeToken={removeToken} />}
               />,
             ]
           : [

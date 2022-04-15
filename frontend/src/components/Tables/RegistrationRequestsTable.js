@@ -245,7 +245,10 @@ export default function RegistrationRequestsTable(props) {
           <TableFooter>
             <TableRow>
               <Tooltip title="Refresh table">
-                <IconButton onClick={getRegisterRequests} style={{padding: "1rem"}}>
+                <IconButton
+                  onClick={getRegisterRequests}
+                  style={{ padding: "1rem" }}
+                >
                   <AutorenewIcon />
                 </IconButton>
               </Tooltip>
@@ -343,6 +346,6 @@ TablePaginationActions.propTypes = {
 };
 const theme = createTheme({
   typography: {
-    fontFamily: ["Open sans"],
+    fontFamily: ["Roboto", "Helvetica", "Arial", "sans-serif"],
   },
 });
