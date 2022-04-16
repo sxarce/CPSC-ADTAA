@@ -50,14 +50,14 @@
 .table-container-setup-sections {
   /* width: max-content;
   height: max-content; */
-  width: 83vw;
+  width: 85vw;
   height: 80vh;
   z-index: 1;
 
   position: absolute;
   top: 5%;
   
-  left: 16%;
+  left: 15%;
 
   /* border: 1px solid green; */
   /* align-self: center; */

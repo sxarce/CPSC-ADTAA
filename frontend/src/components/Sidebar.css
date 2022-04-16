@@ -5,8 +5,9 @@
   left: 0rem;
   bottom: 0rem;
   background: #ddcdd1;
-  width: 14rem !important;
-  width: fit-content;
+  width: 14rem;
+  
+  /* width: fit-content; */
   display: flex;
   flex-direction: column;
   box-shadow: 2px 7px 15px -6px #5b525a;

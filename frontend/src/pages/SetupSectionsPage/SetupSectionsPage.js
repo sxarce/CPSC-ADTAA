@@ -31,7 +31,9 @@ import { format } from "date-fns";
 import SettingsIcon from "@mui/icons-material/Settings";
 import IconButton from "@mui/material/IconButton";
 import { useNavigate } from "react-router-dom";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function SetupPage(props) {
   const [loading, setLoading] = React.useState(true); // For <Loader />
@@ -113,6 +115,7 @@ export default function SetupPage(props) {
       label: "End 3",
       disableSorting: true,
     },
+    { id: "actions", label: "", disableSorting: true },
   ];
 
   const useStyles = makeStyles({
@@ -147,7 +150,9 @@ export default function SetupPage(props) {
     },
   });
   const [openPopup, setOpenPopup] = React.useState(false);
-  const [records, setRecords] = React.useState(); // tableData
+  const [tableData, setTableData] = React.useState(); // records
+  const [sectionToEdit, setSectionToEdit] = React.useState(null);
+  console.log(tableData);
 
   React.useEffect(() => {
     axios
@@ -155,7 +160,7 @@ export default function SetupPage(props) {
       .then((response) => {
         console.log(response);
         let retrievedTableData = response.data.TableData;
-        setRecords(retrievedTableData);
+        setTableData(retrievedTableData);
       })
       .catch((error) => console.log(error));
   }, []);
@@ -164,8 +169,8 @@ export default function SetupPage(props) {
     TableContainer,
     TableHeader,
     TablePagination,
-    recordsAfterPagingAndSorting,
-  } = useTable(records, headerCells, filterFn);
+    tableDataAfterPagingAndSorting,
+  } = useTable(tableData, headerCells, filterFn);
 
   function handleSearch(event) {
     let target = event.target;
@@ -189,18 +194,49 @@ export default function SetupPage(props) {
   }
 
   const addOrEdit = (formData, resetForm) => {
-    axios
-      .post("/add-section", formData)
-      .then((response) => {
-        console.log(response);
+    // if new
+    if (formData.id === -1) {
+      axios
+        .post("/add-section", formData)
+        .then((response) => {
+          console.log(response);
 
-        // update records/tableData
-        setRecords(response.data.TableData);
-      })
-      .catch((error) => console.log(error));
+          // update frontend records/tableData
+          setTableData(response.data.TableData);
+        })
+        .catch((error) => console.log(error));
+    } else {
+      // elif id !== -1 ---> editing section
+      axios
+        .post("/update-section", formData)
+        .then((response) => {
+          console.log(response);
+
+          // update frontend records/tableData
+          setTableData(response.data.TableData);
+        })
+        .catch((error) => console.log(error));
+    }
+
     resetForm();
+    setSectionToEdit(null);
     setOpenPopup(false);
   };
+
+  function openInPopUp(sectionToEdit) {
+    setSectionToEdit(sectionToEdit);
+    setOpenPopup(true);
+  }
+
+  function deleteSection(section) {
+    axios
+      .post("/delete-section", section)
+      .then((response) => {
+        // update frontend records/tableData
+        setTableData(response.data.TableData);
+      })
+      .catch((error) => console.log(error));
+  }
 
   if (loading === true) return <Loader message={""} />;
   else if (credentials === undefined || credentials === null) {
@@ -251,13 +287,16 @@ export default function SetupPage(props) {
               style={{ position: "absolute", right: "30px" }}
               startIcon={<AddIcon />}
               color="primary"
-              handleClick={() => setOpenPopup(true)}
+              handleClick={() => {
+                setOpenPopup(true);
+                setSectionToEdit(null);
+              }}
             />
           </Toolbar>
           <TableContainer>
             <TableHeader />
             <TableBody>
-              {recordsAfterPagingAndSorting().map((elem) => (
+              {tableDataAfterPagingAndSorting().map((elem) => (
                 <TableRow key={elem.id}>
                   <TableCell style={{ width: "0px", fontWeight: "bold" }}>
                     {elem.courseNumber}
@@ -286,6 +325,26 @@ export default function SetupPage(props) {
                       <TableCell></TableCell>
                     </>
                   )}
+                  <TableCell align="center">
+                    <Controls.ActionButton
+                      color="primary"
+                      handleClick={() => {
+                        openInPopUp(elem);
+                      }}
+                      style={{ margin: "0.15rem" }}
+                    >
+                      <EditIcon fontSize="small" />
+                    </Controls.ActionButton>
+                    <Controls.ActionButton
+                      color="secondary"
+                      style={{ margin: "0.15rem" }}
+                      handleClick={() => {
+                        deleteSection(elem);
+                      }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </Controls.ActionButton>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -315,90 +374,10 @@ export default function SetupPage(props) {
             token={props.token}
             setToken={props.setToken}
             addOrEdit={addOrEdit}
+            sectionToEdit={sectionToEdit}
           />
         </Popup>
       </div>
     </div>
   );
 }
-
-// const records = [
-//   {
-//     id: "1",
-//     courseNumber: "2345",
-//     sectionNumber: "1",
-//     numMeetingPeriods: "2",
-//     meetingPeriod1Day: "Monday",
-//     meetingPeriod1Start: "9:30",
-//     meetingPeriod1End: "11:30",
-//   },
-//   {
-//     id: "2",
-//     courseNumber: "6789",
-//     sectionNumber: "2",
-//     numMeetingPeriods: "3",
-//     meetingPeriod1Day: "Tuesday",
-//     meetingPeriod1Start: "9:30",
-//     meetingPeriod1End: "11:30",
-//   },
-//   {
-//     id: "3",
-//     courseNumber: "abcd",
-//     sectionNumber: "3 ",
-//     numMeetingPeriods: "3",
-//     meetingPeriod1Day: "Tuesday",
-//     meetingPeriod1Start: "9:30",
-//     meetingPeriod1End: "11:30",
-//   },
-//   {
-//     id: "4",
-//     courseNumber: "asda",
-//     sectionNumber: "4",
-//     numMeetingPeriods: "3",
-//     meetingPeriod1Day: "Tuesday",
-//     meetingPeriod1Start: "9:30",
-//     meetingPeriod1End: "11:30",
-//   },
-//   {
-//     id: "5",
-//     courseNumber: "hghc",
-//     sectionNumber: "5",
-//     numMeetingPeriods: "3",
-//     meetingPeriod1Day: "Tuesday",
-//     meetingPeriod1Start: "9:30",
-//     meetingPeriod1End: "11:30",
-//   },
-//   {
-//     id: "6",
-//     courseNumber: "cvxc",
-//     sectionNumber: "1",
-//     numMeetingPeriods: "3",
-//     meetingPeriod1Day: "Tuesday",
-//     meetingPeriod1Start: "9:30",
-//     meetingPeriod1End: "11:30",
-//   },
-//   {
-//     id: "7",
-//     courseNumber: "kjjk",
-//     sectionNumber: "4",
-//     numMeetingPeriods: "3",
-//     meetingPeriod1Day: "Tuesday",
-//     meetingPeriod1Start: "9:30",
-//     meetingPeriod1End: "11:30",
-//     meetingPeriod2Day: "Tuesday",
-//     meetingPeriod2Start: "9:30",
-//     meetingPeriod2End: "11:30",
-//     meetingPeriod3Day: "Tuesday",
-//     meetingPeriod3Start: "9:30",
-//     meetingPeriod3End: "11:30",
-//   },
-//   {
-//     id: "8",
-//     courseNumber: "mmbn",
-//     sectionNumber: "3",
-//     numMeetingPeriods: "3",
-//     meetingPeriod1Day: "Tuesday",
-//     meetingPeriod1Start: "9:30",
-//     meetingPeriod1End: "11:30",
-//   },
-// ];

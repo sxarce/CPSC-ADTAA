@@ -27,7 +27,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function useTable(records, headerCells, filterFn) {
+export default function useTable(tableData, headerCells, filterFn) {
   const classes = useStyles();
   function TableContainer(props) {
     return <Table className={classes.table}>{props.children}</Table>;
@@ -109,8 +109,8 @@ export default function useTable(records, headerCells, filterFn) {
     return 0;
   }
 
-  const recordsAfterPagingAndSorting = () => {
-    return sort(filterFn.fn(records), getComparator(order, orderBy)).slice(
+  const tableDataAfterPagingAndSorting = () => {
+    return sort(filterFn.fn(tableData), getComparator(order, orderBy)).slice(
       page * rowsPerPage,
       (page + 1) * rowsPerPage
     );
@@ -123,7 +123,7 @@ export default function useTable(records, headerCells, filterFn) {
         page={page}
         rowsPerPageOptions={pages}
         rowsPerPage={rowsPerPage}
-        count={records.length}
+        count={tableData.length}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
@@ -134,6 +134,6 @@ export default function useTable(records, headerCells, filterFn) {
     TableContainer,
     TableHeader,
     TablePagination,
-    recordsAfterPagingAndSorting,
+    tableDataAfterPagingAndSorting: tableDataAfterPagingAndSorting,
   };
 }

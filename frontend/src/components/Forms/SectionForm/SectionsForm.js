@@ -10,8 +10,8 @@ import axios from "axios";
 //  width: 50vw; height: 60vh;top: 12%;left: 20%;
 
 const radioGroupItems = [
-  { id: "2", title: "2" }, // id is value, title is label of radio button
-  { id: "3", title: "3" },
+  { id: 2, title: "2" }, // id is value, title is label of radio button
+  { id: 3, title: "3" },
 ];
 
 const validClassDays = [
@@ -26,7 +26,7 @@ const initialValues = {
   id: -1,
   courseNumber: "",
   sectionNumber: "",
-  numMeetingPeriods: "2",
+  numMeetingPeriods: 2,
 
   meetingPeriod1Day: "",
   meetingPeriod1Start: new Date(),
@@ -47,15 +47,16 @@ export default function SectionsForm(props) {
         headers: { Authorization: "Bearer " + props.token },
       })
       .then((response) => {
-        let retrievedTableData = response.data.TableData;
+        let retrievedCourseList = response.data.TableData;
 
-        if (retrievedTableData) {
-          setCourseList(retrievedTableData);
+        if (retrievedCourseList) {
+          setCourseList(retrievedCourseList);
         }
       })
       .catch((error) => console.log(error));
   }
   React.useEffect(() => getAvailableCourses(), []);
+
   const [courseList, setCourseList] = React.useState([]);
 
   const validate = (formDataFields = formData) => {
@@ -71,7 +72,7 @@ export default function SectionsForm(props) {
     setErrors({ ...temp });
 
     if (formDataFields === formData) {
-      return Object.values(temp).every((elem) => elem === ""); // for validate() call. Submitting the form
+      return Object.values(temp).every((elem) => elem === ""); // for validate() call. before Submitting the form
     }
   };
 
@@ -83,13 +84,50 @@ export default function SectionsForm(props) {
     resetForm,
     handleInputChange,
   } = useSectionForm(initialValues, true, validate);
-  const { addOrEdit } = props;
+
+  const { addOrEdit, sectionToEdit } = props;
+
+  // FOR displaying input inside form upon clicking edit-btn
+  React.useEffect(() => {
+    if (sectionToEdit !== null) {
+      // console.log(sectionToEdit);
+
+      setFormData({
+        ...sectionToEdit,
+
+        meetingPeriod1Day: sectionToEdit.meetingPeriods[0].meetDay,
+        meetingPeriod1Start: new Date(
+          sectionToEdit.meetingPeriods[0].startTime
+        ),
+        meetingPeriod1End: new Date(sectionToEdit.meetingPeriods[0].endTime),
+
+        meetingPeriod2Day: sectionToEdit.meetingPeriods[1].meetDay,
+        meetingPeriod2Start: new Date(
+          sectionToEdit.meetingPeriods[1].startTime
+        ),
+        meetingPeriod2End: new Date(sectionToEdit.meetingPeriods[1].endTime),
+
+        meetingPeriod3Day:
+          sectionToEdit.numMeetingPeriods <= 2
+            ? new Date()
+            : sectionToEdit.meetingPeriods[2].meetDay,
+        meetingPeriod3Start:
+          sectionToEdit.numMeetingPeriods <= 2
+            ? new Date()
+            : sectionToEdit.meetingPeriods[2].startTime,
+        meetingPeriod3End:
+          sectionToEdit.numMeetingPeriods <= 2
+            ? new Date()
+            : sectionToEdit.meetingPeriods[2].endTime,
+      });
+    }
+  }, [sectionToEdit]);
 
   const handleSubmit = (event) => {
     event.preventDefault(); // avoid refresh upon submit-btn-click
 
     if (validate()) {
-      addOrEdit(formData, resetForm)
+      addOrEdit(formData, resetForm);
     }
   };
 
@@ -184,7 +222,7 @@ export default function SectionsForm(props) {
                 handleChange={handleInputChange}
               />
             </Grid>
-            {formData.numMeetingPeriods === "3" && (
+            {formData.numMeetingPeriods == "3" && (
               <>
                 <Grid item xs={5}>
                   <Controls.Select
