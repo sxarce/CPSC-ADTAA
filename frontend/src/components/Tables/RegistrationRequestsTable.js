@@ -15,7 +15,9 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
+
 import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
 
 import checkIcon from "../../assets/svg/check-icon.svg";
 import closeIcon from "../../assets/svg/close-icon.svg";
@@ -116,6 +118,16 @@ export default function RegistrationRequestsTable(props) {
     borderBottom: "1px solid #E9ECEF",
     borderTop: "1px solid #E9ECEF",
   };
+  const useStyles = makeStyles({
+    table: {
+      "& tbody tr:hover": {
+        // backgroundColor: "#FFFBF2",
+        backgroundColor: "#fcfcfa",
+        cursor: "pointer",
+      },
+    },
+  });
+  const classes = useStyles()
 
   return (
     <TableContainer
@@ -124,7 +136,7 @@ export default function RegistrationRequestsTable(props) {
       className="regReqs-card-table"
     >
       <ThemeProvider theme={theme}>
-        <Table aria-label="custom pagination table">
+        <Table aria-label="custom pagination table" className={classes.table}>
           <TableHead>
             <TableRow>
               <TableCell

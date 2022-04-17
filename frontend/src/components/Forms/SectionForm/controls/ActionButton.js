@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 import React from "react";
 import { makeStyles } from "@mui/styles";
 
@@ -35,10 +35,28 @@ const useStyles = makeStyles({
 });
 
 export default function ActionButton(props) {
-  const { variant, color, children, handleClick, ...others } = props;
+  const { variant, color, children, handleClick, tooltipTitle, ...others } =
+    props;
+
+  function CustomToolTip(props) {
+    const { children, title } = props;
+
+    return <Tooltip title={title}>{children}</Tooltip>;
+  }
 
   const classes = useStyles();
-  return (
+  return tooltipTitle ? (
+    <CustomToolTip title={tooltipTitle}>
+      <Button
+        variant={variant}
+        className={`${classes.root} ${classes[color]}`}
+        onClick={handleClick}
+        {...others}
+      >
+        {children}
+      </Button>
+    </CustomToolTip>
+  ) : (
     <Button
       variant={variant}
       className={`${classes.root} ${classes[color]}`}

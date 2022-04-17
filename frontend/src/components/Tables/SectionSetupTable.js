@@ -27,6 +27,7 @@ import { Button } from "@mui/material";
 import "./SectionSetupTable.css";
 
 import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
 
 import { TextField } from "@mui/material";
 // import { makeStyles } from "@mui/styles";
@@ -81,6 +82,16 @@ function getStyles(meetingDay, meetingDaysInput, theme) {
     // fontSize: "x-small",
   };
 }
+
+const useStyles = makeStyles({
+  table: {
+    "& tbody tr:hover": {
+      // backgroundColor: "#FFFBF2",
+      backgroundColor: "#fcfcfa",      
+      cursor: "pointer",
+    },
+  },
+});
 
 export default function CustomPaginationActionsTable(props) {
   const [page, setPage] = React.useState(0);

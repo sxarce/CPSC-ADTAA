@@ -34,6 +34,7 @@ export default function Popup(props) {
             handleClick={() => {
               setOpenPopup(false);
             }}
+            tooltipTitle="Close"
           >
             <CloseIcon />
           </Controls.ActionButton>

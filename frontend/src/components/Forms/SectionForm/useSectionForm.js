@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
 
+// validateOnChange --> real-time validation on form.
 export function useSectionForm(initialValues, validateOnChange = false, validate) {
   const [formData, setFormData] = useState(initialValues);
   const [errors, setErrors] = useState({});

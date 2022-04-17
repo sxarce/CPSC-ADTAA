@@ -27,6 +27,7 @@ import { Button } from "@mui/material";
 // import "./InstructorSetupTable.css";
 import "./CourseSetupTable.css";
 import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
 
 import { TextField } from "@mui/material";
 // import { makeStyles } from "@mui/styles";
@@ -39,7 +40,8 @@ import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 
 import Tooltip from "@mui/material/Tooltip";
-import CustomToolTip from "../Forms/SectionForm/controls/CustomToolTip";
+// import CustomToolTip from "../Forms/SectionForm/controls/CustomToolTip";
+import Controls from "../../components/Forms/SectionForm/controls/Controls";
 
 import axios from "axios";
 
@@ -70,6 +72,7 @@ const recognizedDisciplineAreas = [
   "Database structures and design",
 ];
 
+// for discipline area dropdown menu items
 function getStyles(name, disciplineAreas, theme) {
   return {
     fontWeight:
@@ -79,6 +82,16 @@ function getStyles(name, disciplineAreas, theme) {
     // fontSize: "x-small",
   };
 }
+
+const useStyles = makeStyles({
+  table: {
+    "& tbody tr:hover": {
+      // backgroundColor: "#FFFBF2",
+      backgroundColor: "#fcfcfa",
+      cursor: "pointer",
+    },
+  },
+});
 
 export default function CustomPaginationActionsTable(props) {
   const [page, setPage] = React.useState(0);
@@ -153,6 +166,8 @@ export default function CustomPaginationActionsTable(props) {
     borderBottom: "1px solid #E9ECEF",
     borderTop: "1px solid #E9ECEF",
   };
+
+  const classes = useStyles();
 
   function deleteCourse(event, name, number) {
     axios
@@ -370,302 +385,301 @@ export default function CustomPaginationActionsTable(props) {
       style={{ width: "77vw" }}
       className="course-card-table"
     >
-      <ThemeProvider theme={theme}>
-        <Table aria-label="Course table">
-          <TableHead>
-            <TableRow>
-              <TableCell
-                colSpan={5}
-                style={{
-                  fontWeight: "bold",
-                  fontSize: "0.9rem",
-                  padding: "1rem 1rem 1.3rem 1rem",
-                  borderBottom: "none",
-                }}
-              >
-                Offered Courses
-              </TableCell>
-              {/* <TableCell align="right" colSpan={2}>
+      {/* <ThemeProvider theme={theme}> */}
+      <Table aria-label="Course table" className={classes.table}>
+        <TableHead>
+          <TableRow>
+            <TableCell
+              colSpan={5}
+              style={{
+                fontWeight: "bold",
+                fontSize: "0.9rem",
+                padding: "1rem 1rem 1.3rem 1rem",
+                borderBottom: "none",
+              }}
+            >
+              Offered Courses
+            </TableCell>
+            {/* <TableCell align="right" colSpan={2}>
                 Button here!
               </TableCell> */}
-            </TableRow>
-            <TableRow style={HeaderBackgroundStyle}>
-              <TableCell style={HeaderStyle}>Course Name</TableCell>
-              <TableCell style={HeaderStyle}>Course #</TableCell>
-              <TableCell style={HeaderStyle}>Department Code</TableCell>
-              <TableCell style={HeaderStyle}>Required expertise</TableCell>
-              <TableCell
-                style={{
-                  width: "5rem",
-                  borderBottom: "none",
-                  borderTop: "none",
-                }}
-                aria-label="btns-area"
-              ></TableCell>
-            </TableRow>
-          </TableHead>
+          </TableRow>
+          <TableRow style={HeaderBackgroundStyle}>
+            <TableCell style={HeaderStyle}>Course Name</TableCell>
+            <TableCell style={HeaderStyle}>Course #</TableCell>
+            <TableCell style={HeaderStyle}>Department Code</TableCell>
+            <TableCell style={HeaderStyle}>Required expertise</TableCell>
+            <TableCell
+              style={{
+                width: "5rem",
+                borderBottom: "none",
+                borderTop: "none",
+              }}
+              aria-label="btns-area"
+            ></TableCell>
+          </TableRow>
+        </TableHead>
 
-          <TableBody>
-            {(rowsPerPage > 0
-              ? tableData.slice(
-                  page * rowsPerPage,
-                  page * rowsPerPage + rowsPerPage
-                )
-              : tableData
-            ).map((row) => {
-              return (
-                <TableRow key={row.name} style={{ border: "none" }}>
-                  <TableCell>
-                    {row.courseName === "" || editCourseID === row.id ? (
-                      <TextField
-                        variant="outlined"
-                        name="courseNameInput"
-                        label="course name"
-                        style={{ width: "100%" }}
-                        value={courseInfo.courseNameInput}
-                        onChange={handleCourseInputChange}
-                        autoFocus
-                        onFocus={() => setCourseNameFocus(true)}
-                        onBlur={() => setCourseNameFocus(false)}
-                        error={!validCourseName && courseNameFocus}
-                        autoComplete="off"
-                      />
-                    ) : (
-                      row.courseName
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {row.courseNumber === "" || editCourseID === row.id ? (
-                      <TextField
-                        variant="outlined"
-                        name="courseNumberInput"
-                        type="number"
-                        label="course #"
-                        style={{ width: "100%" }}
-                        value={courseInfo.courseNumberInput}
-                        onChange={handleCourseInputChange}
-                        onFocus={() => setCourseNumberFocus(true)}
-                        onBlur={() => setCourseNumberFocus(false)}
-                        error={!validCourseNumber && courseNumberFocus}
-                        autoComplete="off"
-                      />
-                    ) : (
-                      row.courseNumber
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {row.courseDeptCode === "" || editCourseID === row.id ? (
-                      <TextField
-                        variant="outlined"
-                        name="courseDeptCodeInput"
-                        label="dept. code"
-                        style={{ width: "100%" }}
-                        value={courseInfo.courseDeptCodeInput}
-                        onChange={handleCourseInputChange}
-                        onFocus={() => setCourseDeptFocus(true)}
-                        onBlur={() => setCourseDeptFocus(false)}
-                        error={!validCourseDeptCode && courseDeptFocus}
-                        autoComplete="off"
-                      />
-                    ) : (
-                      row.courseDeptCode
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {!row.requiredExpertise.length ||
-                    editCourseID === row.id ? (
-                      <FormControl sx={{ width: 300 }}>
-                        <InputLabel
-                          id="demo-multiple-chip-label"
-                          error={!validDisciplineAreas && disciplineAreasFocus}
-                        >
-                          Discipline areas
-                        </InputLabel>
-                        <Select
-                          labelId="demo-multiple-chip-label"
-                          label="Discipline areas"
-                          id="demo-multiple-chip"
-                          name="disciplineAreasInput"
-                          width="200"
-                          multiple
-                          value={disciplineAreas}
-                          onChange={handleSelectChange}
-                          input={
-                            <OutlinedInput
-                              id="select-multiple-chip"
-                              label="Discipline areas"
-                            />
-                          }
-                          renderValue={(selected) => (
-                            <Box
-                              sx={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                gap: 0.5,
-                              }}
-                            >
-                              {selected.map((value) => (
-                                <Chip key={value} label={value} />
-                              ))}
-                            </Box>
-                          )}
-                          MenuProps={MenuProps}
-                          onFocus={() => setDisciplineAreasFocus(true)}
-                          onBlur={() => setDisciplineAreasFocus(false)}
-                          error={!validDisciplineAreas && disciplineAreasFocus}
-                        >
-                          {recognizedDisciplineAreas.map((name) => (
-                            <MenuItem
-                              key={name}
-                              value={name}
-                              style={getStyles(name, disciplineAreas, theme)}
-                            >
-                              {name}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    ) : (
-                      <div className="list-items-discipline-areas">
-                        {row.requiredExpertise.map((disciplineArea) => (
-                          <Chip label={disciplineArea} />
+        <TableBody>
+          {(rowsPerPage > 0
+            ? tableData.slice(
+                page * rowsPerPage,
+                page * rowsPerPage + rowsPerPage
+              )
+            : tableData
+          ).map((row) => {
+            return (
+              <TableRow key={row.name} style={{ border: "none" }}>
+                <TableCell>
+                  {row.courseName === "" || editCourseID === row.id ? (
+                    <TextField
+                      variant="outlined"
+                      name="courseNameInput"
+                      label="course name"
+                      style={{ width: "100%" }}
+                      value={courseInfo.courseNameInput}
+                      onChange={handleCourseInputChange}
+                      autoFocus
+                      onFocus={() => setCourseNameFocus(true)}
+                      onBlur={() => setCourseNameFocus(false)}
+                      error={!validCourseName && courseNameFocus}
+                      autoComplete="off"
+                    />
+                  ) : (
+                    row.courseName
+                  )}
+                </TableCell>
+                <TableCell>
+                  {row.courseNumber === "" || editCourseID === row.id ? (
+                    <TextField
+                      variant="outlined"
+                      name="courseNumberInput"
+                      type="number"
+                      label="course #"
+                      style={{ width: "100%" }}
+                      value={courseInfo.courseNumberInput}
+                      onChange={handleCourseInputChange}
+                      onFocus={() => setCourseNumberFocus(true)}
+                      onBlur={() => setCourseNumberFocus(false)}
+                      error={!validCourseNumber && courseNumberFocus}
+                      autoComplete="off"
+                    />
+                  ) : (
+                    row.courseNumber
+                  )}
+                </TableCell>
+                <TableCell>
+                  {row.courseDeptCode === "" || editCourseID === row.id ? (
+                    <TextField
+                      variant="outlined"
+                      name="courseDeptCodeInput"
+                      label="dept. code"
+                      style={{ width: "100%" }}
+                      value={courseInfo.courseDeptCodeInput}
+                      onChange={handleCourseInputChange}
+                      onFocus={() => setCourseDeptFocus(true)}
+                      onBlur={() => setCourseDeptFocus(false)}
+                      error={!validCourseDeptCode && courseDeptFocus}
+                      autoComplete="off"
+                    />
+                  ) : (
+                    row.courseDeptCode
+                  )}
+                </TableCell>
+                <TableCell>
+                  {!row.requiredExpertise.length || editCourseID === row.id ? (
+                    <FormControl sx={{ width: 300 }}>
+                      <InputLabel
+                        id="demo-multiple-chip-label"
+                        error={!validDisciplineAreas && disciplineAreasFocus}
+                      >
+                        Discipline areas
+                      </InputLabel>
+                      <Select
+                        labelId="demo-multiple-chip-label"
+                        label="Discipline areas"
+                        id="demo-multiple-chip"
+                        name="disciplineAreasInput"
+                        width="200"
+                        multiple
+                        value={disciplineAreas}
+                        onChange={handleSelectChange}
+                        input={
+                          <OutlinedInput
+                            id="select-multiple-chip"
+                            label="Discipline areas"
+                          />
+                        }
+                        renderValue={(selected) => (
+                          <Box
+                            sx={{
+                              display: "flex",
+                              flexWrap: "wrap",
+                              gap: 0.5,
+                            }}
+                          >
+                            {selected.map((value) => (
+                              <Chip key={value} label={value} />
+                            ))}
+                          </Box>
+                        )}
+                        MenuProps={MenuProps}
+                        onFocus={() => setDisciplineAreasFocus(true)}
+                        onBlur={() => setDisciplineAreasFocus(false)}
+                        error={!validDisciplineAreas && disciplineAreasFocus}
+                      >
+                        {recognizedDisciplineAreas.map((name) => (
+                          <MenuItem
+                            key={name}
+                            value={name}
+                            style={getStyles(name, disciplineAreas, theme)}
+                          >
+                            {name}
+                          </MenuItem>
                         ))}
-                      </div>
-                    )}
-                  </TableCell>
+                      </Select>
+                    </FormControl>
+                  ) : (
+                    <div className="list-items-discipline-areas">
+                      {row.requiredExpertise.map((disciplineArea) => (
+                        <Chip label={disciplineArea} />
+                      ))}
+                    </div>
+                  )}
+                </TableCell>
 
-                  <TableCell>
-                    {row.id === -1 || editCourseID === row.id ? (
-                      <Tooltip title="Save">
+                <TableCell>
+                  {row.id === -1 || editCourseID === row.id ? (
+                    <Tooltip title="Save">
+                      <IconButton
+                        disabled={
+                          !validCourseName ||
+                          !validCourseNumber ||
+                          !validCourseDeptCode ||
+                          !validDisciplineAreas
+                        }
+                        className="save-btn"
+                        onClick={(e) => {
+                          saveCourse(e);
+                        }}
+                      >
+                        <SaveIcon className="save-btn-icon" />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    <>
+                      <Controls.CustomToolTip title="Edit">
                         <IconButton
-                          disabled={
-                            !validCourseName ||
-                            !validCourseNumber ||
-                            !validCourseDeptCode ||
-                            !validDisciplineAreas
-                          }
-                          className="save-btn"
-                          onClick={(e) => {
-                            saveCourse(e);
+                          disabled={addMode}
+                          className="edit-btn"
+                          onClick={() => {
+                            setEditCourseID(row.id);
                           }}
                         >
-                          <SaveIcon className="save-btn-icon" />
+                          <EditIcon />
+                        </IconButton>
+                      </Controls.CustomToolTip>
+
+                      <Tooltip title="Delete">
+                        <IconButton
+                          className="delete-btn"
+                          onClick={(e) => {
+                            deleteCourse(e, row.courseName, row.courseNumber);
+                          }}
+                        >
+                          <DeleteIcon />
                         </IconButton>
                       </Tooltip>
-                    ) : (
-                      <>
-                        <CustomToolTip title="Edit">
-                          <IconButton
-                            disabled={addMode}
-                            className="edit-btn"
-                            onClick={() => {
-                              setEditCourseID(row.id);
-                            }}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                        </CustomToolTip>
-
-                        <Tooltip title="Delete">
-                          <IconButton
-                            className="delete-btn"
-                            onClick={(e) => {
-                              deleteCourse(e, row.courseName, row.courseNumber);
-                            }}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </>
-                    )}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-
-            {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
-                <TableCell colSpan={6} />
+                    </>
+                  )}
+                </TableCell>
               </TableRow>
-            )}
-          </TableBody>
+            );
+          })}
 
-          <TableFooter>
-            <TableRow>
-              <TableCell colspan={2} style={{ padding: "0rem" }}>
-                <Button
-                  className="add-course-btn"
-                  variant="contained"
-                  onClick={(event) => {
+          {emptyRows > 0 && (
+            <TableRow style={{ height: 53 * emptyRows }}>
+              <TableCell colSpan={6} />
+            </TableRow>
+          )}
+        </TableBody>
+
+        <TableFooter>
+          <TableRow>
+            <TableCell colspan={2} style={{ padding: "0rem" }}>
+              <Button
+                className="add-course-btn"
+                variant="contained"
+                onClick={(event) => {
+                  Promise.resolve().then(() => {
+                    setAddMode(true);
+                    addCourse(event);
+                  });
+                }}
+                disabled={
+                  editMode || tableData.some((course) => course.id === -1)
+                    ? true
+                    : false
+                }
+              >
+                <AddIcon />
+              </Button>
+
+              <Tooltip title="Refresh table">
+                <IconButton
+                  onClick={() => {
                     Promise.resolve().then(() => {
-                      setAddMode(true);
-                      addCourse(event);
+                      setCourseInfo({
+                        courseNameInput: "",
+                        courseNumberInput: "",
+                        courseDeptCodeInput: "CPSC",
+                      });
+                      setDisciplineAreas([]);
+
+                      setEditMode(false);
+                      setEditCourseID(-1);
+                      setAddMode(false);
+
+                      getCourseList();
                     });
                   }}
-                  disabled={
-                    editMode || tableData.some((course) => course.id === -1)
-                      ? true
-                      : false
-                  }
                 >
-                  <AddIcon />
-                </Button>
+                  <AutorenewIcon />
+                </IconButton>
+              </Tooltip>
 
-                <Tooltip title="Refresh table">
-                  <IconButton
-                    onClick={() => {
-                      Promise.resolve().then(() => {
-                        setCourseInfo({
-                          courseNameInput: "",
-                          courseNumberInput: "",
-                          courseDeptCodeInput: "CPSC",
-                        });
-                        setDisciplineAreas([]);
+              <Tooltip title="Assign sections">
+                <IconButton
+                  onClick={goToAssignSectionsPage}
+                  className="go-to-assign-sections-btn"
+                  disabled={tableData.length > 0 ? false : true}
+                >
+                  <MoreTimeOutlinedIcon />
+                </IconButton>
+              </Tooltip>
+            </TableCell>
 
-                        setEditMode(false);
-                        setEditCourseID(-1);
-                        setAddMode(false);
-
-                        getCourseList();
-                      });
-                    }}
-                  >
-                    <AutorenewIcon />
-                  </IconButton>
-                </Tooltip>
-
-                <Tooltip title="Assign sections">
-                  <IconButton
-                    onClick={goToAssignSectionsPage}
-                    className="go-to-assign-sections-btn"
-                    disabled={tableData.length > 0 ? false : true}
-                  >
-                    <MoreTimeOutlinedIcon />
-                  </IconButton>
-                </Tooltip>
-              </TableCell>
-
-              <TablePagination
-                rowsPerPageOptions={[3, 5]}
-                colSpan={3}
-                count={tableData.length}
-                rowsPerPage={rowsPerPage}
-                style={{ border: "none" }}
-                page={page}
-                SelectProps={{
-                  inputProps: {
-                    "aria-label": "Rows per page",
-                  },
-                  native: true,
-                }}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                ActionsComponent={TablePaginationActions}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </ThemeProvider>
+            <TablePagination
+              rowsPerPageOptions={[3, 5]}
+              colSpan={3}
+              count={tableData.length}
+              rowsPerPage={rowsPerPage}
+              style={{ border: "none" }}
+              page={page}
+              SelectProps={{
+                inputProps: {
+                  "aria-label": "Rows per page",
+                },
+                native: true,
+              }}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              ActionsComponent={TablePaginationActions}
+            />
+          </TableRow>
+        </TableFooter>
+      </Table>
+      {/* </ThemeProvider> */}
     </TableContainer>
   );
 }
@@ -738,8 +752,8 @@ TablePaginationActions.propTypes = {
   page: PropTypes.number.isRequired,
   rowsPerPage: PropTypes.number.isRequired,
 };
-const theme = createTheme({
-  typography: {
-    fontFamily: ["Open sans"],
-  },
-});
+// const theme = createTheme({
+//   typography: {
+//     fontFamily: ["Open sans"],
+//   },
+// });

@@ -21,7 +21,8 @@ const useStyles = makeStyles({
       fontWeight: "300",
     },
     "& tbody tr:hover": {
-      backgroundColor: "#FFFBF2",
+      // backgroundColor: "#FFFBF2",
+      backgroundColor: "#fcfcfa",
       cursor: "pointer",
     },
   },
@@ -68,6 +69,7 @@ export default function useTable(tableData, headerCells, filterFn) {
     );
   }
 
+  // states for pagination
   const pages = [5, 10];
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(pages[page]);

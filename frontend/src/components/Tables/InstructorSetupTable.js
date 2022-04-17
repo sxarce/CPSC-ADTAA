@@ -26,6 +26,7 @@ import { Button } from "@mui/material";
 
 import "./InstructorSetupTable.css";
 import { ThemeProvider, createTheme, styled } from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
 
 import { TextField } from "@mui/material";
 // import { makeStyles } from "@mui/styles";
@@ -77,6 +78,22 @@ function getStyles(name, disciplineAreas, theme) {
     // fontSize: "x-small",
   };
 }
+const useStyles = makeStyles({
+  table: {
+    "& tbody tr:hover": {
+      // backgroundColor: "#FFFBF2",
+      backgroundColor: "#fcfcfa",
+      cursor: "pointer",
+    },
+  },
+});
+
+// alternative way to make styles. typography and palette.
+const outerTheme = createTheme({
+  typography: {
+    fontFamily: ["Open sans"],
+  },
+});
 
 export default function CustomPaginationActionsTable(props) {
   const [page, setPage] = React.useState(0);
@@ -142,6 +159,8 @@ export default function CustomPaginationActionsTable(props) {
     borderBottom: "1px solid #E9ECEF",
     borderTop: "1px solid #E9ECEF",
   };
+
+  const classes = useStyles();
 
   function deleteInstructor(event, lastName, firstName) {
     axios
@@ -391,8 +410,8 @@ export default function CustomPaginationActionsTable(props) {
       style={{ width: "77vw" }}
       className="instructor-card-table"
     >
-      <ThemeProvider theme={theme}>
-        <Table aria-label="Instructor table">
+      {/* <ThemeProvider theme={outerTheme}> */}
+        <Table aria-label="Instructor table" className={classes.table}>
           <TableHead>
             <TableRow>
               <TableCell
@@ -655,7 +674,7 @@ export default function CustomPaginationActionsTable(props) {
             </TableRow>
           </TableFooter>
         </Table>
-      </ThemeProvider>
+      {/* </ThemeProvider> */}
     </TableContainer>
   );
 }
@@ -728,8 +747,3 @@ TablePaginationActions.propTypes = {
   page: PropTypes.number.isRequired,
   rowsPerPage: PropTypes.number.isRequired,
 };
-const theme = createTheme({
-  typography: {
-    fontFamily: ["Open sans"],
-  },
-});

@@ -122,6 +122,7 @@ export default function SetupPage(props) {
     pageContent: {
       margin: "40px",
       padding: "24px",
+      width: "77vw", // Table is at 100%. 100% of Paper (77vw)
     },
     searchInput: {
       width: "65%",
@@ -152,7 +153,7 @@ export default function SetupPage(props) {
   const [openPopup, setOpenPopup] = React.useState(false);
   const [tableData, setTableData] = React.useState(); // records
   const [sectionToEdit, setSectionToEdit] = React.useState(null);
-  console.log(tableData);
+  // console.log(tableData);
 
   React.useEffect(() => {
     axios
@@ -193,6 +194,7 @@ export default function SetupPage(props) {
     navigate(path);
   }
 
+  // used by SectionsForm.
   const addOrEdit = (formData, resetForm) => {
     // if new
     if (formData.id === -1) {
@@ -280,7 +282,7 @@ export default function SetupPage(props) {
               }}
               handleChange={handleSearch}
             />
-            <Controls.Button
+            {/* <Controls.Button
               variant="contained"
               text="Add section"
               // classes={{startIcon: classes.startIcon}}
@@ -291,7 +293,21 @@ export default function SetupPage(props) {
                 setOpenPopup(true);
                 setSectionToEdit(null);
               }}
-            />
+            /> */}
+            <Controls.ActionButton
+              color="primary"
+              handleClick={() => {
+                setOpenPopup(true);
+                setSectionToEdit(null);
+              }}
+              style={{
+                padding: "0.65rem 2rem",
+                position: "absolute",
+                right: "30px",
+              }}
+            >
+              <AddIcon fontSize="medium" />
+            </Controls.ActionButton>
           </Toolbar>
           <TableContainer>
             <TableHeader />
@@ -332,15 +348,18 @@ export default function SetupPage(props) {
                         openInPopUp(elem);
                       }}
                       style={{ margin: "0.15rem" }}
+                      tooltipTitle="Edit"
                     >
                       <EditIcon fontSize="small" />
                     </Controls.ActionButton>
+
                     <Controls.ActionButton
                       color="secondary"
                       style={{ margin: "0.15rem" }}
                       handleClick={() => {
                         deleteSection(elem);
                       }}
+                      tooltipTitle="Delete"
                     >
                       <DeleteIcon fontSize="small" />
                     </Controls.ActionButton>
