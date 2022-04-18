@@ -1,22 +1,75 @@
 import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
+import { addMinutes } from "date-fns";
 
 // validateOnChange --> real-time validation on form.
-export function useSectionForm(initialValues, validateOnChange = false, validate) {
+export function useSectionForm(
+  initialValues,
+  validateOnChange = false,
+  validate
+) {
   const [formData, setFormData] = useState(initialValues);
+  console.log(formData);
   const [errors, setErrors] = useState({});
-  console.log(formData)
 
   function handleInputChange(event) {
     const { name, value, label } = event.target;
 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
+    // Automatically assign endTime based on name and formData.numMeetingPeriods
+    // Why? No time validation/error. Alternatively, force endTime to conform to required totalTime based on numMeetingDays.
+    let minutesToAdd = formData.numMeetingPeriods == 2 ? 75 : 50;
+    if (name === "meetingPeriod1Start") {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+        meetingPeriod1End: addMinutes(value, minutesToAdd),
+      }));
+    } else if (name === "meetingPeriod2Start") {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+        meetingPeriod2End: addMinutes(value, minutesToAdd),
+      }));
+    } else if (name === "meetingPeriod3Start") {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+        meetingPeriod3End: addMinutes(value, minutesToAdd),
+      }));
+    } else if (name === "numMeetingPeriods") {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+        meetingPeriod1End: addMinutes(
+          formData.meetingPeriod1Start,
+          value == 2 ? 75 : 50
+        ),
+        meetingPeriod2End: addMinutes(
+          formData.meetingPeriod2Start,
+          value == 2 ? 75 : 50
+        ),
+        meetingPeriod3End: addMinutes(
+          formData.meetingPeriod3Start,
+          value == 2 ? 75 : 50
+        ),
+      }));
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
+    }
+
+    // Solution for: No automatic endTime assignment based on startTime.
+    // Solution for: No automatic endTime assignment based on numMeetingPeriods
+
+    // setFormData((prevFormData) => ({
+    //   ...prevFormData,
+    //   [name]: value,
+    // }));
 
     if (validateOnChange) {
-      validate({[name] : value})
+      validate({ [name]: value });
     }
   }
 

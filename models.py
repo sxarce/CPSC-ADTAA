@@ -138,7 +138,7 @@ class Section(db.Model):
         'MeetingPeriod', backref='owning_section', lazy=True)
 
     __table_args__ = (db.UniqueConstraint('course_id', 'sectionNumber'), )
-    # UniqueConstraint: Each sectionNumber must be unique for each course_id.
+    # UniqueConstraint: Each sectionNumber must be unique for each course (course_id).
     # COMMA at end is impt. needs to be a tuple. Otherwise, compile error
 
 

@@ -6,12 +6,13 @@ import { TextField } from "@mui/material";
 
 const convertToEvent = (name, value) => ({
   target: {
-    name, value
-  }
-})
+    name,
+    value,
+  },
+});
 
 export default function TimePicker(props) {
-  const { name, label, value, handleChange } = props;
+  const { name, label, value, handleChange, ...others } = props;
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -19,8 +20,9 @@ export default function TimePicker(props) {
         name={name}
         label={label}
         value={value}
-        onChange={date => handleChange(convertToEvent(name, date))}
+        onChange={(date) => handleChange(convertToEvent(name, date))}
         renderInput={(params) => <TextField {...params} />}
+        {...others}
       />
     </LocalizationProvider>
   );

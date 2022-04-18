@@ -6,8 +6,29 @@ import { useSectionForm, Form } from "./useSectionForm";
 import { Box } from "@mui/system";
 
 import axios from "axios";
+import { add, addMinutes, differenceInMinutes, sub } from "date-fns";
 
-//  width: 50vw; height: 60vh;top: 12%;left: 20%;
+// Explanation on SectionForm validation:
+// Restrictions/Constraints:
+// Course# --> MUST NOT be empty
+// Section# --> MUST NOT be empty. MUST BE unique based on course# (e.g., There can't be two section #1 in Course# 235)
+// # of meeting days --> WILL NEVER be empty.
+// PeriodDay --> MUST NOT be empty. MUST NOT match another PeriodDay.
+// PeriodStart --> WILL NEVER be empty. MUST conform to numMeetingDays (if numMeetingDays == 2, then PeriodStart = PeriodEnd - 75. Else PeriodStart = PeriodEnd - 50)
+// PeriodEnd --> Read-only. WILL NEVER be empty. MUST conform to numMeetingDays (if numMeetingDays ==2, then PeriodEnd = PeriodStart + 75. Else PeriodEnd = PeriodStart + 50)
+
+// Handled by Frontend validation:
+// Course# --> CHECKS if not empty
+// PeriodDay --> CHECKS if not empty AND does not match other PeriodDays
+
+// Handled by backend:
+// Section# --> Unique constraint.
+
+// NOOOO PeriodStart or PeriodEnd validation?
+// None. TimePicker has minTime and maxTime to set error. That was inconvenient.
+// ALTERNATIVE: Made PeriodEnd-Field to be read-only. Upon changing PeriodStart, PeriodEnd changes based on numMeetingPeriods (latest value)
+// Changing numMeetingPeriods (using the radio button), also changes all PeriodEnds (+75min or +50min)
+// CONSEQUENCE: useSectionForm.handleInputChange is no longer reusable. SOLUTION: make another handleInputChange2 in useSectionForm to reuse.
 
 const radioGroupItems = [
   { id: 2, title: "2" }, // id is value, title is label of radio button
@@ -30,15 +51,15 @@ const initialValues = {
 
   meetingPeriod1Day: "",
   meetingPeriod1Start: new Date(),
-  meetingPeriod1End: new Date(),
+  meetingPeriod1End: add(new Date(), { minutes: 75 }),
 
   meetingPeriod2Day: "",
   meetingPeriod2Start: new Date(),
-  meetingPeriod2End: new Date(),
+  meetingPeriod2End: add(new Date(), { minutes: 75 }),
 
   meetingPeriod3Day: "",
   meetingPeriod3Start: new Date(),
-  meetingPeriod3End: new Date(),
+  meetingPeriod3End: add(new Date(), { minutes: 50 }),
 };
 export default function SectionsForm(props) {
   function getAvailableCourses() {
@@ -61,12 +82,40 @@ export default function SectionsForm(props) {
 
   const validate = (formDataFields = formData) => {
     let temp = { ...errors };
+    console.log(formDataFields);
 
     if ("sectionNumber" in formDataFields) {
-      temp.sectionNumber = formDataFields.sectionNumber ? "" : "*Required";
+      temp.sectionNumber = formDataFields.sectionNumber ? "" : "*Required"; // empty string is falsy. thus, error={key.value}
     }
     if ("courseNumber" in formDataFields) {
       temp.courseNumber = formDataFields.courseNumber ? "" : "*Required";
+    }
+
+    if ("meetingPeriod1Day" in formDataFields) {
+      temp.meetingPeriod1Day =
+        formDataFields.meetingPeriod1Day &&
+        formDataFields.meetingPeriod1Day !== formData.meetingPeriod2Day &&
+        formDataFields.meetingPeriod1Day !== formData.meetingPeriod3Day
+          ? ""
+          : "*Required. Days must be unique.";
+    }
+    if ("meetingPeriod2Day" in formDataFields) {
+      temp.meetingPeriod2Day =
+        formDataFields.meetingPeriod2Day &&
+        formDataFields.meetingPeriod2Day !== formData.meetingPeriod1Day &&
+        formDataFields.meetingPeriod2Day !== formData.meetingPeriod3Day
+          ? ""
+          : "*Required. Days must be unique.";
+    }
+    if (formData.numMeetingPeriods == 3) {
+      if ("meetingPeriod3Day" in formDataFields) {
+        temp.meetingPeriod3Day =
+          formDataFields.meetingPeriod3Day &&
+          formDataFields.meetingPeriod3Day !== formData.meetingPeriod1Day &&
+          formDataFields.meetingPeriod3Day !== formData.meetingPeriod2Day
+            ? ""
+            : "*Required. Days must be unique.";
+      }
     }
 
     setErrors({ ...temp });
@@ -87,7 +136,7 @@ export default function SectionsForm(props) {
 
   const { addOrEdit, sectionToEdit } = props;
 
-  // FOR displaying input inside form upon clicking edit-btn
+  // FOR displaying input inside form after clicking edit-btn
   React.useEffect(() => {
     if (sectionToEdit !== null) {
       // console.log(sectionToEdit);
@@ -109,16 +158,16 @@ export default function SectionsForm(props) {
 
         meetingPeriod3Day:
           sectionToEdit.numMeetingPeriods <= 2
-            ? new Date()
+            ? ""
             : sectionToEdit.meetingPeriods[2].meetDay,
         meetingPeriod3Start:
           sectionToEdit.numMeetingPeriods <= 2
-            ? new Date()
-            : sectionToEdit.meetingPeriods[2].startTime,
+            ? new Date() // new Date(). Otherwise, time picker throws a stupid error.
+            : new Date(sectionToEdit.meetingPeriods[2].startTime), // time picker only allows Date() objects.
         meetingPeriod3End:
           sectionToEdit.numMeetingPeriods <= 2
             ? new Date()
-            : sectionToEdit.meetingPeriods[2].endTime,
+            : new Date(sectionToEdit.meetingPeriods[2].endTime),
       });
     }
   }, [sectionToEdit]);
@@ -176,6 +225,7 @@ export default function SectionsForm(props) {
                 value={formData.meetingPeriod1Day}
                 handleChange={handleInputChange}
                 options2={validClassDays}
+                error={errors.meetingPeriod1Day}
               />
             </Grid>
 
@@ -192,7 +242,8 @@ export default function SectionsForm(props) {
                 name="meetingPeriod1End"
                 label="Period 1 End time"
                 value={formData.meetingPeriod1End}
-                handleChange={handleInputChange}
+                // handleChange={handleInputChange}
+                readOnly
               />
             </Grid>
 
@@ -204,6 +255,7 @@ export default function SectionsForm(props) {
                 value={formData.meetingPeriod2Day}
                 handleChange={handleInputChange}
                 options2={validClassDays}
+                error={errors.meetingPeriod2Day}
               />
             </Grid>
             <Grid item xs={3.5}>
@@ -219,7 +271,8 @@ export default function SectionsForm(props) {
                 name="meetingPeriod2End"
                 label="Period 2 End time"
                 value={formData.meetingPeriod2End}
-                handleChange={handleInputChange}
+                // handleChange={handleInputChange}
+                readOnly
               />
             </Grid>
             {formData.numMeetingPeriods == "3" && (
@@ -232,6 +285,7 @@ export default function SectionsForm(props) {
                     value={formData.meetingPeriod3Day}
                     handleChange={handleInputChange}
                     options2={validClassDays}
+                    error={errors.meetingPeriod3Day}
                   />
                 </Grid>
                 <Grid item xs={3.5} align="center">
@@ -247,7 +301,8 @@ export default function SectionsForm(props) {
                     name="meetingPeriod3End"
                     label="Period 3 End time"
                     value={formData.meetingPeriod3End}
-                    handleChange={handleInputChange}
+                    // handleChange={handleInputChange}
+                    readOnly
                   />
                 </Grid>
               </>

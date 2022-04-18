@@ -34,6 +34,7 @@ import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 
 export default function SetupPage(props) {
   const [loading, setLoading] = React.useState(true); // For <Loader />
@@ -303,7 +304,7 @@ export default function SetupPage(props) {
               style={{
                 padding: "0.65rem 2rem",
                 position: "absolute",
-                right: "30px",
+                right: "20px",
               }}
             >
               <AddIcon fontSize="medium" />
