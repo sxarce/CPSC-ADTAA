@@ -20,6 +20,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { Link } from "react-router-dom";
+import Notification from "../../components/Forms/SectionForm/controls/Notification";
 
 /* FORM VALIDATION REGEX */
 const USERNAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
@@ -27,6 +28,11 @@ const EMAIL_REGEX = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 export default function RegisterPage() {
+  const [notify, setNotify] = React.useState({
+    isOpen: false,
+    message: "",
+    type: "",
+  });
   const [formData, setFormData] = React.useState({
     email: "",
     username: "",
@@ -38,11 +44,21 @@ export default function RegisterPage() {
 
   const insertUser = () => {
     axios
-      .post("http://localhost:5000/register-user", formData)
+      .post("/register-user", formData)
       .then((response) => {
         console.log(response);
+        setNotify({
+          isOpen: true,
+          message: "Registration request submitted! Check your email for a confirmation link.",
+          type: "success",
+        });
       })
       .catch((error) => {
+        setNotify({
+          isOpen: true,
+          message: "Unable to submit a registration request",
+          type: "error",
+        });
         console.log(error);
       });
   };
@@ -51,10 +67,10 @@ export default function RegisterPage() {
     e.preventDefault();
 
     /* prevent js button-enabling hack */
-    const usernameTest = USERNAME_REGEX.test(formData.username)
-    const passwordTest = PWD_REGEX.test(formData.password)
+    const usernameTest = USERNAME_REGEX.test(formData.username);
+    const passwordTest = PWD_REGEX.test(formData.password);
     if (!usernameTest || !passwordTest) {
-      setErrMsg("Invalid entry")
+      setErrMsg("Invalid entry");
       return;
     }
 
@@ -343,6 +359,7 @@ export default function RegisterPage() {
           </div>
         </form>
       </div>
+      <Notification notify={notify} setNotify={setNotify} />
     </div>
   );
 }

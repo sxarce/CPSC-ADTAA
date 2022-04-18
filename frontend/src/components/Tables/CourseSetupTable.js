@@ -97,6 +97,8 @@ export default function CustomPaginationActionsTable(props) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+  const { setNotify } = props;
+
   const [tableData, setTableData] = React.useState([]);
   // console.log(tableData);
   const [courseInfo, setCourseInfo] = React.useState({
@@ -188,8 +190,19 @@ export default function CustomPaginationActionsTable(props) {
         console.log(response);
         const data = response.data;
         data.access_token && props.setToken(data.access_token);
+
+        setNotify({
+          isOpen: true,
+          message: "Course deleted!",
+          type: "success",
+        });
       })
       .catch((error) => {
+        setNotify({
+          isOpen: true,
+          message: "Unable to delete course!",
+          type: "error",
+        });
         console.log(error);
         localStorage.removeItem("token");
       });
@@ -221,8 +234,22 @@ export default function CustomPaginationActionsTable(props) {
           },
         }
       )
-      .then((response) => console.log(response))
-      .catch((error) => console.log(error));
+      .then((response) => {
+        setNotify({
+          isOpen: true,
+          message: "Course added/modified!",
+          type: "success",
+        });
+        console.log(response);
+      })
+      .catch((error) => {
+        setNotify({
+          isOpen: true,
+          message: "Unable to add/modify course!",
+          type: "error",
+        });
+        console.log(error);
+      });
   }
 
   function addCourse(event) {

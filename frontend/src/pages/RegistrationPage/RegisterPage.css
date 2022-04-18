@@ -123,6 +123,7 @@ form.input-fields input {
 
 .register-btn:disabled {
   background: #746b6b !important;
+  cursor: default;
 }
 .register-btn {
   background: #6f2539 !important;
@@ -132,7 +133,7 @@ form.input-fields input {
   font-weight: 700 !important;
   font-size: 100% !important;
   border: none;
-  padding: 1rem ;
+  padding: 1rem;
   margin-top: 2rem !important;
   margin-bottom: 1rem !important;
   width: 65%;
@@ -140,7 +141,7 @@ form.input-fields input {
   /* min-width: 240px; */
   align-self: center;
   /* or 130% */
-
+  cursor: pointer;
   text-align: center;
 
   color: #ffffff !important;

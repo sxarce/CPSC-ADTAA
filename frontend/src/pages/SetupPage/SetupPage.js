@@ -10,8 +10,16 @@ import axios from "axios";
 import Loader from "../../components/LoadingScreen/Loader";
 import { Navigate } from "react-router-dom";
 
+import Notification from "../../components/Forms/SectionForm/controls/Notification"
+
 export default function SetupPage(props) {
   const [loading, setLoading] = React.useState(true); // For <Loader />
+
+  const [notify, setNotify] = React.useState({
+    isOpen: false,
+    message: "",
+    type: "",
+  });
 
   const [credentials, setCredentials] = React.useState(null);
   React.useEffect(() => {
@@ -67,12 +75,13 @@ export default function SetupPage(props) {
       />
 
       <div className="table-container-setup">
-        <InstructorSetupTable token={props.token} setToken={props.setToken} />
+        <InstructorSetupTable token={props.token} setToken={props.setToken} setNotify={setNotify}/>
         <br />
         <br />
         <br />
 
-        <CourseSetupTable token={props.token} setToken={props.setToken} />
+        <CourseSetupTable token={props.token} setToken={props.setToken} setNotify={setNotify} />
+        <Notification notify={notify} setNotify={setNotify} />
       </div>
     </div>
   );

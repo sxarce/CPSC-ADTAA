@@ -99,6 +99,8 @@ export default function CustomPaginationActionsTable(props) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+  const { setNotify } = props;
+
   const [tableData, setTableData] = React.useState([]);
   // console.log(tableData);
   const [instructorName, setInstructorName] = React.useState({
@@ -181,8 +183,19 @@ export default function CustomPaginationActionsTable(props) {
         console.log(response);
         const data = response.data;
         data.access_token && props.setToken(data.access_token);
+
+        setNotify({
+          isOpen: true,
+          message: "Instructor deleted!",
+          type: "success",
+        });
       })
       .catch((error) => {
+        setNotify({
+          isOpen: true,
+          message: "Unable to delete instructor!",
+          type: "error",
+        });
         console.log(error);
         localStorage.removeItem("token");
       });
@@ -216,8 +229,22 @@ export default function CustomPaginationActionsTable(props) {
           },
         }
       )
-      .then((response) => console.log(response))
-      .catch((error) => console.log(error));
+      .then((response) => {
+        console.log(response);
+        setNotify({
+          isOpen: true,
+          message: "Instructor added/modified!",
+          type: "success",
+        });
+      })
+      .catch((error) => {
+        setNotify({
+          isOpen: true,
+          message: "Unable to add/modify instructor.",
+          type: "error",
+        });
+        console.log(error);
+      });
   }
 
   function addInstructor(event) {
@@ -411,269 +438,269 @@ export default function CustomPaginationActionsTable(props) {
       className="instructor-card-table"
     >
       {/* <ThemeProvider theme={outerTheme}> */}
-        <Table aria-label="Instructor table" className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell
-                colSpan={3}
-                style={{
-                  fontWeight: "bold",
-                  fontSize: "0.9rem",
-                  padding: "1rem 1rem 1.3rem 1rem",
-                  borderBottom: "none",
-                }}
-              >
-                Current Roster
-              </TableCell>
-              <TableCell
-                align="right"
-                colSpan={2}
-                style={{ borderBottom: "none" }}
-              >
-                Instructors
-              </TableCell>
-            </TableRow>
-            <TableRow style={HeaderBackgroundStyle}>
-              <TableCell style={HeaderStyle}>Last Name</TableCell>
-              <TableCell style={HeaderStyle}>First Name</TableCell>
-              <TableCell style={HeaderStyle}>Expertise</TableCell>
-              <TableCell
-                style={{
-                  width: "5rem",
-                  borderBottom: "none",
-                  borderTop: "none",
-                }}
-                aria-label="btns-area"
-              ></TableCell>
-            </TableRow>
-          </TableHead>
+      <Table aria-label="Instructor table" className={classes.table}>
+        <TableHead>
+          <TableRow>
+            <TableCell
+              colSpan={3}
+              style={{
+                fontWeight: "bold",
+                fontSize: "0.9rem",
+                padding: "1rem 1rem 1.3rem 1rem",
+                borderBottom: "none",
+              }}
+            >
+              Current Roster
+            </TableCell>
+            <TableCell
+              align="right"
+              colSpan={2}
+              style={{ borderBottom: "none" }}
+            >
+              Instructors
+            </TableCell>
+          </TableRow>
+          <TableRow style={HeaderBackgroundStyle}>
+            <TableCell style={HeaderStyle}>Last Name</TableCell>
+            <TableCell style={HeaderStyle}>First Name</TableCell>
+            <TableCell style={HeaderStyle}>Expertise</TableCell>
+            <TableCell
+              style={{
+                width: "5rem",
+                borderBottom: "none",
+                borderTop: "none",
+              }}
+              aria-label="btns-area"
+            ></TableCell>
+          </TableRow>
+        </TableHead>
 
-          <TableBody>
-            {(rowsPerPage > 0
-              ? tableData.slice(
-                  page * rowsPerPage,
-                  page * rowsPerPage + rowsPerPage
-                )
-              : tableData
-            ).map((row) => {
-              return (
-                <TableRow key={row.name} style={{ border: "none" }}>
-                  <TableCell className="last-name-text">
-                    {row.lastName === "" || editInstructorID === row.id ? (
-                      <TextField
-                        variant="outlined"
-                        name="lastNameInput"
-                        label="last name"
-                        style={{ width: "100%" }}
-                        value={instructorName.lastNameInput}
-                        onChange={handleInstructorInputChange}
-                        autoFocus
-                        onFocus={() => setLastNameFocus(true)}
-                        onBlur={() => setLastNameFocus(false)}
-                        error={!validLastName && lastNameFocus}
-                        autoComplete="off"
-                      />
-                    ) : (
-                      row.lastName
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {row.firstName === "" || editInstructorID === row.id ? (
-                      <TextField
-                        variant="outlined"
-                        name="firstNameInput"
-                        label="first name"
-                        style={{ width: "100%" }}
-                        value={instructorName.firstNameInput}
-                        onChange={handleInstructorInputChange}
-                        onFocus={() => setFirstNameFocus(true)}
-                        onBlur={() => setFirstNameFocus(false)}
-                        error={!validFirstName && firstNameFocus}
-                        autoComplete="off"
-                      />
-                    ) : (
-                      row.firstName
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {!row.expertise.length || editInstructorID === row.id ? (
-                      <FormControl sx={{ width: 300 }}>
-                        <InputLabel
-                          id="demo-multiple-chip-label"
-                          error={!validDisciplineAreas && disciplineAreasFocus}
-                        >
-                          Discipline areas
-                        </InputLabel>
-                        <Select
-                          labelId="demo-multiple-chip-label"
-                          label="Discipline areas"
-                          id="demo-multiple-chip"
-                          name="disciplineAreasInput"
-                          width="200"
-                          multiple
-                          value={disciplineAreas}
-                          onChange={handleSelectChange}
-                          input={
-                            <OutlinedInput
-                              id="select-multiple-chip"
-                              label="Discipline areas"
-                            />
-                          }
-                          renderValue={(selected) => (
-                            <Box
-                              sx={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                gap: 0.5,
-                              }}
-                            >
-                              {selected.map((value) => (
-                                <Chip key={value} label={value} />
-                              ))}
-                            </Box>
-                          )}
-                          MenuProps={MenuProps}
-                          onFocus={() => setDisciplineAreasFocus(true)}
-                          onBlur={() => setDisciplineAreasFocus(false)}
-                          error={!validDisciplineAreas && disciplineAreasFocus}
-                        >
-                          {recognizedDisciplineAreas.map((name) => (
-                            <MenuItem
-                              key={name}
-                              value={name}
-                              style={getStyles(name, disciplineAreas, theme)}
-                            >
-                              {name}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    ) : (
-                      <div className="list-items-discipline-areas">
-                        {row.expertise.map((disciplineArea) => (
-                          <Chip label={disciplineArea} />
+        <TableBody>
+          {(rowsPerPage > 0
+            ? tableData.slice(
+                page * rowsPerPage,
+                page * rowsPerPage + rowsPerPage
+              )
+            : tableData
+          ).map((row) => {
+            return (
+              <TableRow key={row.name} style={{ border: "none" }}>
+                <TableCell className="last-name-text">
+                  {row.lastName === "" || editInstructorID === row.id ? (
+                    <TextField
+                      variant="outlined"
+                      name="lastNameInput"
+                      label="last name"
+                      style={{ width: "100%" }}
+                      value={instructorName.lastNameInput}
+                      onChange={handleInstructorInputChange}
+                      autoFocus
+                      onFocus={() => setLastNameFocus(true)}
+                      onBlur={() => setLastNameFocus(false)}
+                      error={!validLastName && lastNameFocus}
+                      autoComplete="off"
+                    />
+                  ) : (
+                    row.lastName
+                  )}
+                </TableCell>
+                <TableCell>
+                  {row.firstName === "" || editInstructorID === row.id ? (
+                    <TextField
+                      variant="outlined"
+                      name="firstNameInput"
+                      label="first name"
+                      style={{ width: "100%" }}
+                      value={instructorName.firstNameInput}
+                      onChange={handleInstructorInputChange}
+                      onFocus={() => setFirstNameFocus(true)}
+                      onBlur={() => setFirstNameFocus(false)}
+                      error={!validFirstName && firstNameFocus}
+                      autoComplete="off"
+                    />
+                  ) : (
+                    row.firstName
+                  )}
+                </TableCell>
+                <TableCell>
+                  {!row.expertise.length || editInstructorID === row.id ? (
+                    <FormControl sx={{ width: 300 }}>
+                      <InputLabel
+                        id="demo-multiple-chip-label"
+                        error={!validDisciplineAreas && disciplineAreasFocus}
+                      >
+                        Discipline areas
+                      </InputLabel>
+                      <Select
+                        labelId="demo-multiple-chip-label"
+                        label="Discipline areas"
+                        id="demo-multiple-chip"
+                        name="disciplineAreasInput"
+                        width="200"
+                        multiple
+                        value={disciplineAreas}
+                        onChange={handleSelectChange}
+                        input={
+                          <OutlinedInput
+                            id="select-multiple-chip"
+                            label="Discipline areas"
+                          />
+                        }
+                        renderValue={(selected) => (
+                          <Box
+                            sx={{
+                              display: "flex",
+                              flexWrap: "wrap",
+                              gap: 0.5,
+                            }}
+                          >
+                            {selected.map((value) => (
+                              <Chip key={value} label={value} />
+                            ))}
+                          </Box>
+                        )}
+                        MenuProps={MenuProps}
+                        onFocus={() => setDisciplineAreasFocus(true)}
+                        onBlur={() => setDisciplineAreasFocus(false)}
+                        error={!validDisciplineAreas && disciplineAreasFocus}
+                      >
+                        {recognizedDisciplineAreas.map((name) => (
+                          <MenuItem
+                            key={name}
+                            value={name}
+                            style={getStyles(name, disciplineAreas, theme)}
+                          >
+                            {name}
+                          </MenuItem>
                         ))}
-                      </div>
-                    )}
-                  </TableCell>
+                      </Select>
+                    </FormControl>
+                  ) : (
+                    <div className="list-items-discipline-areas">
+                      {row.expertise.map((disciplineArea) => (
+                        <Chip label={disciplineArea} />
+                      ))}
+                    </div>
+                  )}
+                </TableCell>
 
-                  <TableCell>
-                    {row.id === -1 || editInstructorID === row.id ? (
-                      <Tooltip title="Save">
+                <TableCell>
+                  {row.id === -1 || editInstructorID === row.id ? (
+                    <Tooltip title="Save">
+                      <IconButton
+                        disabled={
+                          !validLastName ||
+                          !validFirstName ||
+                          !validDisciplineAreas
+                        }
+                        className="save-btn"
+                        onClick={(e) => {
+                          saveInstructor(e);
+                        }}
+                      >
+                        <SaveIcon className="save-btn-icon" />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    <>
+                      <CustomToolTip title="Edit">
                         <IconButton
-                          disabled={
-                            !validLastName ||
-                            !validFirstName ||
-                            !validDisciplineAreas
-                          }
-                          className="save-btn"
-                          onClick={(e) => {
-                            saveInstructor(e);
+                          className="edit-btn"
+                          disabled={addMode}
+                          onClick={() => {
+                            setEditInstructorID(row.id);
                           }}
                         >
-                          <SaveIcon className="save-btn-icon" />
+                          <EditIcon />
+                        </IconButton>
+                      </CustomToolTip>
+                      <Tooltip title="Delete">
+                        <IconButton
+                          className="delete-btn"
+                          onClick={(e) => {
+                            deleteInstructor(e, row.lastName, row.firstName);
+                          }}
+                        >
+                          <DeleteIcon />
                         </IconButton>
                       </Tooltip>
-                    ) : (
-                      <>
-                        <CustomToolTip title="Edit">
-                          <IconButton
-                            className="edit-btn"
-                            disabled={addMode}
-                            onClick={() => {
-                              setEditInstructorID(row.id);
-                            }}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                        </CustomToolTip>
-                        <Tooltip title="Delete">
-                          <IconButton
-                            className="delete-btn"
-                            onClick={(e) => {
-                              deleteInstructor(e, row.lastName, row.firstName);
-                            }}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </>
-                    )}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-
-            {emptyRows > 0 && (
-              <TableRow style={{ height: 53 * emptyRows }}>
-                <TableCell colSpan={6} />
+                    </>
+                  )}
+                </TableCell>
               </TableRow>
-            )}
-          </TableBody>
+            );
+          })}
 
-          <TableFooter>
-            <TableRow>
-              <Button
-                className="add-instructor-btn"
-                variant="contained"
-                onClick={(event) => {
+          {emptyRows > 0 && (
+            <TableRow style={{ height: 53 * emptyRows }}>
+              <TableCell colSpan={6} />
+            </TableRow>
+          )}
+        </TableBody>
+
+        <TableFooter>
+          <TableRow>
+            <Button
+              className="add-instructor-btn"
+              variant="contained"
+              onClick={(event) => {
+                Promise.resolve().then(() => {
+                  setAddMode(true);
+                  addInstructor(event);
+                });
+              }}
+              disabled={
+                editMode ||
+                tableData.some((instructor) => instructor.lastName === "")
+                  ? true
+                  : false
+              }
+            >
+              <AddIcon />
+            </Button>
+
+            <Tooltip title="Refresh table">
+              <IconButton
+                onClick={() => {
                   Promise.resolve().then(() => {
-                    setAddMode(true);
-                    addInstructor(event);
+                    setInstructorName({
+                      lastNameInput: "",
+                      firstNameInput: "",
+                    });
+                    setDisciplineAreas([]);
+
+                    setEditMode(false);
+                    setEditInstructorID(-1);
+                    setAddMode(false);
+
+                    getInstructorRoster();
                   });
                 }}
-                disabled={
-                  editMode ||
-                  tableData.some((instructor) => instructor.lastName === "")
-                    ? true
-                    : false
-                }
               >
-                <AddIcon />
-              </Button>
+                <AutorenewIcon />
+              </IconButton>
+            </Tooltip>
 
-              <Tooltip title="Refresh table">
-                <IconButton
-                  onClick={() => {
-                    Promise.resolve().then(() => {
-                      setInstructorName({
-                        lastNameInput: "",
-                        firstNameInput: "",
-                      });
-                      setDisciplineAreas([]);
-
-                      setEditMode(false);
-                      setEditInstructorID(-1);
-                      setAddMode(false);
-
-                      getInstructorRoster();
-                    });
-                  }}
-                >
-                  <AutorenewIcon />
-                </IconButton>
-              </Tooltip>
-
-              <TablePagination
-                rowsPerPageOptions={[3, 5]}
-                colSpan={3}
-                count={tableData.length}
-                rowsPerPage={rowsPerPage}
-                style={{ border: "none" }}
-                page={page}
-                SelectProps={{
-                  inputProps: {
-                    "aria-label": "Rows per page",
-                  },
-                  native: true,
-                }}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                ActionsComponent={TablePaginationActions}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
+            <TablePagination
+              rowsPerPageOptions={[3, 5]}
+              colSpan={3}
+              count={tableData.length}
+              rowsPerPage={rowsPerPage}
+              style={{ border: "none" }}
+              page={page}
+              SelectProps={{
+                inputProps: {
+                  "aria-label": "Rows per page",
+                },
+                native: true,
+              }}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              ActionsComponent={TablePaginationActions}
+            />
+          </TableRow>
+        </TableFooter>
+      </Table>
       {/* </ThemeProvider> */}
     </TableContainer>
   );

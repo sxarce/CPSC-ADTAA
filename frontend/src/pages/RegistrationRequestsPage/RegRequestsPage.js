@@ -10,12 +10,21 @@ import { Navigate } from "react-router-dom";
 
 import { useSpring, animated } from "react-spring";
 
+// import Notification from "../Forms/SectionForm/controls/Notification";
+import Notification from "../../components/Forms/SectionForm/controls/Notification"
+
 export default function RegRequestsPage(props) {
   // For <Loader />
   const [loading, setLoading] = useState(true);
   // useEffect(() => {
   //   setTimeout(() => setLoading(false), 900);
   // }, []);
+
+  const [notify, setNotify] = useState({
+    isOpen: false,
+    message: "",
+    type: "",
+  });
 
   const [credentials, setCredentials] = React.useState(null);
   useEffect(() => {
@@ -45,7 +54,7 @@ export default function RegRequestsPage(props) {
 
     // getRegisterRequests(); // Table used to be here. This call was needed to fill the table w/ initial data
   }, []);
-  
+
   // const fadeInAnimationStyle = useSpring({to: {opacity: 1}, from: {opacity: -1}, config : {duration: 2500} })
 
   // useEffect() runs after render. Render loading page first to ensure credentials are retrieved.
@@ -60,9 +69,13 @@ export default function RegRequestsPage(props) {
     return <Navigate replace to="/dashboard" />;
   }
   return (
-    <div className="background-requests" >
+    <div className="background-requests">
       <div className="banner-requests">
-        <img src={userBackground} alt="person logo" className="person-background" />
+        <img
+          src={userBackground}
+          alt="person logo"
+          className="person-background"
+        />
       </div>
 
       <Sidebar
@@ -75,7 +88,9 @@ export default function RegRequestsPage(props) {
         <RegistrationRequestsTable
           token={props.token}
           setToken={props.setToken}
+          setNotify={setNotify}
         />
+        <Notification notify={notify} setNotify={setNotify} />
       </div>
     </div>
   );

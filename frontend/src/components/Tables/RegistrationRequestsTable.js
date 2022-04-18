@@ -40,6 +40,8 @@ import AutorenewIcon from "@mui/icons-material/Autorenew";
 export default function RegistrationRequestsTable(props) {
   const [tableData, setTableData] = React.useState([]);
 
+  const { setNotify } = props;
+
   React.useEffect(() => getRegisterRequests(), []);
 
   function getRegisterRequests() {
@@ -78,8 +80,19 @@ export default function RegistrationRequestsTable(props) {
         console.log(response);
         const data = response.data;
         data.access_token && props.setToken(data.access_token);
+
+        setNotify({
+          isOpen: true,
+          message: "Registration request updated!",
+          type: "success",
+        });
       })
       .catch((error) => {
+        setNotify({
+          isOpen: true,
+          message: "Unable to update registration request",
+          type: "error",
+        });
         console.log(error);
         localStorage.removeItem("token");
       });
@@ -127,7 +140,7 @@ export default function RegistrationRequestsTable(props) {
       },
     },
   });
-  const classes = useStyles()
+  const classes = useStyles();
 
   return (
     <TableContainer

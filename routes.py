@@ -382,7 +382,7 @@ def confirm_email(token):
     if existing_user.email_confirmed:
         # TODO: Make template dead-end page to redirect to login (external url)
         print('Email already confirmed. Please log in', file=sys.stderr)
-        return '<p>Email already confirmed. Please log in. </p>'
+        return '<p>Email already confirmed. Please wait for you registration request to be verified. </p>'
         # return redirect('http://localhost:3000/')
     else:
         existing_user.email_confirmed = True

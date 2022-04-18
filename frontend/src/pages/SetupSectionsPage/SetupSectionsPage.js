@@ -35,6 +35,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
+import Notification from "../../components/Forms/SectionForm/controls/Notification";
 
 export default function SetupPage(props) {
   const [loading, setLoading] = React.useState(true); // For <Loader />
@@ -154,6 +155,11 @@ export default function SetupPage(props) {
   const [openPopup, setOpenPopup] = React.useState(false);
   const [tableData, setTableData] = React.useState(); // records
   const [sectionToEdit, setSectionToEdit] = React.useState(null);
+  const [notify, setNotify] = React.useState({
+    isOpen: false,
+    message: "",
+    type: "",
+  });
   // console.log(tableData);
 
   React.useEffect(() => {
@@ -206,8 +212,20 @@ export default function SetupPage(props) {
 
           // update frontend records/tableData
           setTableData(response.data.TableData);
+          setNotify({
+            isOpen: true,
+            message: "Section added!",
+            type: "success",
+          });
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          setNotify({
+            isOpen: true,
+            message: "Unable to add section. Section # must be unique.",
+            type: "error",
+          });
+          console.log(error);
+        });
     } else {
       // elif id !== -1 ---> editing section
       axios
@@ -217,8 +235,19 @@ export default function SetupPage(props) {
 
           // update frontend records/tableData
           setTableData(response.data.TableData);
+          setNotify({
+            isOpen: true,
+            message: "Section modified!",
+            type: "success",
+          });
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          setNotify({
+            isOpen: true,
+            message: "Unable to modify section.",
+            type: "success",
+          });
+          console.log(error)});
     }
 
     resetForm();
@@ -237,8 +266,20 @@ export default function SetupPage(props) {
       .then((response) => {
         // update frontend records/tableData
         setTableData(response.data.TableData);
+        setNotify({
+          isOpen: true,
+          message: "Section deleted!",
+          type: "success",
+        });
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        setNotify({
+          isOpen: true,
+          message: "Unable to delete section!",
+          type: "error",
+        });
+        console.log(error);
+      });
   }
 
   if (loading === true) return <Loader message={""} />;
@@ -397,6 +438,7 @@ export default function SetupPage(props) {
             sectionToEdit={sectionToEdit}
           />
         </Popup>
+        <Notification notify={notify} setNotify={setNotify} />
       </div>
     </div>
   );

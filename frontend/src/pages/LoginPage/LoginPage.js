@@ -16,7 +16,9 @@ import axios from "axios";
 import { animated, useSpring } from "react-spring";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+
+import Notification from "../../components/Forms/SectionForm/controls/Notification";
 
 const LoginPage = (props) => {
   // TEST ONLY: sends ONE email upon visiting the website.
@@ -44,6 +46,11 @@ const LoginPage = (props) => {
         return props.setToken(response.data.access_token);
       })
       .catch((error) => {
+        setNotify({
+          isOpen: true,
+          message: "Login failed. Check details and try again.",
+          type: "error",
+        });
         if (error.response) {
           console.log(error.response);
           console.log(error.response.status);
@@ -63,6 +70,11 @@ const LoginPage = (props) => {
     });
   }
 
+  const [notify, setNotify] = useState({
+    isOpen: false,
+    message: "",
+    type: "",
+  });
   const [formData, setFormData] = useState({
     usernameInput: "",
     passwordInput: "",
@@ -108,8 +120,6 @@ const LoginPage = (props) => {
     from: { opacity: -1 },
     config: { duration: 2500 },
   });
-
-  
 
   return (
     <animated.div className="background" style={fadeInAnimationStyle}>
@@ -201,6 +211,7 @@ const LoginPage = (props) => {
           </form>
         </div>
       </section>
+      <Notification notify={notify} setNotify={setNotify} />
     </animated.div>
   );
 };
