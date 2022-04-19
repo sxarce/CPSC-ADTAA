@@ -14,6 +14,11 @@
   /* min-height: 100vh; */
   transition: 0.3s;
 }
+@media all and (max-height: 1020px){
+  .sidebar {
+    width: 13.5rem;
+  }
+}
 .sidebar:hover {
   background: #d8c6ca;
   box-shadow: 5px 10px 21px -6px #5b525a;

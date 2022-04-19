@@ -136,6 +136,7 @@ class Section(db.Model):
 
     meetingPeriods = db.relationship(
         'MeetingPeriod', backref='owning_section', lazy=True)
+    assignedInstructor = db.Column(db.Integer, db.ForeignKey('instructor.id'), nullable=True)
 
     __table_args__ = (db.UniqueConstraint('course_id', 'sectionNumber'), )
     # UniqueConstraint: Each sectionNumber must be unique for each course (course_id).

@@ -4,7 +4,7 @@
 .background-setup-sections {
   position: relative;
   width: 100vw;
-  height: 180vh;
+  height: 200vh;
   background-color: rgb(231, 235, 240);
 }
 
@@ -40,7 +40,7 @@
   }
   .table-container-setup-sections {
     left: 14% !important;
-    top: 6.5% !important;
+    top: 5.5% !important;
   }
 }
 
