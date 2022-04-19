@@ -46,7 +46,7 @@ def send_confirmation_email(user_email):
         _external=True
     )
 
-    msg = Message(subject='Confirm Your Email Address',
+    msg = Message(subject='CPSC-ADTAA: Confirm Your Email Address',
                   html=render_template(
                       'email_confirmation.html', confirm_url=confirm_url),
                   recipients=[user_email], sender=app.config['MAIL_USERNAME'])
@@ -376,13 +376,15 @@ def confirm_email(token):
     except BadSignature:
         # TODO: redirect template dead-end page
         print("The confirmation link is expired.", file=sys.stderr)
+        # return '<p>The confirmation link is expired</p>'
+        return render_template('dead_end_page.html', msg="The confirmation link is expired")
 
     existing_user = User.query.filter_by(email=email).first()
 
     if existing_user.email_confirmed:
         # TODO: Make template dead-end page to redirect to login (external url)
-        print('Email already confirmed. Please log in', file=sys.stderr)
-        return '<p>Email already confirmed. Please wait for you registration request to be verified. </p>'
+        # return '<p>Email already confirmed. Please wait for your registration request to be verified. </p>'
+        return render_template('dead_end_page.html', msg="Email already confirmed. Please wait for your registration request to be verified.")
         # return redirect('http://localhost:3000/')
     else:
         existing_user.email_confirmed = True
@@ -392,8 +394,9 @@ def confirm_email(token):
         db.session.add(existing_user)
         db.session.commit()
         # TODO: redirect to template dead-end page
-        print('Thank you for confirming your email address.', file=sys.stderr)
-        return '<p> Thank you for confirming your email address'
+        print('Thank you for confirming your email address. ', file=sys.stderr)
+        # return '<p> Thank you for confirming your email address </p>'
+        return render_template('dead_end_page.html', msg="Thank you for confirming your email address. Please wait for your registration request to be verified.")
 
     # return jsonify(logged_in_as=existing_user.email), 200
     # return '<p> email confirmed </p>'
@@ -432,7 +435,7 @@ def login_user():  # create_token()
     print(attempted_user, file=sys.stderr)
 
     if not attempted_user or attempted_user.password != passwordInput:
-        return {"msg": "wrong email or password"}, 401
+        return {"msg": "Wrong email or password"}, 401
     elif not attempted_user.isValid:
         return {"msg": "Invalid account. User with pending registration request."}, 401
 

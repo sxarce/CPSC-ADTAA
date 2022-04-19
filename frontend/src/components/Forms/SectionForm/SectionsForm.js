@@ -31,6 +31,7 @@ import { add, addMinutes, differenceInMinutes, sub } from "date-fns";
 // CONSEQUENCE: useSectionForm.handleInputChange is no longer reusable. SOLUTION: make another handleInputChange2 in useSectionForm to reuse.
 
 const radioGroupItems = [
+  { id: 1, title: "1" }, // NEW_ADD_ONE
   { id: 2, title: "2" }, // id is value, title is label of radio button
   { id: 3, title: "3" },
 ];
@@ -99,14 +100,18 @@ export default function SectionsForm(props) {
           ? ""
           : "*Required. Days must be unique.";
     }
-    if ("meetingPeriod2Day" in formDataFields) {
-      temp.meetingPeriod2Day =
-        formDataFields.meetingPeriod2Day &&
-        formDataFields.meetingPeriod2Day !== formData.meetingPeriod1Day &&
-        formDataFields.meetingPeriod2Day !== formData.meetingPeriod3Day
-          ? ""
-          : "*Required. Days must be unique.";
+    if (formData.numMeetingPeriods == 2) {
+      // NEW_ADD_ONE
+      if ("meetingPeriod2Day" in formDataFields) {
+        temp.meetingPeriod2Day =
+          formDataFields.meetingPeriod2Day &&
+          formDataFields.meetingPeriod2Day !== formData.meetingPeriod1Day &&
+          formDataFields.meetingPeriod2Day !== formData.meetingPeriod3Day
+            ? ""
+            : "*Required. Days must be unique.";
+      }
     }
+
     if (formData.numMeetingPeriods == 3) {
       if ("meetingPeriod3Day" in formDataFields) {
         temp.meetingPeriod3Day =
@@ -149,23 +154,37 @@ export default function SectionsForm(props) {
           sectionToEdit.meetingPeriods[0].startTime
         ),
         meetingPeriod1End: new Date(sectionToEdit.meetingPeriods[0].endTime),
+        
+        // Back when life was much fun and simpler... 2 v 3 meetingPeriods.
+        // meetingPeriod2Day: sectionToEdit.meetingPeriods[1].meetDay,
+        // meetingPeriod2Start: new Date(
+        //   sectionToEdit.meetingPeriods[1].startTime
+        // ),
+        // meetingPeriod2End: new Date(sectionToEdit.meetingPeriods[1].endTime),
 
-        meetingPeriod2Day: sectionToEdit.meetingPeriods[1].meetDay,
-        meetingPeriod2Start: new Date(
-          sectionToEdit.meetingPeriods[1].startTime
-        ),
-        meetingPeriod2End: new Date(sectionToEdit.meetingPeriods[1].endTime),
+        meetingPeriod2Day:
+        sectionToEdit.numMeetingPeriods <= 1
+          ? ""
+          : sectionToEdit.meetingPeriods[1].meetDay,
+        meetingPeriod2Start:
+          sectionToEdit.numMeetingPeriods <= 1 
+            ? new Date()
+            : new Date(sectionToEdit.meetingPeriods[1].startTime),
+        meetingPeriod2End:
+          sectionToEdit.numMeetingPeriods <= 1 
+            ? new Date()
+            : new Date(sectionToEdit.meetingPeriods[1].endTime),
 
         meetingPeriod3Day:
           sectionToEdit.numMeetingPeriods <= 2
             ? ""
             : sectionToEdit.meetingPeriods[2].meetDay,
         meetingPeriod3Start:
-          sectionToEdit.numMeetingPeriods <= 2
+          sectionToEdit.numMeetingPeriods <= 2 
             ? new Date() // new Date(). Otherwise, time picker throws a stupid error.
             : new Date(sectionToEdit.meetingPeriods[2].startTime), // time picker only allows Date() objects.
         meetingPeriod3End:
-          sectionToEdit.numMeetingPeriods <= 2
+          sectionToEdit.numMeetingPeriods <= 2 
             ? new Date()
             : new Date(sectionToEdit.meetingPeriods[2].endTime),
       });
@@ -215,7 +234,7 @@ export default function SectionsForm(props) {
             items={radioGroupItems}
           />
         </Grid>
-        {formData.numMeetingPeriods && (
+        {formData.numMeetingPeriods >= "1" && (
           <>
             <Grid item xs={5}>
               <Controls.Select
@@ -246,65 +265,68 @@ export default function SectionsForm(props) {
                 readOnly
               />
             </Grid>
-
-            <Grid item xs={5}>
-              <Controls.Select
-                name="meetingPeriod2Day"
-                variant="standard"
-                label="Period 2 Day"
-                value={formData.meetingPeriod2Day}
-                handleChange={handleInputChange}
-                options2={validClassDays}
-                error={errors.meetingPeriod2Day}
-              />
-            </Grid>
-            <Grid item xs={3.5}>
-              <Controls.TimePicker
-                name="meetingPeriod2Start"
-                label="Period 2 Start time"
-                value={formData.meetingPeriod2Start}
-                handleChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={3.5}>
-              <Controls.TimePicker
-                name="meetingPeriod2End"
-                label="Period 2 End time"
-                value={formData.meetingPeriod2End}
-                // handleChange={handleInputChange}
-                readOnly
-              />
-            </Grid>
-            {formData.numMeetingPeriods == "3" && (
+            {formData.numMeetingPeriods >= "2" && (
               <>
                 <Grid item xs={5}>
                   <Controls.Select
-                    name="meetingPeriod3Day"
+                    name="meetingPeriod2Day"
                     variant="standard"
-                    label="Period 3 Day"
-                    value={formData.meetingPeriod3Day}
+                    label="Period 2 Day"
+                    value={formData.meetingPeriod2Day}
                     handleChange={handleInputChange}
                     options2={validClassDays}
-                    error={errors.meetingPeriod3Day}
+                    error={errors.meetingPeriod2Day}
                   />
                 </Grid>
-                <Grid item xs={3.5} align="center">
+                <Grid item xs={3.5}>
                   <Controls.TimePicker
-                    name="meetingPeriod3Start"
-                    label="Period 3 Start time"
-                    value={formData.meetingPeriod3Start}
+                    name="meetingPeriod2Start"
+                    label="Period 2 Start time"
+                    value={formData.meetingPeriod2Start}
                     handleChange={handleInputChange}
                   />
                 </Grid>
-                <Grid item xs={3.5} align="center">
+                <Grid item xs={3.5}>
                   <Controls.TimePicker
-                    name="meetingPeriod3End"
-                    label="Period 3 End time"
-                    value={formData.meetingPeriod3End}
+                    name="meetingPeriod2End"
+                    label="Period 2 End time"
+                    value={formData.meetingPeriod2End}
                     // handleChange={handleInputChange}
                     readOnly
                   />
                 </Grid>
+                {formData.numMeetingPeriods >= "3" && (
+                  <>
+                    <Grid item xs={5}>
+                      <Controls.Select
+                        name="meetingPeriod3Day"
+                        variant="standard"
+                        label="Period 3 Day"
+                        value={formData.meetingPeriod3Day}
+                        handleChange={handleInputChange}
+                        options2={validClassDays}
+                        error={errors.meetingPeriod3Day}
+                      />
+                    </Grid>
+                    <Grid item xs={3.5} align="center">
+                      <Controls.TimePicker
+                        name="meetingPeriod3Start"
+                        label="Period 3 Start time"
+                        value={formData.meetingPeriod3Start}
+                        handleChange={handleInputChange}
+                      />
+                    </Grid>
+                    <Grid item xs={3.5} align="center">
+                      <Controls.TimePicker
+                        name="meetingPeriod3End"
+                        label="Period 3 End time"
+                        value={formData.meetingPeriod3End}
+                        // handleChange={handleInputChange}
+                        readOnly
+                      />
+                    </Grid>
+                  </>
+                )}
               </>
             )}
           </>

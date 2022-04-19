@@ -245,7 +245,7 @@ export default function SetupPage(props) {
           setNotify({
             isOpen: true,
             message: "Unable to modify section.",
-            type: "success",
+            type: "error",
           });
           console.log(error)});
     }
@@ -376,7 +376,18 @@ export default function SetupPage(props) {
                       </TableCell>
                     </>
                   ))}
-                  {elem.meetingPeriods.length <= 2 && (
+                  
+                  {elem.meetingPeriods.length === 1 && (
+                    <>
+                      <TableCell></TableCell>
+                      <TableCell></TableCell>
+                      <TableCell></TableCell>
+                      <TableCell></TableCell>
+                      <TableCell></TableCell>
+                      <TableCell></TableCell>
+                    </>
+                  )}
+                  {elem.meetingPeriods.length === 2 && (
                     <>
                       <TableCell></TableCell>
                       <TableCell></TableCell>

@@ -48,13 +48,13 @@ const LoginPage = (props) => {
       .catch((error) => {
         setNotify({
           isOpen: true,
-          message: "Login failed. Check details and try again.",
+          message: `Login failed: ${error.response.data.msg}`,
           type: "error",
         });
         if (error.response) {
           console.log(error.response);
-          console.log(error.response.status);
-          console.log(error.response.headers);
+          // console.log(error.response.status);
+          // console.log(error.response.headers);
         }
       });
   };
