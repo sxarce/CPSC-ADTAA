@@ -377,14 +377,14 @@ def confirm_email(token):
         # TODO: redirect template dead-end page
         print("The confirmation link is expired.", file=sys.stderr)
         # return '<p>The confirmation link is expired</p>'
-        return render_template('dead_end_page.html', msg="The confirmation link is expired")
+        return render_template('dead_end_page.html', msg="This confirmation link is expired", affirm=False)
 
     existing_user = User.query.filter_by(email=email).first()
 
     if existing_user.email_confirmed:
         # TODO: Make template dead-end page to redirect to login (external url)
         # return '<p>Email already confirmed. Please wait for your registration request to be verified. </p>'
-        return render_template('dead_end_page.html', msg="Email already confirmed. Please wait for your registration request to be verified.")
+        return render_template('dead_end_page.html', msg="Email already confirmed. Please wait for your registration request to be verified.", affirm=False)
         # return redirect('http://localhost:3000/')
     else:
         existing_user.email_confirmed = True
@@ -396,7 +396,7 @@ def confirm_email(token):
         # TODO: redirect to template dead-end page
         print('Thank you for confirming your email address. ', file=sys.stderr)
         # return '<p> Thank you for confirming your email address </p>'
-        return render_template('dead_end_page.html', msg="Thank you for confirming your email address. Please wait for your registration request to be verified.")
+        return render_template('dead_end_page.html', msg="Thank you for confirming your email address. Please wait for your registration request to be verified.", affirm=True)
 
     # return jsonify(logged_in_as=existing_user.email), 200
     # return '<p> email confirmed </p>'
