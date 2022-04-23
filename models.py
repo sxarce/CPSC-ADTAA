@@ -53,7 +53,7 @@ class Instructor(db.Model):
     maxLoad = db.Column(db.Integer, nullable=False, default=4)
 
     def __repr__(self):
-        return f'INSTRUCTOR -> NAME: {self.firstName} {self.lastName}, disciplineAreas: {self.disciplineAreas}'
+        return f'INSTRUCTOR -> NAME: {self.firstName} {self.lastName}, maxLoad: {self.maxLoad}\n disciplineAreas: {self.disciplineAreas}'
 
 
 class InstructorSchema(ma.Schema):
@@ -71,6 +71,9 @@ class InstructorDisciplineArea(db.Model):
     name = db.Column(db.String(50), nullable=False)
     instructor_id = db.Column(db.Integer, db.ForeignKey(
         'instructor.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<INSTRUCTOR DA >> NAME: {self.name}, INSTRUCTOR_ID: {self.instructor_id}>'
 
 
 class InstructorDisciplineAreaSchema(ma.Schema):
@@ -117,6 +120,10 @@ class CourseDisciplineArea(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey(
         'course.id'), nullable=False)
 
+    def __repr__(self):
+        # for debugging
+        return f'<COURSE DA >> NAME: {self.name}, COURSE_ID: {self.course_id}>'
+
 
 class CourseDisciplineAreaSchema(ma.Schema):
     class Meta:
@@ -136,11 +143,15 @@ class Section(db.Model):
 
     meetingPeriods = db.relationship(
         'MeetingPeriod', backref='owning_section', lazy=True)
-    assignedInstructor = db.Column(db.Integer, db.ForeignKey('instructor.id'), nullable=True)
+    assignedInstructor = db.Column(
+        db.Integer, db.ForeignKey('instructor.id'), nullable=True)
 
     __table_args__ = (db.UniqueConstraint('course_id', 'sectionNumber'), )
     # UniqueConstraint: Each sectionNumber must be unique for each course (course_id).
     # COMMA at end is impt. needs to be a tuple. Otherwise, compile error
+
+    def __repr__(self):
+        return f'SECTION -> Sec.#: {self.sectionNumber}, COURSE: {self.course_id}\n MeetingPeriods: {self.meetingPeriods}, assignedInstructor: {self.assignedInstructor}'
 
 
 class SectionSchema(ma.Schema):
@@ -160,6 +171,9 @@ class MeetingPeriod(db.Model):
     section_id = db.Column(db.Integer, db.ForeignKey(
         'section.id'), nullable=False)
 
+    def __repr__(self):
+        return f'<MEET_PERIOD >> DAY: {self.meetDay}, START: {self.startTime}, END: {self.endTime}>'
+
 
 class MeetingPeriodSchema(ma.Schema):
     class Meta:
@@ -169,6 +183,46 @@ class MeetingPeriodSchema(ma.Schema):
 meetingPeriod_schema = MeetingPeriodSchema()
 meetingPeriods_schema = MeetingPeriodSchema(many=True)
 
+
+########################################################
+###################### SCHEDULES #######################
+########################################################
+
+class PartialSchedule(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    assignedClasses = db.relationship(
+        'AssignedClass', backref='owning_schedule', lazy=True)
+
+    # def __repr__(self):
+    #     return f'Assigned Classes: {self.assignedClasses}'
+
+
+class PartialScheduleSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "assignedClasses")
+
+
+partialSchedule_schema = PartialScheduleSchema()
+partialSchedules_schema = PartialScheduleSchema(many=True)
+
+
+class AssignedClass(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    assigned_section = db.Column(
+        db.Integer, db.ForeignKey('section.id'), nullable=True)
+    assigned_instructor = db.Column(
+        db.Integer, db.ForeignKey('instructor.id'), nullable=True)
+    schedule_id = db.Column(db.Integer, db.ForeignKey(
+        'partial_schedule.id'), nullable=False)
+
+
+class AssignedClassSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "assigned_section", "assigned_instructor")
+
+
+assignedClass_schema = AssignedClassSchema()
+assignedClasses_schema = AssignedClassSchema(many=True)
 
 # class Articles(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)

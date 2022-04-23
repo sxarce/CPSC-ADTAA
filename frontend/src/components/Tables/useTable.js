@@ -16,13 +16,15 @@ const useStyles = makeStyles({
       fontWeight: "600",
       backgroundColor: "rgb(246, 249, 252)",
       color: "rgb(136, 152, 170)",
+      padding: "8px",
     },
     "& tbody td": {
       fontWeight: "300",
+      padding: "8px",
     },
     "& tbody tr:hover": {
-      // backgroundColor: "#FFFBF2",
-      backgroundColor: "#fcfcfa",
+      backgroundColor: "#FFFBF2",
+      // backgroundColor: "#fcfcfa",
       cursor: "pointer",
     },
   },

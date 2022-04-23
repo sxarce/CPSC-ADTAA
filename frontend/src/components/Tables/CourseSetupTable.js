@@ -86,8 +86,8 @@ function getStyles(name, disciplineAreas, theme) {
 const useStyles = makeStyles({
   table: {
     "& tbody tr:hover": {
-      // backgroundColor: "#FFFBF2",
-      backgroundColor: "#fcfcfa",
+      backgroundColor: "#FFFBF2",
+      // backgroundColor: "#fcfcfa",
       cursor: "pointer",
     },
   },

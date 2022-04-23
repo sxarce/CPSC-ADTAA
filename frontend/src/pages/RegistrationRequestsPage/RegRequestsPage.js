@@ -48,7 +48,8 @@ export default function RegRequestsPage(props) {
           console.log(error.response);
           console.log(error.response.status);
           console.log(error.response.headers);
-          localStorage.removeItem("token");
+          // localStorage.removeItem("token");
+          props.removeToken()
         }
       });
 

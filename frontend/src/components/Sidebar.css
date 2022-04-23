@@ -16,7 +16,7 @@
 }
 @media all and (max-height: 1020px){
   .sidebar {
-    width: 13.5rem;
+    width: 12.5rem;
   }
 }
 .sidebar:hover {

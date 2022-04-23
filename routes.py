@@ -10,6 +10,8 @@ from models import Course, course_schema, courses_schema
 from models import CourseDisciplineArea, courseDisciplineArea_schema, courseDisciplineAreas_schema
 from models import Section, section_schema, sections_schema
 from models import MeetingPeriod, meetingPeriod_schema, meetingPeriods_schema
+from models import PartialSchedule, partialSchedule_schema, partialSchedules_schema
+from models import AssignedClass, assignedClass_schema, assignedClasses_schema
 from flask_login import login_user
 
 import sys
@@ -53,9 +55,62 @@ def send_confirmation_email(user_email):
 
     return mail.send(msg)
 
+# Needed by section routes.
+
+
+def convert_utc_to_cst(utc_time):
+    from_zone = tz.gettz('UTC')
+    to_zone = tz.gettz('America/Chicago')
+
+    utc = datetime.strptime(utc_time, '%Y-%m-%dT%H:%M:%S.%fZ')
+    utc = utc.replace(tzinfo=from_zone)
+    return utc.astimezone(to_zone)
+
 #############################################
 ################## routes ###################
 #############################################
+
+
+@app.route("/get-schedules")
+def get_schedules():
+
+    # CONSTRAINT: Cant modify DB directly (Shallow-copy).
+    # SOLUTION: Instead match everything here, create assigned classes and push as schedule
+
+    # REMINDERS:
+    # (1) ACCESSING SECTIONS FROM COURSE
+    # for course in Course.query.all():
+    #     print(f'{course.sections}', file=sys.stderr)
+
+    # (2) ACCESSING INSRUCTORS FROM SECTION
+    # for section in Section.query.all():
+    #     print(f'{section.assignedInstructor}', file=sys.stderr)
+
+    # (3) ACCESSING TIME
+    # type(section.meetingPeriods[0].endTime) === datetime.datetime
+    # timeOnly = sectionsList[0].meetingPeriods[0].endTime.replace(microsecond=0).time()
+    #
+    # if sectionsList[0].meetingPeriods[0].startTime.replace(microsecond=0).time() < sectionsList[0].meetingPeriods[0].endTime.replace(microsecond=0).time():
+    #     print(f'startTime less than endTime', file=sys.stderr)
+
+    # (4) MUTATE INSTRUCTOR COPY
+    # sortedInstructorRoster[0].maxLoad = 3
+    # print(f'{sortedInstructorRoster}', file=sys.stderr)
+
+    # PLAN:
+    # PartialSchedule contains a list of Pair<Section, Instructor>
+    # The pair is a db.Model (AssignedClass) which belongs to a specific PartialSchedule
+    # Create assigned classes by passing in both instructor and section ID's
+    # Pass in owning_schedule
+
+    sortedInstructorRoster = sorted(Instructor.query.all(
+    ), key=lambda instructor: len(instructor.disciplineAreas))
+    sectionsList = Section.query.all()
+
+    
+        
+
+    return {"Message": "Okay"}
 
 
 @app.route("/delete-instructor", methods=['GET', 'POST'])
@@ -239,17 +294,8 @@ def add_course():
     return jsonify({'Message': f'Course added/modified!'})
 
 
-def convert_utc_to_cst(utc_time):
-    from_zone = tz.gettz('UTC')
-    to_zone = tz.gettz('America/Chicago')
-
-    utc = datetime.strptime(utc_time, '%Y-%m-%dT%H:%M:%S.%fZ')
-    utc = utc.replace(tzinfo=from_zone)
-    return utc.astimezone(to_zone)
-
-
 @app.route("/add-section", methods=['GET', 'POST'])
-# @jwt_required()
+@jwt_required()
 def add_section():
     # CONVERT JS toJSON() string to datetime (similar to email_confirmed_on)
     courseNumber = request.json['courseNumber']
@@ -291,6 +337,7 @@ def add_section():
 
 
 @app.route("/get-sections")
+@jwt_required()
 def get_sections():
     sectionsList = Section.query.all()
     serialized_sections_list = sections_schema.dump(sectionsList)
@@ -308,6 +355,7 @@ def get_sections():
 
 
 @app.route("/update-section", methods=['GET', 'POST'])
+@jwt_required()
 def update_section():
     editSectionId = request.json['id']
     sectionToEdit = Section.query.filter_by(id=editSectionId).first()
@@ -353,6 +401,7 @@ def update_section():
 
 
 @app.route("/delete-section", methods=['GET', 'POST'])
+@jwt_required()
 def delete_section():
     sectionToDelete = Section.query.filter_by(id=request.json['id']).first()
 

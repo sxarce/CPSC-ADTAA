@@ -31,7 +31,8 @@
 .ualr-logo {
   position: absolute;
   right: 10rem;
-  top: 2rem;
+  /* top: 2rem; */
+  top: 1rem;
   margin-left: 3rem;
   height: 10rem;
   max-width: 15.5rem;
@@ -47,7 +48,8 @@
 section.sign-in {
   position: absolute;
   right: 10rem;
-  top: 3rem;
+  /* top: 3rem; */
+  top: 2.5rem;
   color: #4b4b4b;
   width: 40vw;
   height: auto;

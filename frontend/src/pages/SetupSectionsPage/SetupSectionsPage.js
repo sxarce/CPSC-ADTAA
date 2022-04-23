@@ -37,7 +37,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import Notification from "../../components/Forms/SectionForm/controls/Notification";
 
-export default function SetupPage(props) {
+export default function SetupSectionsPage(props) {
   const [loading, setLoading] = React.useState(true); // For <Loader />
 
   const [credentials, setCredentials] = React.useState(null);
@@ -63,7 +63,8 @@ export default function SetupPage(props) {
           console.log(error.response.status);
           console.log(error.response.headers);
           setCredentials(null);
-          localStorage.removeItem("token");
+          // localStorage.removeItem("token");
+          props.removeToken()
         }
       });
   }, []);
@@ -124,7 +125,7 @@ export default function SetupPage(props) {
     pageContent: {
       margin: "40px",
       padding: "24px",
-      width: "77vw", // Table is at 100%. 100% of Paper (77vw)
+      width: "75vw", // Table is at 100%. 100% of Paper (77vw)
     },
     searchInput: {
       width: "65%",
@@ -164,9 +165,14 @@ export default function SetupPage(props) {
 
   React.useEffect(() => {
     axios
-      .get("/get-sections")
+      .get("/get-sections", {
+        headers: { Authorization: "Bearer " + props.token },
+      })
       .then((response) => {
         console.log(response);
+        response.data.access_token &&
+          props.setToken(response.data.access_token);
+
         let retrievedTableData = response.data.TableData;
         setTableData(retrievedTableData);
       })
@@ -206,9 +212,16 @@ export default function SetupPage(props) {
     // if new
     if (formData.id === -1) {
       axios
-        .post("/add-section", formData)
+        .post("/add-section", formData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + props.token,
+          },
+        })
         .then((response) => {
           console.log(response);
+          response.data.access_token &&
+            props.setToken(response.data.access_token);
 
           // update frontend records/tableData
           setTableData(response.data.TableData);
@@ -229,9 +242,16 @@ export default function SetupPage(props) {
     } else {
       // elif id !== -1 ---> editing section
       axios
-        .post("/update-section", formData)
+        .post("/update-section", formData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + props.token,
+          },
+        })
         .then((response) => {
           console.log(response);
+          response.data.access_token &&
+            props.setToken(response.data.access_token);
 
           // update frontend records/tableData
           setTableData(response.data.TableData);
@@ -247,7 +267,8 @@ export default function SetupPage(props) {
             message: "Unable to modify section.",
             type: "error",
           });
-          console.log(error)});
+          console.log(error);
+        });
     }
 
     resetForm();
@@ -262,8 +283,16 @@ export default function SetupPage(props) {
 
   function deleteSection(section) {
     axios
-      .post("/delete-section", section)
+      .post("/delete-section", section, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + props.token,
+        },
+      })
       .then((response) => {
+        response.data.access_token &&
+          props.setToken(response.data.access_token);
+
         // update frontend records/tableData
         setTableData(response.data.TableData);
         setNotify({
@@ -376,7 +405,7 @@ export default function SetupPage(props) {
                       </TableCell>
                     </>
                   ))}
-                  
+
                   {elem.meetingPeriods.length === 1 && (
                     <>
                       <TableCell></TableCell>
@@ -438,7 +467,7 @@ export default function SetupPage(props) {
           </div>
         </Paper>
         <Popup
-          title="Add section"
+          title={sectionToEdit === null ? "Add section" : "Edit section"}
           openPopup={openPopup}
           setOpenPopup={setOpenPopup}
         >

@@ -1,6 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;700&display=swap");
 
-
 .background-setup-sections {
   position: relative;
   width: 100vw;
@@ -18,11 +17,11 @@
   min-width: 100vw;
 }
 
-@media all and (max-height: 620px) {
+/* @media all and (max-height: 620px) {
   .table-container-setup-sections {
     display: none;
   }
-}
+} */
 /* @media all and (max-width: 1400px) {
   .table-container-setup-sections {
     display: none;
@@ -56,8 +55,8 @@
 
   position: absolute;
   top: 5%;
-  
-  left: 15%;
+
+  left: 16%;
 
   /* border: 1px solid green; */
   /* align-self: center; */

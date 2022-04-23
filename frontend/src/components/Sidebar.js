@@ -21,7 +21,7 @@ export default function Sidebar(props) {
     navigate(path);
   }
   function goToAssistantPage(e) {
-    let path = "/assisstant";
+    let path = "/assistant";
     navigate(path);
   }
   function goToSetupPage(e) {

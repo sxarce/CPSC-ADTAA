@@ -134,8 +134,8 @@ export default function RegistrationRequestsTable(props) {
   const useStyles = makeStyles({
     table: {
       "& tbody tr:hover": {
-        // backgroundColor: "#FFFBF2",
-        backgroundColor: "#fcfcfa",
+        backgroundColor: "#FFFBF2",
+        // backgroundColor: "#f0f0e9",
         cursor: "pointer",
       },
     },
@@ -206,35 +206,41 @@ export default function RegistrationRequestsTable(props) {
                 {/* Chosen icons and color for distinction between access levels  */}
                 <TableCell align="center" style={{ fontSize: "small" }}>
                   {row.accessLevel === "ASSISTANT" ? (
-                    <Chip
-                      variant="outlined"
-                      icon={<FaceIcon />}
-                      label={
-                        row.accessLevel.charAt(0) +
-                        row.accessLevel.slice(1).toLowerCase()
-                      }
-                      style={{ fontSize: "small" }}
-                    />
+                    <Tooltip title="Has access to: Assistant page">
+                      <Chip
+                        variant="outlined"
+                        icon={<FaceIcon />}
+                        label={
+                          row.accessLevel.charAt(0) +
+                          row.accessLevel.slice(1).toLowerCase()
+                        }
+                        style={{ fontSize: "small" }}
+                      />
+                    </Tooltip>
                   ) : row.accessLevel === "ADMIN" ? (
-                    <Chip
-                      variant="filled"
-                      icon={<SupervisorAccountIcon />}
-                      label={
-                        row.accessLevel.charAt(0) +
-                        row.accessLevel.slice(1).toLowerCase()
-                      }
-                      style={{ fontSize: "small" }}
-                    />
+                    <Tooltip title="Has access to: Setup and Assistant pages">
+                      <Chip
+                        variant="filled"
+                        icon={<SupervisorAccountIcon />}
+                        label={
+                          row.accessLevel.charAt(0) +
+                          row.accessLevel.slice(1).toLowerCase()
+                        }
+                        style={{ fontSize: "small" }}
+                      />
+                    </Tooltip>
                   ) : (
-                    <Chip
-                      variant="filled"
-                      icon={<ShieldIcon style={{ color: "#B07888" }} />}
-                      label={
-                        row.accessLevel.charAt(0) +
-                        row.accessLevel.slice(1).toLowerCase()
-                      }
-                      style={{ fontSize: "small" }}
-                    />
+                    <Tooltip title="Has access to: Setup, Assistant, and Registration Request pages">
+                      <Chip
+                        variant="filled"
+                        icon={<ShieldIcon style={{ color: "#B07888" }} />}
+                        label={
+                          row.accessLevel.charAt(0) +
+                          row.accessLevel.slice(1).toLowerCase()
+                        }
+                        style={{ fontSize: "small" }}
+                      />
+                    </Tooltip>
                   )}
                 </TableCell>
                 <TableCell align="center">

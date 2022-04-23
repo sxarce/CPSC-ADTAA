@@ -44,7 +44,8 @@ export default function SetupPage(props) {
           console.log(error.response.status);
           console.log(error.response.headers);
           setCredentials(null);
-          localStorage.removeItem("token");
+          // localStorage.removeItem("token");
+          props.removeToken()
         }
       });
   }, []);

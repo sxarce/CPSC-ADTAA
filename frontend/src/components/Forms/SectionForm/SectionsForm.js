@@ -181,7 +181,7 @@ export default function SectionsForm(props) {
             : sectionToEdit.meetingPeriods[2].meetDay,
         meetingPeriod3Start:
           sectionToEdit.numMeetingPeriods <= 2 
-            ? new Date() // new Date(). Otherwise, time picker throws a stupid error.
+            ? new Date() // new Date(). Otherwise, time picker throws a stupid error. also, route needs a date object to do convert_utc_to_cst
             : new Date(sectionToEdit.meetingPeriods[2].startTime), // time picker only allows Date() objects.
         meetingPeriod3End:
           sectionToEdit.numMeetingPeriods <= 2 

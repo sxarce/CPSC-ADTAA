@@ -19,6 +19,7 @@ import {
 import RegisterPage from "./pages/RegistrationPage/RegisterPage";
 import SetupPage from "./pages/SetupPage/SetupPage";
 import SetupSectionsPage from "./pages/SetupSectionsPage/SetupSectionsPage";
+import AssistantPage from "./pages/AssistantPage/AssistantPage";
 
 import useToken from "./components/Token/useToken";
 // import Header from "./components/Token/Header";
@@ -60,22 +61,55 @@ export default function App() {
           ? [
               <Route
                 path={"/dashboard"}
-                element={<DashboardPage token={token} setToken={setToken} />}
+                element={
+                  <DashboardPage
+                    token={token}
+                    setToken={setToken}
+                    removeToken={removeToken}
+                  />
+                }
               />,
               <Route
                 path={"/setup"}
-                element={<SetupPage token={token} setToken={setToken} removeToken={removeToken} />}
+                element={
+                  <SetupPage
+                    token={token}
+                    setToken={setToken}
+                    removeToken={removeToken}
+                  />
+                }
               />,
               <Route
                 path={"/assign-sections"}
                 element={
-                  <SetupSectionsPage token={token} setToken={setToken} removeToken={removeToken} />
+                  <SetupSectionsPage
+                    token={token}
+                    setToken={setToken}
+                    removeToken={removeToken}
+                  />
                 }
               />,
               <Route
                 exact
                 path="/registration-requests"
-                element={<RegRequestsPage token={token} setToken={setToken} removeToken={removeToken} />}
+                element={
+                  <RegRequestsPage
+                    token={token}
+                    setToken={setToken}
+                    removeToken={removeToken}
+                  />
+                }
+              />,
+              <Route
+                exact
+                path="/assistant"
+                element={
+                  <AssistantPage
+                    token={token}
+                    setToken={setToken}
+                    removeToken={removeToken}
+                  />
+                }
               />,
             ]
           : [
