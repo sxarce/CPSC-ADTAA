@@ -21,12 +21,12 @@
   right: 0rem;
   top: 0rem;
 }
-
+/* 
 @media all and (max-height: 620px) {
   .table-container-assistant {
     display: none;
   }
-}
+} */
 /* UNCOMMENT BELOW AFTER TESTING */
 /* @media all and (max-width: 1400px) {
   .table-container-assistant {

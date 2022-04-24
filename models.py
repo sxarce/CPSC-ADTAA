@@ -193,8 +193,8 @@ class PartialSchedule(db.Model):
     assignedClasses = db.relationship(
         'AssignedClass', backref='owning_schedule', lazy=True)
 
-    # def __repr__(self):
-    #     return f'Assigned Classes: {self.assignedClasses}'
+    def __repr__(self):
+        return f'PARTIALSCHEDULE -> assignedClasses: {self.assignedClasses}'
 
 
 class PartialScheduleSchema(ma.Schema):
@@ -214,6 +214,9 @@ class AssignedClass(db.Model):
         db.Integer, db.ForeignKey('instructor.id'), nullable=True)
     schedule_id = db.Column(db.Integer, db.ForeignKey(
         'partial_schedule.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<ASSIGNED_CLASS >> Section_id: {self.assigned_section}, Instructor_id: {self.assigned_instructor}'
 
 
 class AssignedClassSchema(ma.Schema):

@@ -177,4 +177,9 @@ label[for="Remember me"] {
 .register-button {
   background: none;
   color: #8c8c8c;
+  width:fit-content !important;
+  
+  /* quick fix to too much width */
+  margin-left: 3.1rem !important; 
+  align-self: center;
 }

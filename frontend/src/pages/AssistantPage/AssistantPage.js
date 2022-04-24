@@ -10,6 +10,7 @@ import "./AssistantPage.css";
 import Controls from "../../components/Forms/SectionForm/controls/Controls";
 
 export default function AssistantPage(props) {
+  document.title = "Assistant - ADTAA";
   const [loading, setLoading] = React.useState(true); // For <Loader />
 
   const [credentials, setCredentials] = React.useState(null);

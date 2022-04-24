@@ -28,6 +28,7 @@ const EMAIL_REGEX = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 export default function RegisterPage() {
+  document.title = "Sign up for ADTAA"
   const [notify, setNotify] = React.useState({
     isOpen: false,
     message: "",
@@ -206,7 +207,7 @@ export default function RegisterPage() {
               <option value="" disabled selected>
                 Access level
               </option>
-              <option value="ROOT">Root User</option>
+              <option value="ROOT">Root</option>
               <option value="ADMIN">Admin</option>
               <option value="ASSISTANT">Assistant</option>
               {/* </optgroup> */}

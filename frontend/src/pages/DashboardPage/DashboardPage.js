@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 /* MUI components */
-import { Button } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 
 import axios from "axios";
 import Loader from "../../components/LoadingScreen/Loader";
@@ -18,10 +18,11 @@ import Loader from "../../components/LoadingScreen/Loader";
 import { useSpring, animated } from "react-spring";
 
 export default function DashboardPage(props) {
+  document.title = "Dashboard - ADTAA";
   const [loading, setLoading] = useState(true); // For <Loader />
   const [credentials, setCredentials] = useState(null);
   let navigate = useNavigate();
-  
+
   useEffect(() => {
     setTimeout(() => setLoading(false), 1500);
     getData();
@@ -48,14 +49,18 @@ export default function DashboardPage(props) {
           console.log(error.response.status);
           console.log(error.response.headers);
           // localStorage.removeItem("token");
-          props.removeToken()
+          props.removeToken();
         }
       });
   }
   console.log(credentials);
 
-  const fadeInAnimationStyle = useSpring({to: {opacity: 1}, from: {opacity: -1}, config : {duration: 2500} })
-  
+  const fadeInAnimationStyle = useSpring({
+    to: { opacity: 1 },
+    from: { opacity: -1 },
+    config: { duration: 2500 },
+  });
+
   // used conditional rendering for unmounting components.
   return (
     <>
@@ -64,7 +69,10 @@ export default function DashboardPage(props) {
       ) : credentials === undefined || credentials === null ? (
         <Loader message={"Authentication failed. Please refresh the page"} />
       ) : (
-        <animated.div className={`${"background-dashboard"}`} style={fadeInAnimationStyle}>
+        <animated.div
+          className={`${"background-dashboard"}`}
+          style={fadeInAnimationStyle}
+        >
           <img src={leftImg} alt="ellipse" className="left-img-dashboard" />
           <img
             src={rightImg}
@@ -84,6 +92,7 @@ export default function DashboardPage(props) {
             >
               <img src={gear} alt="gear icon" />
             </Button>
+
             <Button className="btn" onClick={() => navigate("/assistant")}>
               <img src={peopleAssist} alt="assist icon" />
             </Button>

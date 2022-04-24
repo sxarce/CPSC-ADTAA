@@ -74,26 +74,33 @@ def convert_utc_to_cst(utc_time):
 @app.route("/get-schedules")
 def get_schedules():
 
-    # CONSTRAINT: Cant modify DB directly (Shallow-copy).
+    # CONSTRAINT: SHOULDNT modify DB directly.
     # SOLUTION: Instead match everything here, create assigned classes and push as schedule
+    # ALTERNATIVE: CAN modify DB directly.
+    # sortedInstructorRoster[0].maxLoad = 4
+    # db.session.commit() to save changes in db.
 
     # REMINDERS:
     # (1) ACCESSING SECTIONS FROM COURSE
     # for course in Course.query.all():
     #     print(f'{course.sections}', file=sys.stderr)
 
-    # (2) ACCESSING INSRUCTORS FROM SECTION
+    # (2) ACCESSING COURSE  FROM SECTION
+    # for section in sectionsList:
+    #     print(f'{section.owning_course}', file=sys.stderr)
+
+    # (3) ACCESSING INSRUCTORS FROM SECTION
     # for section in Section.query.all():
     #     print(f'{section.assignedInstructor}', file=sys.stderr)
 
-    # (3) ACCESSING TIME
+    # (A) ACCESSING TIME
     # type(section.meetingPeriods[0].endTime) === datetime.datetime
     # timeOnly = sectionsList[0].meetingPeriods[0].endTime.replace(microsecond=0).time()
     #
     # if sectionsList[0].meetingPeriods[0].startTime.replace(microsecond=0).time() < sectionsList[0].meetingPeriods[0].endTime.replace(microsecond=0).time():
     #     print(f'startTime less than endTime', file=sys.stderr)
 
-    # (4) MUTATE INSTRUCTOR COPY
+    # (B) MUTATE INSTRUCTOR COPY
     # sortedInstructorRoster[0].maxLoad = 3
     # print(f'{sortedInstructorRoster}', file=sys.stderr)
 
@@ -103,14 +110,86 @@ def get_schedules():
     # Create assigned classes by passing in both instructor and section ID's
     # Pass in owning_schedule
 
+    # POTENTIAL ISSUES: Foreign key contraint (deleting an instructor/section MAY become an issue)
+
     sortedInstructorRoster = sorted(Instructor.query.all(
     ), key=lambda instructor: len(instructor.disciplineAreas))
     sectionsList = Section.query.all()
 
-    
-        
+    new_schedule = PartialSchedule()
 
+    for instructor in sortedInstructorRoster:
+        for section in sectionsList:
+            if instructor.maxLoad > 0:
+                # iterate through sections wherein instructor is assigned. check if overlap
+                if hasMatchingDisciplineAreas(section.owning_course.disciplineAreas, instructor.disciplineAreas):
+                    instructorSections = Section.query.filter_by(
+                        assignedInstructor=instructor.id)
+                    if not hasSectionOverlap(section, instructorSections):
+                        # create assignedClass AND associate it to PartialSchedule
+                        new_assigned_class = AssignedClass(
+                            assigned_section=section.id, assigned_instructor=instructor.id, owning_schedule=new_schedule)
+                        # Update section with assigned instructor AND update maxload
+                        section.assignedInstructor = instructor.id
+                        instructor.maxLoad -= 1
+                        # remove instructor from list if maxLoad exceed.
+                        if instructor.maxLoad <= 0:
+                            sortedInstructorRoster = [
+                                availableInstructor for availableInstructor in sortedInstructorRoster if availableInstructor.id != instructor.id]
+
+    print(f'{new_schedule}', file=sys.stderr)
+    # TODO: Return result and commit.
     return {"Message": "Okay"}
+
+
+def hasSectionOverlap(sectionToAssign, instructorSections):
+    '''Find overlap between 2 sections.
+
+    Keyword arguments: 
+
+    \n\tsectionToAssign -- the section to assign 
+    \n\tinstructorSections -- a list of sections associated with an instructor.
+    '''
+    for assignedSection in instructorSections:
+        if isOverlapping(sectionToAssign, assignedSection):
+            return True
+
+    return False
+
+
+def isOverlapping(sectionToAssign, assignedSection):
+    '''Helper function for hasSectionOverlap(). Accepts exactly 2 sections as arguments.'''
+    # CALLS hasTimeConflict. This function will only compare x section to y section. (ONLY 1v1.)
+    assignedMeetingPeriods = [
+        meetingPeriod for meetingPeriod in assignedSection.meetingPeriods]
+
+    for assignedMeetPeriod in assignedMeetingPeriods:
+        for sectionMeetPeriod in sectionToAssign.meetingPeriods:
+            if hasTimeConflict(meetingPeriodToAssign=sectionMeetPeriod, assignedMeetingPeriod=assignedMeetPeriod):
+                return True
+
+    return False
+
+
+def hasTimeConflict(meetingPeriodToAssign, assignedMeetingPeriod):
+    '''Helper function for isOverlapping(). Accepts exactly 2 meeting_periods as arguments'''
+
+    return (assignedMeetingPeriod.startTime.replace(microsecond=0).time() <
+            meetingPeriodToAssign.startTime.replace(microsecond=0).time()
+            < assignedMeetingPeriod.endTime.replace(microsecond=0).time())
+
+
+def hasMatchingDisciplineAreas(sectionDisciplineAreas, instructorDisciplineAreas):
+    '''Used for matching discipline areas between sections.course and instructor'''
+    sectionDisciplineAreasNames = [da.name for da in sectionDisciplineAreas]
+    instructorDisciplineAreasNames = [
+        da.name for da in instructorDisciplineAreas]
+
+    for instructorDA in instructorDisciplineAreasNames:
+        if instructorDA in sectionDisciplineAreasNames:
+            return True
+
+    return False
 
 
 @app.route("/delete-instructor", methods=['GET', 'POST'])

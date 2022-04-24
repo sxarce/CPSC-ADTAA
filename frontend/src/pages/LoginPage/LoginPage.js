@@ -27,7 +27,7 @@ const LoginPage = (props) => {
   //   .then(response => console.log(response))
   //   .catch(error => console.log(error))
   // }, [])
-
+  document.title = "ADTAA - log in or register"
   const loginUser = (e) => {
     axios
       .post(
@@ -66,7 +66,7 @@ const LoginPage = (props) => {
     setFormData({
       usernameInput: "",
       passwordInput: "",
-      rememberBool: false,
+      // rememberBool: false,
     });
   }
 
@@ -78,16 +78,18 @@ const LoginPage = (props) => {
   const [formData, setFormData] = useState({
     usernameInput: "",
     passwordInput: "",
-    rememberBool: false,
+    // rememberBool: false,
   });
   const [passwordShown, setPasswordShown] = useState(false);
 
   function handleChange(e) {
-    const { name, value, type, checked } = e.target;
+    // const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData((prevFormData) => {
       return {
         ...formData,
-        [name]: type === "checkbox" ? checked : value,
+        // [name]: type === "checkbox" ? checked : value,
+        [name]: value,
       };
     });
   }
@@ -182,7 +184,7 @@ const LoginPage = (props) => {
                 </span>
               )}
             </div>
-            <div className="sign-in-areas">
+            {/* <div className="sign-in-areas">
               <input
                 id="remember"
                 type="checkbox"
@@ -191,7 +193,7 @@ const LoginPage = (props) => {
                 onChange={handleChange}
               />
               <label htmlFor="Remember me">Remember me</label>
-            </div>
+            </div> */}
 
             <div className="button-areas">
               {/* <Button className="sign-in-button">Sign in</Button> */}

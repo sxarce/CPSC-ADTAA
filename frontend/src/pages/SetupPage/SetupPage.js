@@ -13,6 +13,7 @@ import { Navigate } from "react-router-dom";
 import Notification from "../../components/Forms/SectionForm/controls/Notification"
 
 export default function SetupPage(props) {
+  document.title = "Setup - ADTAA";
   const [loading, setLoading] = React.useState(true); // For <Loader />
 
   const [notify, setNotify] = React.useState({

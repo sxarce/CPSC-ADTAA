@@ -14,6 +14,7 @@ import { useSpring, animated } from "react-spring";
 import Notification from "../../components/Forms/SectionForm/controls/Notification"
 
 export default function RegRequestsPage(props) {
+  document.title = "Registration requests - ADTAA";
   // For <Loader />
   const [loading, setLoading] = useState(true);
   // useEffect(() => {

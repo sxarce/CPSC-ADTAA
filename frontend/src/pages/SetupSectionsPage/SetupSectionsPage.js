@@ -38,6 +38,7 @@ import AutorenewIcon from "@mui/icons-material/Autorenew";
 import Notification from "../../components/Forms/SectionForm/controls/Notification";
 
 export default function SetupSectionsPage(props) {
+  document.title = "Setup sections - ADTAA";
   const [loading, setLoading] = React.useState(true); // For <Loader />
 
   const [credentials, setCredentials] = React.useState(null);
