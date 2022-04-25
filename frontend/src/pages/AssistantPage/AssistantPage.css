@@ -3,7 +3,7 @@
 .background-assistant {
   position: relative;
   width: 100vw;
-  height: 100vh;  
+  height: 200vh;  
   background-color: rgb(231, 235, 240);
 }
 
@@ -44,9 +44,9 @@
     height: 19.3vh !important;
   }
   .table-container-assistant {
-    left: 17% !important;
+    left: 14% !important;
     /* top: 7.5% !important; */
-    top: 30% !important;
+    top: 5.5% !important;
   }
 }
 

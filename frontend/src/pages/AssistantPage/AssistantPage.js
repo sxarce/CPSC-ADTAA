@@ -15,6 +15,8 @@ import {
   TableBody,
   TableCell,
   TableRow,
+  Chip,
+  Tooltip,
 } from "@mui/material";
 import useTable from "../../components/Tables/useTable";
 
@@ -54,7 +56,9 @@ export default function AssistantPage(props) {
       });
   }, []);
 
-  const [testData, setTestData] = React.useState(null);
+  const [tableData, setTableData] = React.useState(null);
+  console.log(tableData);
+
   const generateSchedules = () => {
     console.log("Clicked! Generating schedule...");
     axios
@@ -67,14 +71,23 @@ export default function AssistantPage(props) {
     console.log("Getting schedules");
     axios
       .get("/get-schedules")
-      .then((response) => console.log(response))
+      .then((response) => {
+        console.log(response);
+        let retrievedTableData = response.data.TableData;
+        setTableData(retrievedTableData[0].assignedClasses);
+      })
       .catch((error) => console.log(error));
   };
 
+  React.useEffect(() => {
+    getSchedules();
+  }, []);
+
   const headerCells = [
+    { id: "courseNumber", label: "Course #" },
     { id: "sectionNumber", label: "Section #" },
     { id: "instructorName", label: "Instructor Name" },
-    { id: "commonDisciplineAreas", label: "Common discipline areas"}
+    { id: "commonDisciplineAreas", label: "Common discipline areas" },
   ];
   const [filterFn, setFilterFn] = React.useState({
     fn: (items) => {
@@ -86,7 +99,25 @@ export default function AssistantPage(props) {
     TableHeader,
     TablePagination,
     tableDataAfterPagingAndSorting,
-  } = useTable(testData, headerCells, filterFn);
+  } = useTable(tableData, headerCells, filterFn);
+
+  function handleSearch(event) {
+    let target = event.target;
+    setFilterFn({
+      fn: (items) => {
+        if (target.value === "") {
+          return items;
+        } else
+          return items.filter((item) =>
+            item.assigned_instructor.lastName
+              .toString()
+              .toLowerCase()
+              .includes(target.value.toLowerCase())
+          );
+      },
+    });
+    // console.log(target.value)
+  }
 
   const useStyles = makeStyles({
     pageContent: {
@@ -153,7 +184,7 @@ export default function AssistantPage(props) {
         <Paper className={classes.pageContent}>
           <Toolbar>
             <Controls.Input
-              label="Search by instructor name"
+              label="Search by instructor's last name"
               className={classes.searchInput}
               InputProps={{
                 startAdornment: (
@@ -162,14 +193,53 @@ export default function AssistantPage(props) {
                   </InputAdornment>
                 ),
               }}
+              handleChange={handleSearch}
             />
           </Toolbar>
 
           <TableContainer>
             <TableHeader />
-            <TableBody></TableBody>
+            <TableBody>
+              {tableDataAfterPagingAndSorting().map((elem) => {
+                console.log(elem);
+                return (
+                  <TableRow key={elem.id}>
+                    <TableCell style={{ width: "0px", fontWeight: "bold" }}>
+                      <Tooltip title={elem.assigned_section.course_info.name}>
+                        <span>{elem.assigned_section.course_info.number}</span>
+                      </Tooltip>
+                    </TableCell>
+
+                    <TableCell style={{ width: "0px" }}>
+                      {elem.assigned_section.sectionNumber}
+                    </TableCell>
+                    <TableCell style={{ width: "0px" }}>
+                      {`${elem.assigned_instructor.lastName}, ${elem.assigned_instructor.firstName}`}
+                    </TableCell>
+                    <TableCell style={{ width: "0px" }}>
+                      {/* {() => {
+                        let instructorDisciplineAreas = elem.assigned_instructor.disciplineAreas
+                        let courseDisciplineAreas = elem.assigned_section.course_info.disciplineAreas
+
+
+                      }} */}
+                      {elem.assigned_instructor.disciplineAreas
+                        .filter((item) =>
+                          elem.assigned_section.course_info.disciplineAreas.some(
+                            ({ name }) => item.name === name
+                          )
+                        )
+                        .map((listItem) => (
+                          <li>{listItem.name}</li>
+                        ))}
+                      {/* {elem.assigned_section.course_info.disciplineAreas.map(x => (<li>{x.name}</li>))} */}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
           </TableContainer>
-          {/* <TablePagination /> */}
+          <TablePagination />
         </Paper>
       </div>
     </div>

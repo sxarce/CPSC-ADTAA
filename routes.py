@@ -123,9 +123,9 @@ def get_schedule():
                 assignedClass['assigned_instructor']['disciplineAreas']
             )
 
-    print(f'{serialized_schedules}', file=sys.stderr)  # DO NOT DELETE PRINT. MESSY.
+    # DO NOT DELETE PRINT. MESSY.
+    print(f'{serialized_schedules}', file=sys.stderr)
     return {"Message": "Reached get-schedules!", "TableData": serialized_schedules}
-    return {"msg": "reached get-schedules!"}
 
 
 @app.route("/generate-schedule", methods=['GET', 'POST'])
