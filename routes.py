@@ -118,28 +118,34 @@ def get_schedules():
 
     new_schedule = PartialSchedule()
 
-    for instructor in sortedInstructorRoster:
-        for section in sectionsList:
-            if instructor.maxLoad > 0:
-                # iterate through sections wherein instructor is assigned. check if overlap
-                if hasMatchingDisciplineAreas(section.owning_course.disciplineAreas, instructor.disciplineAreas):
-                    instructorSections = Section.query.filter_by(
-                        assignedInstructor=instructor.id)
-                    if not hasSectionOverlap(section, instructorSections):
-                        # create assignedClass AND associate it to PartialSchedule
-                        new_assigned_class = AssignedClass(
-                            assigned_section=section.id, assigned_instructor=instructor.id, owning_schedule=new_schedule)
-                        # Update section with assigned instructor AND update maxload
-                        section.assignedInstructor = instructor.id
-                        instructor.maxLoad -= 1
-                        # remove instructor from list if maxLoad exceed.
-                        if instructor.maxLoad <= 0:
-                            sortedInstructorRoster = [
-                                availableInstructor for availableInstructor in sortedInstructorRoster if availableInstructor.id != instructor.id]
+    # for instructor in sortedInstructorRoster:
+    #     for section in sectionsList:
+    #         if instructor.maxLoad > 0:
+    #             # iterate through sections wherein instructor is assigned. check if overlap
+    #             if hasMatchingDisciplineAreas(section.owning_course.disciplineAreas, instructor.disciplineAreas):
+    #                 instructorSections = Section.query.filter_by(
+    #                     assignedInstructor=instructor.id)
+    #                 if not hasSectionOverlap(section, instructorSections):
+    #                     # create assignedClass AND associate it to PartialSchedule
+    #                     new_assigned_class = AssignedClass(
+    #                         assigned_section=section.id, assigned_instructor=instructor.id, owning_schedule=new_schedule)
+    #                     # Update section with assigned instructor AND update maxload
+    #                     section.assignedInstructor = instructor.id
+    #                     instructor.maxLoad -= 1
+    #                     # remove instructor from list if maxLoad exceed.
+    #                     if instructor.maxLoad <= 0:
+    #                         sortedInstructorRoster = [
+    #                             availableInstructor for availableInstructor in sortedInstructorRoster if availableInstructor.id != instructor.id]
 
-    print(f'{new_schedule}', file=sys.stderr)
+    
     # TODO: Return result and commit.
-    return {"Message": "Okay"}
+    sortedInstructorRoster[0].owning_section = Section.query.filter_by(id=1).first()
+    db.session.commit()
+    # print(f'{sortedInstructorRoster[0].owning_section}', file=sys.stderr)
+
+   
+    
+    return {"Message": "Okay",}
 
 
 def hasSectionOverlap(sectionToAssign, instructorSections):
@@ -203,6 +209,7 @@ def delete_instructor():
         lastName=instructorLastName, firstName=instructorFirstName).first()
     # print(f'{instructorToDelete.id}', file=sys.stderr)
 
+    # Does not automatically delete all unlike one-to-one 4/24/22
     for disciplineArea in instructorToDelete.disciplineAreas:
         db.session.delete(disciplineArea)
 

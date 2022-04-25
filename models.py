@@ -51,9 +51,12 @@ class Instructor(db.Model):
     disciplineAreas = db.relationship(
         'InstructorDisciplineArea', backref='owning_instructor', lazy=True)
     maxLoad = db.Column(db.Integer, nullable=False, default=4)
+    section_id = db.Column(
+        db.Integer, db.ForeignKey('section.id'), nullable=True)  # one-to-one (See Section)
+    assigned_class_id = db.Column(db.Integer, db.ForeignKey('assigned_class.id'), nullable=True) 
 
     def __repr__(self):
-        return f'INSTRUCTOR -> NAME: {self.firstName} {self.lastName}, maxLoad: {self.maxLoad}\n disciplineAreas: {self.disciplineAreas}'
+        return f'INSTRUCTOR -> NAME: {self.firstName} {self.lastName}, TEACHING_SECTION: {self.section_id}, maxLoad: {self.maxLoad}\n disciplineAreas: {self.disciplineAreas}'
 
 
 class InstructorSchema(ma.Schema):
@@ -139,13 +142,15 @@ class Section(db.Model):
     sectionNumber = db.Column(db.Integer,
                               nullable=False)  # section.number
     course_id = db.Column(db.Integer, db.ForeignKey(
-        'course.id'), nullable=False)  # one-to-one
+        'course.id'), nullable=False)
 
     meetingPeriods = db.relationship(
         'MeetingPeriod', backref='owning_section', lazy=True)
-    assignedInstructor = db.Column(
-        db.Integer, db.ForeignKey('instructor.id'), nullable=True)
 
+    assignedInstructor = db.relationship(
+        'Instructor', backref='owning_section', uselist=False, lazy=True)  # one-to-one. OnInstructorDelete: this gets deleted automatically.
+    
+    assigned_class_id = db.Column(db.Integer, db.ForeignKey('assigned_class.id'), nullable=True) # one-to-one
     __table_args__ = (db.UniqueConstraint('course_id', 'sectionNumber'), )
     # UniqueConstraint: Each sectionNumber must be unique for each course (course_id).
     # COMMA at end is impt. needs to be a tuple. Otherwise, compile error
@@ -208,10 +213,14 @@ partialSchedules_schema = PartialScheduleSchema(many=True)
 
 class AssignedClass(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    assigned_section = db.Column(
-        db.Integer, db.ForeignKey('section.id'), nullable=True)
-    assigned_instructor = db.Column(
-        db.Integer, db.ForeignKey('instructor.id'), nullable=True)
+    # assigned_section = db.Column(
+    #     db.Integer, db.ForeignKey('section.id'), nullable=True)
+    # assigned_instructor = db.Column(
+    #     db.Integer, db.ForeignKey('instructor.id'), nullable=True)
+
+    assigned_section = db.relationship(
+        'Section', backref="owning_class", uselist=False, lazy=True) # one-to-one
+    assigned_instructor = db.relationship('Instructor', backref="owning_class", uselist=False, lazy=True) # one-to-one
     schedule_id = db.Column(db.Integer, db.ForeignKey(
         'partial_schedule.id'), nullable=False)
 
