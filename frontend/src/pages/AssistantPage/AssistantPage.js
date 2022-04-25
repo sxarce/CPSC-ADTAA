@@ -8,6 +8,18 @@ import Sidebar from "../../components/Sidebar";
 import "./AssistantPage.css";
 
 import Controls from "../../components/Forms/SectionForm/controls/Controls";
+import {
+  InputAdornment,
+  Paper,
+  Toolbar,
+  TableBody,
+  TableCell,
+  TableRow,
+} from "@mui/material";
+import useTable from "../../components/Tables/useTable";
+
+import { makeStyles } from "@mui/styles";
+import SearchIcon from "@mui/icons-material/Search";
 
 export default function AssistantPage(props) {
   document.title = "Assistant - ADTAA";
@@ -37,7 +49,6 @@ export default function AssistantPage(props) {
           console.log(error.response.status);
           console.log(error.response.headers);
           setCredentials(null);
-          //   localStorage.removeItem("token");
           props.removeToken(); // logout upon failure to verify credentials. Token expired.
         }
       });
@@ -51,6 +62,51 @@ export default function AssistantPage(props) {
       .then((response) => console.log(response))
       .catch((error) => console.log(error));
   };
+
+  const getSchedules = () => {
+    console.log("Getting schedules");
+    axios
+      .get("/get-schedules")
+      .then((response) => console.log(response))
+      .catch((error) => console.log(error));
+  };
+
+  const headerCells = [
+    { id: "sectionNumber", label: "Section #" },
+    { id: "instructorName", label: "Instructor Name" },
+    { id: "commonDisciplineAreas", label: "Common discipline areas"}
+  ];
+  const [filterFn, setFilterFn] = React.useState({
+    fn: (items) => {
+      return items;
+    },
+  });
+  const {
+    TableContainer,
+    TableHeader,
+    TablePagination,
+    tableDataAfterPagingAndSorting,
+  } = useTable(testData, headerCells, filterFn);
+
+  const useStyles = makeStyles({
+    pageContent: {
+      margin: "40px",
+      padding: "24px",
+      width: "75vw", // Table is at 100%. 100% of Paper (77vw)
+    },
+    searchInput: {
+      width: "65%",
+      "& label.Mui-focused": {
+        color: "#732d40",
+      },
+      "& .MuiOutlinedInput-root": {
+        "&.Mui-focused fieldset": {
+          borderColor: "#732d40",
+        },
+      },
+    },
+  });
+  const classes = useStyles();
 
   // reminder: last return is equivalent to "else return"
   if (loading === true) return <Loader message={""} />;
@@ -76,14 +132,45 @@ export default function AssistantPage(props) {
         logout={props.removeToken}
       />
 
-      <div className="table-container-assistant">
+      <div style={{ display: "flex" }}>
         <Controls.Button
           variant="contained"
           color="primary"
           text="Generate schedule (TEST ONLY)"
           handleClick={generateSchedules}
+          disabled
         />
-        <section className="test">{testData}</section>
+        <Controls.Button
+          variant="contained"
+          color="primary"
+          text="GET schedule (TEST ONLY)"
+          handleClick={getSchedules}
+        />
+      </div>
+
+      <div className="table-container-assistant">
+        {/* <section className="test">{testData}</section> */}
+        <Paper className={classes.pageContent}>
+          <Toolbar>
+            <Controls.Input
+              label="Search by instructor name"
+              className={classes.searchInput}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment>
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Toolbar>
+
+          <TableContainer>
+            <TableHeader />
+            <TableBody></TableBody>
+          </TableContainer>
+          {/* <TablePagination /> */}
+        </Paper>
       </div>
     </div>
   );

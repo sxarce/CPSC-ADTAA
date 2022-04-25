@@ -139,13 +139,13 @@ export default function SetupSectionsPage(props) {
         },
       },
     },
-    newButton: {
-      position: "absolute !important",
-      right: "10px",
-    },
-    startIcon: {
-      margin: "0px",
-    },
+    // newButton: {
+    //   position: "absolute !important",
+    //   right: "10px",
+    // },
+    // startIcon: {
+    //   margin: "0px",
+    // },
   });
   const classes = useStyles();
 

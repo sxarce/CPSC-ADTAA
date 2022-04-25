@@ -54,14 +54,14 @@
   height: 22vh;
 }
 .table-container-assistant {
-  width: max-content;
-  height: max-content;
+  width: 83vw;
+  height: 80vh;
   z-index: 1;
 
   position: absolute;
-  top: 8%;
-  left: 20%;
+  top: 5%;
+  left: 16%;
 
-  /* border: 1px solid green; */
+  border: 1px solid green;
   /* align-self: center; */
 }

@@ -71,6 +71,63 @@ def convert_utc_to_cst(utc_time):
 #############################################
 
 
+@app.route("/get-schedules")
+def get_schedule():
+    '''Filtering least data from course, section and instructor needed by frontend
+
+    \nNeeded by frontend: 
+    \n\t(1) Section#, 
+    \n\t(2) Course# 
+    \n\t(3 & 4) Course Discipline Areas and Instructor Discipline Areas for comparison.
+    '''
+    schedules = PartialSchedule.query.all()
+    # PartialSchedule to JSON
+    serialized_schedules = partialSchedules_schema.dump(schedules)
+
+    # PartialSchedule['assignedClasses'] to JSON
+    for schedule in serialized_schedules:
+        schedule['assignedClasses'] = assignedClasses_schema.dump(
+            schedule['assignedClasses'])
+
+    # PartialSchedule['assignedClasses'][index]['assigned_section'] to JSON
+    for schedule in serialized_schedules:
+        for assignedClass in schedule['assignedClasses']:
+            sectionDict = section_schema.dump(Section.query.filter_by(
+                id=assignedClass['assigned_section']).first())
+
+            # FILTERING COURSE INFO #
+            # GET sectionNumber and course_id
+            assignedClass['assigned_section'] = {
+                key: sectionDict[key] for key in sectionDict if key in ('sectionNumber', 'course_id', 'id')}
+
+            # ADD course info (name, courseNumber, disciplineAreas) using course_id
+            courseDict = course_schema.dump(
+                Course.query.filter_by(id=assignedClass['assigned_section']['course_id']).first())
+            assignedClass['assigned_section']['course_info'] = {
+                key: courseDict[key] for key in courseDict if key in ('name', 'number', 'disciplineAreas')}
+
+            # GET disciplineAreas
+            assignedClass['assigned_section']['course_info']['disciplineAreas'] = courseDisciplineAreas_schema.dump(
+                assignedClass['assigned_section']['course_info']['disciplineAreas'])
+
+            # FILTERING INSTRUCTOR INFO #
+            # GET lastName, firstName, disciplineAreas, and id
+            instructorDict = instructor_schema.dump(Instructor.query.filter_by(
+                id=assignedClass['assigned_instructor']).first())
+            assignedClass['assigned_instructor'] = {
+                key: instructorDict[key] for key in instructorDict if key in ('lastName', 'firstName', 'disciplineAreas', 'id')
+            }
+
+            # GET disciplineAreas
+            assignedClass['assigned_instructor']['disciplineAreas'] = instructorDisciplineAreas_schema.dump(
+                assignedClass['assigned_instructor']['disciplineAreas']
+            )
+
+    print(f'{serialized_schedules}', file=sys.stderr)  # DO NOT DELETE PRINT. MESSY.
+    return {"Message": "Reached get-schedules!", "TableData": serialized_schedules}
+    return {"msg": "reached get-schedules!"}
+
+
 @app.route("/generate-schedule", methods=['GET', 'POST'])
 def generate_schedule():
 
@@ -128,7 +185,7 @@ def generate_schedule():
                 # iterate through sections wherein instructor is assigned. check if overlap
                 if hasMatchingDisciplineAreas(section.owning_course.disciplineAreas, instructor.disciplineAreas):
                     if not hasSectionOverlap(section, instructor.sections):
-                    # create assignedClass AND associate it to PartialSchedule
+                        # create assignedClass AND associate it to PartialSchedule
                         new_assigned_class = AssignedClass(
                             owning_section=section, owning_instructor=instructor, owning_schedule=new_schedule)
                         db.session.add(new_assigned_class)
@@ -150,6 +207,7 @@ def generate_schedule():
     db.session.commit()
 
     return {"Message": "Okay", }
+
 
 def resetMaxLoad():
     instructorRoster = Instructor.query.all()
