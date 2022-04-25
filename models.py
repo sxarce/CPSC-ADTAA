@@ -51,12 +51,15 @@ class Instructor(db.Model):
     disciplineAreas = db.relationship(
         'InstructorDisciplineArea', backref='owning_instructor', lazy=True)
     maxLoad = db.Column(db.Integer, nullable=False, default=4)
-    section_id = db.Column(
-        db.Integer, db.ForeignKey('section.id'), nullable=True)  # one-to-one (See Section)
-    assigned_class_id = db.Column(db.Integer, db.ForeignKey('assigned_class.id'), nullable=True) 
+
+    sections = db.relationship(
+        'Section', backref='owning_instructor', lazy=True)  # many sections
+
+    assigned_classes = db.relationship(
+        'AssignedClass', backref="owning_instructor", lazy=True)
 
     def __repr__(self):
-        return f'INSTRUCTOR -> NAME: {self.firstName} {self.lastName}, TEACHING_SECTION: {self.section_id}, maxLoad: {self.maxLoad}\n disciplineAreas: {self.disciplineAreas}'
+        return f'INSTRUCTOR -> NAME: {self.firstName} {self.lastName}, maxLoad: {self.maxLoad}\n disciplineAreas: {self.disciplineAreas}'
 
 
 class InstructorSchema(ma.Schema):
@@ -147,16 +150,18 @@ class Section(db.Model):
     meetingPeriods = db.relationship(
         'MeetingPeriod', backref='owning_section', lazy=True)
 
-    assignedInstructor = db.relationship(
-        'Instructor', backref='owning_section', uselist=False, lazy=True)  # one-to-one. OnInstructorDelete: this gets deleted automatically.
-    
-    assigned_class_id = db.Column(db.Integer, db.ForeignKey('assigned_class.id'), nullable=True) # one-to-one
+    assigned_instructor = db.Column(
+        db.Integer, db.ForeignKey('instructor.id'), nullable=True)  # one instructor
+
+    assigned_classes = db.relationship(
+        'AssignedClass', backref='owning_section', lazy=True)
+
     __table_args__ = (db.UniqueConstraint('course_id', 'sectionNumber'), )
     # UniqueConstraint: Each sectionNumber must be unique for each course (course_id).
     # COMMA at end is impt. needs to be a tuple. Otherwise, compile error
 
     def __repr__(self):
-        return f'SECTION -> Sec.#: {self.sectionNumber}, COURSE: {self.course_id}\n MeetingPeriods: {self.meetingPeriods}, assignedInstructor: {self.assignedInstructor}'
+        return f'SECTION -> Sec.#: {self.sectionNumber}, COURSE: {self.course_id}\n MeetingPeriods: {self.meetingPeriods}, assigned_instructor: {self.assigned_instructor}'
 
 
 class SectionSchema(ma.Schema):
@@ -212,20 +217,19 @@ partialSchedules_schema = PartialScheduleSchema(many=True)
 
 
 class AssignedClass(db.Model):
+    '''a pair of section and instructor. NOT synonymous to section'''
     id = db.Column(db.Integer, primary_key=True)
-    # assigned_section = db.Column(
-    #     db.Integer, db.ForeignKey('section.id'), nullable=True)
-    # assigned_instructor = db.Column(
-    #     db.Integer, db.ForeignKey('instructor.id'), nullable=True)
 
-    assigned_section = db.relationship(
-        'Section', backref="owning_class", uselist=False, lazy=True) # one-to-one
-    assigned_instructor = db.relationship('Instructor', backref="owning_class", uselist=False, lazy=True) # one-to-one
+    assigned_section = db.Column(
+        db.Integer, db.ForeignKey('section.id'), nullable=True)  # only 1 section.
+    assigned_instructor = db.Column(
+        db.Integer, db.ForeignKey('instructor.id'), nullable=True)  # only 1 instructor
+
     schedule_id = db.Column(db.Integer, db.ForeignKey(
-        'partial_schedule.id'), nullable=False)
+        'partial_schedule.id'), nullable=False)  # one-to-many . only 1 schedule
 
     def __repr__(self):
-        return f'<ASSIGNED_CLASS >> Section_id: {self.assigned_section}, Instructor_id: {self.assigned_instructor}'
+        return f'<ASSIGNED_CLASS >> assigned_section: {self.assigned_section}, assigned_instructor: {self.assigned_instructor}, schedule_id: {self.schedule_id}>'
 
 
 class AssignedClassSchema(ma.Schema):

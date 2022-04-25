@@ -71,8 +71,8 @@ def convert_utc_to_cst(utc_time):
 #############################################
 
 
-@app.route("/get-schedules")
-def get_schedules():
+@app.route("/generate-schedule", methods=['GET', 'POST'])
+def generate_schedule():
 
     # CONSTRAINT: SHOULDNT modify DB directly.
     # SOLUTION: Instead match everything here, create assigned classes and push as schedule
@@ -117,35 +117,44 @@ def get_schedules():
     sectionsList = Section.query.all()
 
     new_schedule = PartialSchedule()
+    db.session.add(new_schedule)
 
-    # for instructor in sortedInstructorRoster:
-    #     for section in sectionsList:
-    #         if instructor.maxLoad > 0:
-    #             # iterate through sections wherein instructor is assigned. check if overlap
-    #             if hasMatchingDisciplineAreas(section.owning_course.disciplineAreas, instructor.disciplineAreas):
-    #                 instructorSections = Section.query.filter_by(
-    #                     assignedInstructor=instructor.id)
-    #                 if not hasSectionOverlap(section, instructorSections):
-    #                     # create assignedClass AND associate it to PartialSchedule
-    #                     new_assigned_class = AssignedClass(
-    #                         assigned_section=section.id, assigned_instructor=instructor.id, owning_schedule=new_schedule)
-    #                     # Update section with assigned instructor AND update maxload
-    #                     section.assignedInstructor = instructor.id
-    #                     instructor.maxLoad -= 1
-    #                     # remove instructor from list if maxLoad exceed.
-    #                     if instructor.maxLoad <= 0:
-    #                         sortedInstructorRoster = [
-    #                             availableInstructor for availableInstructor in sortedInstructorRoster if availableInstructor.id != instructor.id]
+    # print(f'{sectionsList}', file=sys.stderr)
 
-    
+    instructorsToDelete = []
+    for section in sectionsList:
+        for instructor in sortedInstructorRoster:
+            if instructor.maxLoad > 0:
+                # iterate through sections wherein instructor is assigned. check if overlap
+                if hasMatchingDisciplineAreas(section.owning_course.disciplineAreas, instructor.disciplineAreas):
+                    if not hasSectionOverlap(section, instructor.sections):
+                    # create assignedClass AND associate it to PartialSchedule
+                        new_assigned_class = AssignedClass(
+                            owning_section=section, owning_instructor=instructor, owning_schedule=new_schedule)
+                        db.session.add(new_assigned_class)
+                        print(f'{new_schedule}', file=sys.stderr)
+                        # Update maxload
+                        instructor.maxLoad -= 1
+                        # Break out of inner loop. Section assigned.
+                        break
+            else:
+                instructorsToDelete.append(instructor.id)
+
+        # Update sortedInstructorRoster with those in instructorsToDelete
+        sortedInstructorRoster = [
+            availableInstructor for availableInstructor in sortedInstructorRoster if availableInstructor.id not in instructorsToDelete]
+
     # TODO: Return result and commit.
-    sortedInstructorRoster[0].owning_section = Section.query.filter_by(id=1).first()
-    db.session.commit()
-    # print(f'{sortedInstructorRoster[0].owning_section}', file=sys.stderr)
 
-   
-    
-    return {"Message": "Okay",}
+    resetMaxLoad()
+    db.session.commit()
+
+    return {"Message": "Okay", }
+
+def resetMaxLoad():
+    instructorRoster = Instructor.query.all()
+    for instructor in instructorRoster:
+        instructor.maxLoad = 4
 
 
 def hasSectionOverlap(sectionToAssign, instructorSections):

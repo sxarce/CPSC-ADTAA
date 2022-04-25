@@ -47,7 +47,7 @@ export default function AssistantPage(props) {
   const generateSchedules = () => {
     console.log("Clicked! Generating schedule...");
     axios
-      .get("/get-schedules")
+      .post("/generate-schedule")
       .then((response) => console.log(response))
       .catch((error) => console.log(error));
   };

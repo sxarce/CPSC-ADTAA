@@ -272,9 +272,12 @@ export default function SetupSectionsPage(props) {
         });
     }
 
+    // Issue: Resetting the form is shown during closing form. 
+    // SOLUTION: Promise.resolve().then()
+    // CON: Might affect performance.
+    setOpenPopup(false); 
     resetForm();
     setSectionToEdit(null);
-    setOpenPopup(false);
   };
 
   function openInPopUp(sectionToEdit) {
