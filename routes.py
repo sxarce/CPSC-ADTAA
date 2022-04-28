@@ -72,59 +72,42 @@ def convert_utc_to_cst(utc_time):
 
 
 def delete_schedule(IDtoDelete, byRelatedSection):
-    '''
+    '''Deletes schedule based on related section or instructor.
+
     Keyword arguments:
     \n\tIDtoDelete -- ID of section/instructor related to schedule
     \n\tbyRelatedSection -- If True, deletes schedule based on related sections. If False, deletes schedule based on related instructors.
     '''
     # Find all AssignedClass to delete.
+    assignedClassesToDelete = None
     if byRelatedSection:
         assignedClassesToDelete = AssignedClass.query.filter(
             AssignedClass.assigned_section == IDtoDelete).all()
-
-        # Find all schedules associated with any of the assignedClassesToDelete.
-        schedulesIDToDelete = set()
-        for assignedClass in assignedClassesToDelete:
-            scheduleToDelete = PartialSchedule.query.filter_by(
-                id=assignedClass.schedule_id).first()
-            schedulesIDToDelete.add(scheduleToDelete.id)
-
-        # Delete assignedClasses
-        for assignedClassToDelete in assignedClassesToDelete:
-            db.session.delete(assignedClassToDelete)
-
-        # Delete schedules and other associated assignedClasses
-        for idToDelete in schedulesIDToDelete:
-            scheduleToDelete = PartialSchedule.query.filter_by(
-                id=idToDelete).first()
-
-            assignedClasses = scheduleToDelete.assignedClasses
-            for associatedAssignedClass in assignedClasses:
-                db.session.delete(associatedAssignedClass)
-
-            db.session.delete(scheduleToDelete)
     else:
         assignedClassesToDelete = AssignedClass.query.filter(
             AssignedClass.assigned_instructor == IDtoDelete).all()
 
-        schedulesIDToDelete = set()
-        for assignedClass in assignedClassesToDelete:
-            scheduleToDelete = PartialSchedule.query.filter_by(
-                id=assignedClass.schedule_id).first()
-            schedulesIDToDelete.add(scheduleToDelete.id)
+    # Find all schedules associated with any of the assignedClassesToDelete.
+    schedulesIDToDelete = set()
+    for assignedClass in assignedClassesToDelete:
+        scheduleToDelete = PartialSchedule.query.filter_by(
+            id=assignedClass.schedule_id).first()
+        schedulesIDToDelete.add(scheduleToDelete.id)
 
-        for assignedClassToDelete in assignedClassesToDelete:
-            db.session.delete(assignedClassToDelete)
+    # Delete assignedClasses
+    for assignedClassToDelete in assignedClassesToDelete:
+        db.session.delete(assignedClassToDelete)
 
-        for idToDelete in schedulesIDToDelete:
-            scheduleToDelete = PartialSchedule.query.filter_by(
-                id=idToDelete).first()
+    # Delete schedules and other associated assignedClasses
+    for idToDelete in schedulesIDToDelete:
+        scheduleToDelete = PartialSchedule.query.filter_by(
+            id=idToDelete).first()
 
-            assignedClasses = scheduleToDelete.assignedClasses
-            for associatedAssignedClass in assignedClasses:
-                db.session.delete(associatedAssignedClass)
+        assignedClasses = scheduleToDelete.assignedClasses
+        for associatedAssignedClass in assignedClasses:
+            db.session.delete(associatedAssignedClass)
 
-            db.session.delete(scheduleToDelete)
+        db.session.delete(scheduleToDelete)
 
     # save changes/deletions
     db.session.commit()
@@ -369,7 +352,7 @@ def delete_course():
     # delete SECTIONS associated with COURSE
     for section in courseToDelete.sections:
 
-        # Any PartialSchedule this is related to, delete it and the assignedClasses associated with said PartialSchedule.
+        # Any PartialSchedule this section is related to, delete it and the assignedClasses associated with said PartialSchedule.
         delete_schedule(section.id, True)
 
         for meetingPeriod in section.meetingPeriods:
