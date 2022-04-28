@@ -50,7 +50,7 @@ export default function SetupSectionsPage(props) {
         headers: { Authorization: "Bearer " + props.token },
       })
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         const data = response.data;
         data.access_token && props.setToken(data.access_token);
         setCredentials({
@@ -250,7 +250,7 @@ export default function SetupSectionsPage(props) {
           },
         })
         .then((response) => {
-          console.log(response);
+          // console.log(response);
           response.data.access_token &&
             props.setToken(response.data.access_token);
 

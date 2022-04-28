@@ -71,13 +71,74 @@ def convert_utc_to_cst(utc_time):
 #############################################
 
 
+def delete_schedule(IDtoDelete, byRelatedSection):
+    '''
+    Keyword arguments:
+    \n\tIDtoDelete -- ID of section/instructor related to schedule
+    \n\tbyRelatedSection -- If True, deletes schedule based on related sections. If False, deletes schedule based on related instructors.
+    '''
+    # Find all AssignedClass to delete.
+    if byRelatedSection:
+        assignedClassesToDelete = AssignedClass.query.filter(
+            AssignedClass.assigned_section == IDtoDelete).all()
+
+        # Find all schedules associated with any of the assignedClassesToDelete.
+        schedulesIDToDelete = set()
+        for assignedClass in assignedClassesToDelete:
+            scheduleToDelete = PartialSchedule.query.filter_by(
+                id=assignedClass.schedule_id).first()
+            schedulesIDToDelete.add(scheduleToDelete.id)
+
+        # Delete assignedClasses
+        for assignedClassToDelete in assignedClassesToDelete:
+            db.session.delete(assignedClassToDelete)
+
+        # Delete schedules and other associated assignedClasses
+        for idToDelete in schedulesIDToDelete:
+            scheduleToDelete = PartialSchedule.query.filter_by(
+                id=idToDelete).first()
+
+            assignedClasses = scheduleToDelete.assignedClasses
+            for associatedAssignedClass in assignedClasses:
+                db.session.delete(associatedAssignedClass)
+
+            db.session.delete(scheduleToDelete)
+    else:
+        assignedClassesToDelete = AssignedClass.query.filter(
+            AssignedClass.assigned_instructor == IDtoDelete).all()
+
+        schedulesIDToDelete = set()
+        for assignedClass in assignedClassesToDelete:
+            scheduleToDelete = PartialSchedule.query.filter_by(
+                id=assignedClass.schedule_id).first()
+            schedulesIDToDelete.add(scheduleToDelete.id)
+
+        for assignedClassToDelete in assignedClassesToDelete:
+            db.session.delete(assignedClassToDelete)
+
+        for idToDelete in schedulesIDToDelete:
+            scheduleToDelete = PartialSchedule.query.filter_by(
+                id=idToDelete).first()
+
+            assignedClasses = scheduleToDelete.assignedClasses
+            for associatedAssignedClass in assignedClasses:
+                db.session.delete(associatedAssignedClass)
+
+            db.session.delete(scheduleToDelete)
+
+    # save changes/deletions
+    db.session.commit()
+
+    return None
+
+
 @app.route("/get-schedules")
 def get_schedule():
     '''Filtering least data from course, section and instructor needed by frontend
 
-    \nNeeded by frontend: 
-    \n\t(1) Section#, 
-    \n\t(2) Course# 
+    \nNeeded by frontend:
+    \n\t(1) Section#,
+    \n\t(2) Course#
     \n\t(3 & 4) Course Discipline Areas and Instructor Discipline Areas for comparison.
     '''
     schedules = PartialSchedule.query.all()
@@ -124,8 +185,9 @@ def get_schedule():
             )
 
     # DO NOT DELETE PRINT. MESSY.
-    print(f'{serialized_schedules}', file=sys.stderr)
+    # print(f'{serialized_schedules}', file=sys.stderr)
     return {"Message": "Reached get-schedules!", "TableData": serialized_schedules}
+    # return {"Message" : "Test mode"}
 
 
 @app.route("/generate-schedule", methods=['GET', 'POST'])
@@ -218,9 +280,9 @@ def resetMaxLoad():
 def hasSectionOverlap(sectionToAssign, instructorSections):
     '''Find overlap between 2 sections.
 
-    Keyword arguments: 
+    Keyword arguments:
 
-    \n\tsectionToAssign -- the section to assign 
+    \n\tsectionToAssign -- the section to assign
     \n\tinstructorSections -- a list of sections associated with an instructor.
     '''
     for assignedSection in instructorSections:
@@ -276,7 +338,11 @@ def delete_instructor():
         lastName=instructorLastName, firstName=instructorFirstName).first()
     # print(f'{instructorToDelete.id}', file=sys.stderr)
 
+    # Any PartialSchedule this is related to, delete it and the assignedClasses associated with said PartialSchedule (DELETE THE PARTIALSCHEDULE ENTIRELY!).
+    delete_schedule(instructorToDelete.id, False)
+
     # Does not automatically delete all unlike one-to-one 4/24/22
+    # DELETING INSTRUCTORS
     for disciplineArea in instructorToDelete.disciplineAreas:
         db.session.delete(disciplineArea)
 
@@ -302,6 +368,10 @@ def delete_course():
 
     # delete SECTIONS associated with COURSE
     for section in courseToDelete.sections:
+
+        # Any PartialSchedule this is related to, delete it and the assignedClasses associated with said PartialSchedule.
+        delete_schedule(section.id, True)
+
         for meetingPeriod in section.meetingPeriods:
             db.session.delete(meetingPeriod)
         db.session.delete(section)
@@ -556,7 +626,12 @@ def update_section():
 @app.route("/delete-section", methods=['GET', 'POST'])
 @jwt_required()
 def delete_section():
-    sectionToDelete = Section.query.filter_by(id=request.json['id']).first()
+    # DELETING A SECTION
+    sectionToDelete = Section.query.filter_by(
+        id=request.json['id']).first()
+
+    # Any PartialSchedule this is related to, delete it and the assignedClasses associated with said PartialSchedule (DELETE THE PARTIALSCHEDULE ENTIRELY!).
+    delete_schedule(sectionToDelete.id, True)
 
     for meetingPeriod in sectionToDelete.meetingPeriods:
         db.session.delete(meetingPeriod)

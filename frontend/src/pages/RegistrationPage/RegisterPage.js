@@ -87,6 +87,7 @@ export default function RegisterPage() {
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
+    console.log(value)
     setFormData((prevFormData) => {
       return {
         ...prevFormData,

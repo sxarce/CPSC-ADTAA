@@ -37,7 +37,7 @@ export default function AssistantPage(props) {
         headers: { Authorization: "Bearer " + props.token },
       })
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         const data = response.data;
         data.access_token && props.setToken(data.access_token);
         setCredentials({
@@ -57,7 +57,7 @@ export default function AssistantPage(props) {
   }, []);
 
   const [tableData, setTableData] = React.useState(null);
-  console.log(tableData);
+  // console.log(tableData);
 
   const generateSchedules = () => {
     console.log("Clicked! Generating schedule...");
@@ -74,7 +74,9 @@ export default function AssistantPage(props) {
       .then((response) => {
         console.log(response);
         let retrievedTableData = response.data.TableData;
-        setTableData(retrievedTableData[0].assignedClasses);
+        if (retrievedTableData.length > 0) {
+          setTableData(retrievedTableData[0].assignedClasses); // retrievedTableData[0].assignedClasses
+        } else setTableData(retrievedTableData);
       })
       .catch((error) => console.log(error));
   };
@@ -169,7 +171,7 @@ export default function AssistantPage(props) {
           color="primary"
           text="Generate schedule (TEST ONLY)"
           handleClick={generateSchedules}
-          disabled
+          // disabled
         />
         <Controls.Button
           variant="contained"
@@ -201,11 +203,11 @@ export default function AssistantPage(props) {
             <TableHeader />
             <TableBody>
               {tableDataAfterPagingAndSorting().map((elem) => {
-                console.log(elem);
+                // console.log(elem);
                 return (
                   <TableRow key={elem.id}>
                     <TableCell style={{ width: "0px", fontWeight: "bold" }}>
-                      <Tooltip title={elem.assigned_section.course_info.name}>
+                      <Tooltip title={elem.assigned_section.course_info.name} placement="right">
                         <span>{elem.assigned_section.course_info.number}</span>
                       </Tooltip>
                     </TableCell>
