@@ -71,6 +71,19 @@ def convert_utc_to_cst(utc_time):
 #############################################
 
 
+@app.route("/get-stats")
+def get_stats():
+    totalNumSections = len(Section.query.all())
+    totalNumCourses = len(Course.query.all())
+    totalNumInstructors = len(Instructor.query.all())
+
+    return {"stats": {
+        "totalNumSections": totalNumSections,
+        "totalNumCourses": totalNumCourses,
+        "totalNumInstructors": totalNumInstructors,
+    }}
+
+
 @app.route("/delete-schedule", methods=['GET', 'POST'])
 def delete_schedule():
     currentScheduleID = request.json['currentScheduleID']

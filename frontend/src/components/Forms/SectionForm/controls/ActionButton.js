@@ -41,6 +41,19 @@ const useStyles = makeStyles({
       backgroundColor: "#ad4561",
       color: "#FFF",
     },
+  },
+  quarternary: {
+    "&.MuiButton-root": {
+      backgroundColor: "#2e66bf",
+      color: "#FFF",
+    },
+    "&.MuiButton-root:hover": {
+      backgroundColor: "#2b5cab",
+      color: "#FFF",
+    },
+    "&.MuiButton-root:disabled": {
+      backgroundColor: "#9fada2",
+    }
   }
 });
 

@@ -3,6 +3,7 @@ from os import access
 from sqlalchemy import true
 from app import db, ma
 from datetime import datetime
+import pytz
 
 
 class User(db.Model):
@@ -203,7 +204,7 @@ class PartialSchedule(db.Model):
     assignedClasses = db.relationship(
         'AssignedClass', backref='owning_schedule', lazy=True)
     schedule_name = db.Column(db.String(
-        35), nullable=False, default=f'Created on {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
+        35), nullable=False, default=f'Created on {datetime.now(pytz.timezone("America/Chicago")).strftime("%m/%d/%Y, %H:%M:%S")}')
 
     def __repr__(self):
         return f'PARTIALSCHEDULE -> assignedClasses: {self.assignedClasses}'
@@ -211,7 +212,7 @@ class PartialSchedule(db.Model):
 
 class PartialScheduleSchema(ma.Schema):
     class Meta:
-        fields = ("id", "assignedClasses")
+        fields = ("id", "assignedClasses", "schedule_name")
 
 
 partialSchedule_schema = PartialScheduleSchema()

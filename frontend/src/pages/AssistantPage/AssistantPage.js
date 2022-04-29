@@ -20,6 +20,7 @@ import {
   TableFooter,
   IconButton,
   Typography,
+  Grid,
 } from "@mui/material";
 import useTable from "../../components/Tables/useTable";
 
@@ -28,10 +29,14 @@ import SearchIcon from "@mui/icons-material/Search";
 import FiberNewOutlinedIcon from "@mui/icons-material/FiberNewOutlined";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
-import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
+import InfoIcon from "@mui/icons-material/Info";
 
 import Popup from "../../components/Forms/Popup";
 import ScheduleForm from "../../components/Forms/ScheduleForm/ScheduleForm";
+import ScrollableList from "../../components/Forms/SectionForm/controls/ScrollableList";
+import { Box } from "@mui/system";
+import ScheduleInfo from "../../components/ScheduleInfo";
+import CustomToolTip from "../../components/Forms/SectionForm/controls/CustomToolTip";
 
 export default function AssistantPage(props) {
   document.title = "Assistant - ADTAA";
@@ -67,13 +72,15 @@ export default function AssistantPage(props) {
   }, []);
 
   const [tableData, setTableData] = React.useState(null);
-  const [currentScheduleID, setCurrentScheduleID] = React.useState(null);
+  const [currentSchedule, setCurrentSchedule] = React.useState(null);
+  const [schedulesList, setSchedulesList] = React.useState(null);
+  console.log(currentSchedule);
 
   const deleteSchedule = () => {
     axios
       .post(
         "/delete-schedule",
-        { currentScheduleID: currentScheduleID },
+        { currentScheduleID: currentSchedule.id },
         {
           headers: {
             "Content-Type": "application/json",
@@ -86,12 +93,11 @@ export default function AssistantPage(props) {
         let retrievedTableData = response.data.TableData;
         if (retrievedTableData.length > 0) {
           // If not empty, get last/most recent schedule in returned list from backend.
-          setCurrentScheduleID(
-            retrievedTableData[retrievedTableData.length - 1].id
-          );
+          setCurrentSchedule(retrievedTableData[retrievedTableData.length - 1]);
           setTableData(
             retrievedTableData[retrievedTableData.length - 1].assignedClasses
-          ); // retrievedTableData[0].assignedClasses
+          );
+          setSchedulesList(retrievedTableData); // for clipboard button (displaying all schedule names)
         } else setTableData(retrievedTableData);
       })
       .catch((error) => console.log(error));
@@ -108,10 +114,8 @@ export default function AssistantPage(props) {
       .then((response) => {
         let retrievedTableData = response.data.TableData;
         if (retrievedTableData.length > 0) {
-          // If not empty, get last/most recent schedule in returned list from backend.
-          setCurrentScheduleID(
-            retrievedTableData[retrievedTableData.length - 1].id
-          );
+          // If not empty, get last/MOST RECENT schedule in returned list from backend.
+          setCurrentSchedule(retrievedTableData[retrievedTableData.length - 1]);
           setTableData(
             retrievedTableData[retrievedTableData.length - 1].assignedClasses
           ); // retrievedTableData[0].assignedClasses
@@ -130,9 +134,7 @@ export default function AssistantPage(props) {
         console.log(response);
         let retrievedTableData = response.data.TableData;
         if (retrievedTableData.length > 0) {
-          setCurrentScheduleID(
-            retrievedTableData[retrievedTableData.length - 1].id
-          );
+          setCurrentSchedule(retrievedTableData[retrievedTableData.length - 1]);
           setTableData(
             retrievedTableData[retrievedTableData.length - 1].assignedClasses
           ); // retrievedTableData[0].assignedClasses
@@ -140,6 +142,7 @@ export default function AssistantPage(props) {
       })
       .catch((error) => console.log(error));
   };
+
   React.useEffect(() => {
     getSchedules();
   }, []);
@@ -203,11 +206,12 @@ export default function AssistantPage(props) {
   const add = (formData, resetForm) => {
     generateSchedule(formData);
 
-    setOpenPopup(false);
+    setOpenPopupNew(false);
     resetForm();
   };
 
-  const [openPopup, setOpenPopup] = React.useState(false);
+  const [openPopupNew, setOpenPopupNew] = React.useState(false);
+  const [openPopupInfo, setOpenPopupInfo] = React.useState(false);
 
   // reminder: last return is equivalent to "else return"
   if (loading === true) return <Loader message={""} />;
@@ -268,10 +272,15 @@ export default function AssistantPage(props) {
 
             {/* QUESTION MARK BUTTON shows popup containing: title, stats (sections assigned/total sections), etc. */}
             <Controls.ActionButton
-              color="tertiary"
-              style={{ position: "absolute", right: "240px" }}
+              color="quarternary"
+              handleClick={() => {
+                setOpenPopupInfo(true);
+              }}
+              style={{ position: "absolute", right: "70px" }}
+              disabled={tableData.length <= 0}
+              tooltipTitle="Show schedule information"
             >
-              <QuestionMarkIcon />
+              <InfoIcon />
             </Controls.ActionButton>
 
             <Controls.ActionButton
@@ -280,22 +289,23 @@ export default function AssistantPage(props) {
                 padding: "0.1rem 0",
                 width: "10rem",
                 position: "absolute",
-                right: "70px",
+                right: "120px",
               }}
               handleClick={() => {
-                setOpenPopup(true);
+                setOpenPopupNew(true);
               }}
+              tooltipTitle="Generate new schedule"
             >
               <FiberNewOutlinedIcon fontSize="large" />
             </Controls.ActionButton>
 
             <Controls.ActionButton
-              color="tertiary"
-              // handleClick = showAllSchedulesInPopUp
+              color="primary"
               style={{
                 position: "absolute",
                 right: "20px",
               }}
+              tooltipTitle="Show schedule list"
             >
               <AssignmentOutlinedIcon />
             </Controls.ActionButton>
@@ -342,14 +352,16 @@ export default function AssistantPage(props) {
             <TableFooter>
               <TableRow>
                 <TableCell colspan={3} style={{ borderBottom: "0" }}>
-                  <IconButton
-                    style={{
-                      color: "#732d40",
-                    }}
-                    onClick={deleteSchedule}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <Tooltip title="Delete schedule">
+                    <IconButton
+                      style={{
+                        color: "#732d40",
+                      }}
+                      onClick={deleteSchedule}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
                 </TableCell>
                 <TableCell colspan={2} style={{ borderBottom: "0" }}>
                   <TablePagination />
@@ -360,10 +372,18 @@ export default function AssistantPage(props) {
         </Paper>
         <Popup
           title="Generate schedule"
-          openPopup={openPopup}
-          setOpenPopup={setOpenPopup}
+          openPopup={openPopupNew}
+          setOpenPopup={setOpenPopupNew}
         >
           <ScheduleForm token={props.token} add={add} />
+        </Popup>
+        {/* INFO POPUP */}
+        <Popup
+          title="Schedule info"
+          openPopup={openPopupInfo}
+          setOpenPopup={setOpenPopupInfo}
+        >
+          <ScheduleInfo currentSchedule={currentSchedule} />
         </Popup>
       </div>
     </div>
