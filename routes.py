@@ -71,7 +71,24 @@ def convert_utc_to_cst(utc_time):
 #############################################
 
 
-def delete_schedule(IDtoDelete, byRelatedSection):
+@app.route("/delete-schedule", methods=['GET', 'POST'])
+def delete_schedule():
+    currentScheduleID = request.json['currentScheduleID']
+    if not currentScheduleID:
+        return {"Message": "No schedules to delete"}
+
+    scheduleToDelete = PartialSchedule.query.filter_by(
+        id=currentScheduleID).first()
+    for assignedClass in scheduleToDelete.assignedClasses:
+        db.session.delete(assignedClass)
+
+    db.session.delete(scheduleToDelete)
+    db.session.commit()
+
+    return get_schedules()
+
+
+def delete_related_schedule(IDtoDelete, byRelatedSection):
     '''Deletes schedule based on related section or instructor.
 
     Keyword arguments:
@@ -116,7 +133,7 @@ def delete_schedule(IDtoDelete, byRelatedSection):
 
 
 @app.route("/get-schedules")
-def get_schedule():
+def get_schedules():
     '''Filtering least data from course, section and instructor needed by frontend
 
     \nNeeded by frontend:
@@ -175,6 +192,9 @@ def get_schedule():
 
 @app.route("/generate-schedule", methods=['GET', 'POST'])
 def generate_schedule():
+    # TODO: If algoX, then do algoX(). If algoY, then do algoY.
+    algoToUse = request.json['algorithmName']
+    scheduleName = request.json['scheduleName']
 
     # CONSTRAINT: SHOULDNT modify DB directly.
     # SOLUTION: Instead match everything here, create assigned classes and push as schedule
@@ -187,7 +207,7 @@ def generate_schedule():
     # for course in Course.query.all():
     #     print(f'{course.sections}', file=sys.stderr)
 
-    # (2) ACCESSING COURSE  FROM SECTION
+    # (2) ACCESSING COURSE FROM SECTION
     # for section in sectionsList:
     #     print(f'{section.owning_course}', file=sys.stderr)
 
@@ -213,12 +233,16 @@ def generate_schedule():
     # Pass in owning_schedule
 
     # POTENTIAL ISSUES: Foreign key contraint (deleting an instructor/section MAY become an issue)
+    # SOLUTION: Deleting an instructor/section also deletes all the schedules they're associated with (TESTED WITH 1 SCHEDULE ONLY - 4/28/22).
 
+    # ALGO START ----------------------------------------------------------->
     sortedInstructorRoster = sorted(Instructor.query.all(
     ), key=lambda instructor: len(instructor.disciplineAreas))
     sectionsList = Section.query.all()
 
-    new_schedule = PartialSchedule()
+    new_schedule = PartialSchedule(
+        schedule_name=scheduleName) if scheduleName else PartialSchedule()
+    # new_schedule = PartialSchedule()
     db.session.add(new_schedule)
 
     # print(f'{sectionsList}', file=sys.stderr)
@@ -251,7 +275,7 @@ def generate_schedule():
     resetMaxLoad()
     db.session.commit()
 
-    return {"Message": "Okay", }
+    return get_schedules()
 
 
 def resetMaxLoad():
@@ -322,7 +346,7 @@ def delete_instructor():
     # print(f'{instructorToDelete.id}', file=sys.stderr)
 
     # Any PartialSchedule this is related to, delete it and the assignedClasses associated with said PartialSchedule (DELETE THE PARTIALSCHEDULE ENTIRELY!).
-    delete_schedule(instructorToDelete.id, False)
+    delete_related_schedule(instructorToDelete.id, False)
 
     # Does not automatically delete all unlike one-to-one 4/24/22
     # DELETING INSTRUCTORS
@@ -353,7 +377,7 @@ def delete_course():
     for section in courseToDelete.sections:
 
         # Any PartialSchedule this section is related to, delete it and the assignedClasses associated with said PartialSchedule.
-        delete_schedule(section.id, True)
+        delete_related_schedule(section.id, True)
 
         for meetingPeriod in section.meetingPeriods:
             db.session.delete(meetingPeriod)
@@ -614,7 +638,7 @@ def delete_section():
         id=request.json['id']).first()
 
     # Any PartialSchedule this is related to, delete it and the assignedClasses associated with said PartialSchedule (DELETE THE PARTIALSCHEDULE ENTIRELY!).
-    delete_schedule(sectionToDelete.id, True)
+    delete_related_schedule(sectionToDelete.id, True)
 
     for meetingPeriod in sectionToDelete.meetingPeriods:
         db.session.delete(meetingPeriod)

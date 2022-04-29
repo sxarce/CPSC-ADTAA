@@ -32,13 +32,6 @@ import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 
 import Popup from "../../components/Forms/Popup";
 import ScheduleForm from "../../components/Forms/ScheduleForm/ScheduleForm";
-import { Box } from "@mui/system";
-
-const initialValues = {
-  // id: -1,
-  scheduleName: "",
-  algorithmName: "",
-};
 
 export default function AssistantPage(props) {
   document.title = "Assistant - ADTAA";
@@ -74,9 +67,37 @@ export default function AssistantPage(props) {
   }, []);
 
   const [tableData, setTableData] = React.useState(null);
-  // console.log(tableData);
+  const [currentScheduleID, setCurrentScheduleID] = React.useState(null);
 
-  const generateSchedules = (formData) => {
+  const deleteSchedule = () => {
+    axios
+      .post(
+        "/delete-schedule",
+        { currentScheduleID: currentScheduleID },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+
+        let retrievedTableData = response.data.TableData;
+        if (retrievedTableData.length > 0) {
+          // If not empty, get last/most recent schedule in returned list from backend.
+          setCurrentScheduleID(
+            retrievedTableData[retrievedTableData.length - 1].id
+          );
+          setTableData(
+            retrievedTableData[retrievedTableData.length - 1].assignedClasses
+          ); // retrievedTableData[0].assignedClasses
+        } else setTableData(retrievedTableData);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const generateSchedule = (formData) => {
     console.log("Clicked! Generating schedule...");
     axios
       .post("/generate-schedule", formData, {
@@ -84,10 +105,23 @@ export default function AssistantPage(props) {
           "Content-Type": "application/json",
         },
       })
-      .then((response) => console.log(response))
+      .then((response) => {
+        let retrievedTableData = response.data.TableData;
+        if (retrievedTableData.length > 0) {
+          // If not empty, get last/most recent schedule in returned list from backend.
+          setCurrentScheduleID(
+            retrievedTableData[retrievedTableData.length - 1].id
+          );
+          setTableData(
+            retrievedTableData[retrievedTableData.length - 1].assignedClasses
+          ); // retrievedTableData[0].assignedClasses
+        } else setTableData(retrievedTableData);
+        console.log(response);
+      })
       .catch((error) => console.log(error));
   };
 
+  // getSchedules() used for initial render
   const getSchedules = () => {
     console.log("Getting schedules");
     axios
@@ -96,12 +130,16 @@ export default function AssistantPage(props) {
         console.log(response);
         let retrievedTableData = response.data.TableData;
         if (retrievedTableData.length > 0) {
-          setTableData(retrievedTableData[0].assignedClasses); // retrievedTableData[0].assignedClasses
+          setCurrentScheduleID(
+            retrievedTableData[retrievedTableData.length - 1].id
+          );
+          setTableData(
+            retrievedTableData[retrievedTableData.length - 1].assignedClasses
+          ); // retrievedTableData[0].assignedClasses
         } else setTableData(retrievedTableData);
       })
       .catch((error) => console.log(error));
   };
-
   React.useEffect(() => {
     getSchedules();
   }, []);
@@ -163,7 +201,7 @@ export default function AssistantPage(props) {
   const classes = useStyles();
 
   const add = (formData, resetForm) => {
-    generateSchedules(formData);
+    generateSchedule(formData);
 
     setOpenPopup(false);
     resetForm();
@@ -238,7 +276,6 @@ export default function AssistantPage(props) {
 
             <Controls.ActionButton
               color="primary"
-              // handleCick={generateSchedules}
               style={{
                 padding: "0.1rem 0",
                 width: "10rem",
@@ -254,7 +291,7 @@ export default function AssistantPage(props) {
 
             <Controls.ActionButton
               color="tertiary"
-              // handleCick={generateSchedules}
+              // handleClick = showAllSchedulesInPopUp
               style={{
                 position: "absolute",
                 right: "20px",
@@ -309,6 +346,7 @@ export default function AssistantPage(props) {
                     style={{
                       color: "#732d40",
                     }}
+                    onClick={deleteSchedule}
                   >
                     <DeleteIcon />
                   </IconButton>

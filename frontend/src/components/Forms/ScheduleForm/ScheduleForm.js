@@ -62,7 +62,7 @@ export default function ScheduleForm(props) {
           <Controls.Select
             variant="filled"
             name="algorithmName"
-            label="Algorithm to use"
+            label="Choose an algorithm"
             value={formData.algorithmName}
             handleChange={handleInputChangeGeneric}
             options3={sampleAlgos}
