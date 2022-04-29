@@ -18,8 +18,13 @@ export function useSectionForm(
     // Automatically assign endTime based on name and formData.numMeetingPeriods
     // Why? No time validation/error. Alternatively, force endTime to conform to required totalTime based on numMeetingDays.
     // let minutesToAdd = formData.numMeetingPeriods == 2 ? 75 : 50; // original. 2v3 meeting periods.
-    let minutesToAdd = formData.numMeetingPeriods == 2 ? 75 : formData.numMeetingPeriods == 1 ? 150 : 50 
-    console.log(minutesToAdd)
+    let minutesToAdd =
+      formData.numMeetingPeriods == 2
+        ? 75
+        : formData.numMeetingPeriods == 1
+        ? 150
+        : 50;
+    console.log(minutesToAdd);
     if (name === "meetingPeriod1Start") {
       setFormData((prevFormData) => ({
         ...prevFormData,
@@ -48,11 +53,11 @@ export function useSectionForm(
         ),
         meetingPeriod2End: addMinutes(
           formData.meetingPeriod2Start,
-          value == 2 ? 75 : value == 1 ? 150 : 50 
+          value == 2 ? 75 : value == 1 ? 150 : 50
         ),
         meetingPeriod3End: addMinutes(
           formData.meetingPeriod3Start,
-          value == 2 ? 75 : value == 1 ? 150 : 50 
+          value == 2 ? 75 : value == 1 ? 150 : 50
           // value == 2 ? 75 : 50 // original. 2 v 3  meeting periods.
         ),
       }));
@@ -76,6 +81,18 @@ export function useSectionForm(
     }
   }
 
+  function handleInputChangeGeneric(event) {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+
+    if (validateOnChange) {
+      validate({ [name]: value });
+    }
+  }
+
   const resetForm = () => {
     setFormData(initialValues);
     setErrors({});
@@ -88,6 +105,7 @@ export function useSectionForm(
     setErrors,
     resetForm,
     handleInputChange,
+    handleInputChangeGeneric,
   };
 }
 

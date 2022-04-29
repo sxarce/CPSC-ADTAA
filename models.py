@@ -202,6 +202,8 @@ class PartialSchedule(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     assignedClasses = db.relationship(
         'AssignedClass', backref='owning_schedule', lazy=True)
+    schedule_name = db.Column(db.String(
+        35), nullable=False, default=f'Created on {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
 
     def __repr__(self):
         return f'PARTIALSCHEDULE -> assignedClasses: {self.assignedClasses}'

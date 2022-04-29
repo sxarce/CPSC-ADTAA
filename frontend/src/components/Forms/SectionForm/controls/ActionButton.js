@@ -32,6 +32,16 @@ const useStyles = makeStyles({
       color: "#b7bec9",
     },
   },
+  tertiary: {
+    "&.MuiButton-root": {
+      backgroundColor: "#c24e6d",
+      color: "#FFF",
+    },
+    "&.MuiButton-root:hover": {
+      backgroundColor: "#ad4561",
+      color: "#FFF",
+    },
+  }
 });
 
 export default function ActionButton(props) {
