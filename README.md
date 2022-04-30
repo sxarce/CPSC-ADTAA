@@ -87,12 +87,15 @@ npm start
 ```
 
 ------------------------------------------
-***ISSUES***
+***ISSUES*** (Updated 4/29/22)
 
 ***Import could not be resolved from source***
 - Inside VSCode command palette (```Ctrl + Shift + P```), find *Python: Select Interpeter*
 - Select, *Enter interpreter path*
 - Navigate to and select *CPSC-ADTAA/venv/Scripts/python.exe*
+
+**Could not proxy request to...**
+- In frontend folder, change localhost to 127.0.0.1 (For Mac)
 
 
 ***No pyvenv.cfg***
