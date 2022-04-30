@@ -109,7 +109,7 @@ class Course(db.Model):
     sections = db.relationship('Section', backref='owning_course', lazy=True)
 
     def __repr__(self):
-        return f'COURSE -> NAME: {self.name}, NUMBER: {self.number}, DEPTCODE= {self.deptCode}, disciplineAreas: {self.disciplineAreas}'
+        return f'<COURSE -> NAME: {self.name}, NUMBER: {self.number}, DEPTCODE= {self.deptCode}, disciplineAreas: {self.disciplineAreas}>'
 
 
 class CourseSchema(ma.Schema):
@@ -162,7 +162,7 @@ class Section(db.Model):
     # COMMA at end is impt. needs to be a tuple. Otherwise, compile error
 
     def __repr__(self):
-        return f'SECTION -> Sec.#: {self.sectionNumber}, COURSE: {self.course_id}\n MeetingPeriods: {self.meetingPeriods}, assigned_instructor: {self.assigned_instructor}'
+        return f'<SECTION -> Sec.#: {self.sectionNumber}, COURSE: {self.course_id}\n MeetingPeriods: {self.meetingPeriods}, assigned_instructor: {self.assigned_instructor}>'
 
 
 class SectionSchema(ma.Schema):

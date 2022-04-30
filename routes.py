@@ -252,13 +252,13 @@ def generate_schedule():
     sortedInstructorRoster = sorted(Instructor.query.all(
     ), key=lambda instructor: len(instructor.disciplineAreas))
     sectionsList = Section.query.all()
+    # sortedSectionsList = sorted(Section.query.all(), key=lambda section: len(
+    #     section.owning_course.disciplineAreas), reverse=True)
 
     new_schedule = PartialSchedule(
         schedule_name=scheduleName) if scheduleName else PartialSchedule()
-    # new_schedule = PartialSchedule()
-    db.session.add(new_schedule)
 
-    # print(f'{sectionsList}', file=sys.stderr)
+    db.session.add(new_schedule)
 
     instructorsToDelete = []
     for section in sectionsList:
@@ -271,7 +271,10 @@ def generate_schedule():
                         new_assigned_class = AssignedClass(
                             owning_section=section, owning_instructor=instructor, owning_schedule=new_schedule)
                         db.session.add(new_assigned_class)
-                        print(f'{new_schedule}', file=sys.stderr)
+
+                        # Update section.owning_instructor
+                        section.owning_instructor = instructor
+
                         # Update maxload
                         instructor.maxLoad -= 1
                         # Break out of inner loop. Section assigned.
@@ -286,9 +289,16 @@ def generate_schedule():
     # TODO: Return result and commit.
 
     resetMaxLoad()
+    resetAssignedInstructors()
     db.session.commit()
 
     return get_schedules()
+
+
+def resetAssignedInstructors():
+    sectionsList = Section.query.all()
+    for section in sectionsList:
+        section.assigned_instructor = None
 
 
 def resetMaxLoad():
@@ -305,6 +315,7 @@ def hasSectionOverlap(sectionToAssign, instructorSections):
     \n\tsectionToAssign -- the section to assign
     \n\tinstructorSections -- a list of sections associated with an instructor.
     '''
+    # print(f'{instructorSections}, TOASSIGN: {sectionToAssign}')
     for assignedSection in instructorSections:
         if isOverlapping(sectionToAssign, assignedSection):
             return True
@@ -320,6 +331,7 @@ def isOverlapping(sectionToAssign, assignedSection):
 
     for assignedMeetPeriod in assignedMeetingPeriods:
         for sectionMeetPeriod in sectionToAssign.meetingPeriods:
+
             if hasTimeConflict(meetingPeriodToAssign=sectionMeetPeriod, assignedMeetingPeriod=assignedMeetPeriod):
                 return True
 
@@ -329,9 +341,17 @@ def isOverlapping(sectionToAssign, assignedSection):
 def hasTimeConflict(meetingPeriodToAssign, assignedMeetingPeriod):
     '''Helper function for isOverlapping(). Accepts exactly 2 meeting_periods as arguments'''
 
-    return (assignedMeetingPeriod.startTime.replace(microsecond=0).time() <
-            meetingPeriodToAssign.startTime.replace(microsecond=0).time()
-            < assignedMeetingPeriod.endTime.replace(microsecond=0).time())
+    # print(f'{assignedMeetingPeriod} --- TOASSIGN: {meetingPeriodToAssign}') # DEBUG TIME CONFLICTS
+
+    result = (assignedMeetingPeriod.startTime.replace(microsecond=0).time() <
+              meetingPeriodToAssign.startTime.replace(microsecond=0).time()
+              < assignedMeetingPeriod.endTime.replace(microsecond=0).time()) or (
+        assignedMeetingPeriod.startTime.replace(microsecond=0).time() <
+        meetingPeriodToAssign.endTime.replace(microsecond=0).time()
+        < assignedMeetingPeriod.endTime.replace(microsecond=0).time())
+
+    # print(f'{result}', file=sys.stderr) # DEBUG TIME CONFLICTS
+    return result
 
 
 def hasMatchingDisciplineAreas(sectionDisciplineAreas, instructorDisciplineAreas):
