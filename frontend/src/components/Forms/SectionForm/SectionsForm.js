@@ -113,6 +113,14 @@ export default function SectionsForm(props) {
     }
 
     if (formData.numMeetingPeriods == 3) {
+      if ("meetingPeriod2Day" in formDataFields) {
+        temp.meetingPeriod2Day =
+          formDataFields.meetingPeriod2Day &&
+          formDataFields.meetingPeriod2Day !== formData.meetingPeriod1Day &&
+          formDataFields.meetingPeriod2Day !== formData.meetingPeriod3Day
+            ? ""
+            : "*Required. Days must be unique.";
+      }
       if ("meetingPeriod3Day" in formDataFields) {
         temp.meetingPeriod3Day =
           formDataFields.meetingPeriod3Day &&
@@ -154,7 +162,7 @@ export default function SectionsForm(props) {
           sectionToEdit.meetingPeriods[0].startTime
         ),
         meetingPeriod1End: new Date(sectionToEdit.meetingPeriods[0].endTime),
-        
+
         // Back when life was much fun and simpler... 2 v 3 meetingPeriods.
         // meetingPeriod2Day: sectionToEdit.meetingPeriods[1].meetDay,
         // meetingPeriod2Start: new Date(
@@ -163,15 +171,15 @@ export default function SectionsForm(props) {
         // meetingPeriod2End: new Date(sectionToEdit.meetingPeriods[1].endTime),
 
         meetingPeriod2Day:
-        sectionToEdit.numMeetingPeriods <= 1
-          ? ""
-          : sectionToEdit.meetingPeriods[1].meetDay,
+          sectionToEdit.numMeetingPeriods <= 1
+            ? ""
+            : sectionToEdit.meetingPeriods[1].meetDay,
         meetingPeriod2Start:
-          sectionToEdit.numMeetingPeriods <= 1 
+          sectionToEdit.numMeetingPeriods <= 1
             ? new Date()
             : new Date(sectionToEdit.meetingPeriods[1].startTime),
         meetingPeriod2End:
-          sectionToEdit.numMeetingPeriods <= 1 
+          sectionToEdit.numMeetingPeriods <= 1
             ? new Date()
             : new Date(sectionToEdit.meetingPeriods[1].endTime),
 
@@ -180,11 +188,11 @@ export default function SectionsForm(props) {
             ? ""
             : sectionToEdit.meetingPeriods[2].meetDay,
         meetingPeriod3Start:
-          sectionToEdit.numMeetingPeriods <= 2 
+          sectionToEdit.numMeetingPeriods <= 2
             ? new Date() // new Date(). Otherwise, time picker throws a stupid error. also, route needs a date object to do convert_utc_to_cst
             : new Date(sectionToEdit.meetingPeriods[2].startTime), // time picker only allows Date() objects.
         meetingPeriod3End:
-          sectionToEdit.numMeetingPeriods <= 2 
+          sectionToEdit.numMeetingPeriods <= 2
             ? new Date()
             : new Date(sectionToEdit.meetingPeriods[2].endTime),
       });
