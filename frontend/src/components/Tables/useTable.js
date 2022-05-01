@@ -74,7 +74,7 @@ export default function useTable(tableData, headerCells, filterFn) {
   // states for pagination
   const pages = [5, 10];
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(pages[page]);
+  const [rowsPerPage, setRowsPerPage] = useState(pages[1]);
   const [order, setOrder] = useState();
   const [orderBy, setOrderBy] = useState();
 
@@ -136,7 +136,7 @@ export default function useTable(tableData, headerCells, filterFn) {
 
   return {
     TableContainer,
-    TableHeader,
+    TableHeader,  
     TablePagination,
     tableDataAfterPagingAndSorting: tableDataAfterPagingAndSorting,
   };

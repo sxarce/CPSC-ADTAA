@@ -65,7 +65,7 @@ export default function SetupSectionsPage(props) {
           console.log(error.response.headers);
           setCredentials(null);
           // localStorage.removeItem("token");
-          props.removeToken()
+          props.removeToken();
         }
       });
   }, []);
@@ -156,6 +156,7 @@ export default function SetupSectionsPage(props) {
   });
   const [openPopup, setOpenPopup] = React.useState(false);
   const [tableData, setTableData] = React.useState(); // records
+  console.log(tableData);
   const [sectionToEdit, setSectionToEdit] = React.useState(null);
   const [notify, setNotify] = React.useState({
     isOpen: false,
@@ -272,10 +273,10 @@ export default function SetupSectionsPage(props) {
         });
     }
 
-    // Issue: Resetting the form is shown during closing form. 
+    // Issue: Resetting the form is shown during closing form.
     // SOLUTION: Promise.resolve().then()
     // CON: Might affect performance.
-    setOpenPopup(false); 
+    setOpenPopup(false);
     resetForm();
     setSectionToEdit(null);
   };
@@ -390,8 +391,11 @@ export default function SetupSectionsPage(props) {
               {tableDataAfterPagingAndSorting().map((elem) => (
                 <TableRow key={elem.id}>
                   <TableCell style={{ width: "0px", fontWeight: "bold" }}>
-                    {elem.courseNumber}
+                    <Tooltip title={elem.courseName} placement="right">
+                      <span>{elem.courseNumber}</span>
+                    </Tooltip>
                   </TableCell>
+
                   <TableCell style={{ width: "0px" }}>
                     {elem.sectionNumber}
                   </TableCell>

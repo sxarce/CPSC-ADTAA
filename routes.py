@@ -608,6 +608,7 @@ def get_sections():
     for section in serialized_sections_list:
         owning_course = Course.query.filter_by(id=section['course_id']).first()
         section['courseNumber'] = owning_course.number
+        section['courseName'] = owning_course.name
         section['numMeetingPeriods'] = len(section['meetingPeriods'])
 
     for section in serialized_sections_list:

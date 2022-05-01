@@ -7,7 +7,7 @@ import userLogo from "../../assets/svg/briefcase.svg";
 import passLogo from "../../assets/svg/lock.svg";
 
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Button } from "@mui/material";
 import axios from "axios";
@@ -27,7 +27,10 @@ const LoginPage = (props) => {
   //   .then(response => console.log(response))
   //   .catch(error => console.log(error))
   // }, [])
-  document.title = "ADTAA - log in or register"
+  useEffect(() => {
+    document.title = "ADTAA - log in or register"
+  }, [])
+  
   const loginUser = (e) => {
     axios
       .post(

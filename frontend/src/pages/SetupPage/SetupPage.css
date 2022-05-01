@@ -3,7 +3,7 @@
 .background-setup {
   position: relative;
   width: 100vw;
-  height: 200vh;  
+  height: 250vh;  
   background-color: rgb(231, 235, 240);
 }
 
@@ -44,7 +44,7 @@
   }
   .table-container-setup {
     left: 17% !important;
-    top: 7.5% !important;
+    top: 5.5% !important;
   }
 }
 
@@ -57,7 +57,7 @@
   z-index: 1;
 
   position: absolute;
-  top: 8%;
+  top: 6%;
   left: 20%;
 
   /* border: 1px solid green; */

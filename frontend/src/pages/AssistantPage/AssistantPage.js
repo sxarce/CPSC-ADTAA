@@ -72,6 +72,7 @@ export default function AssistantPage(props) {
   }, []);
 
   const [tableData, setTableData] = React.useState(null);
+  console.log(tableData);
   const [currentSchedule, setCurrentSchedule] = React.useState(null);
   const [schedulesList, setSchedulesList] = React.useState(null);
   console.log(currentSchedule);
@@ -148,10 +149,26 @@ export default function AssistantPage(props) {
   }, []);
 
   const headerCells = [
-    { id: "courseNumber", label: "Course #" },
-    { id: "sectionNumber", label: "Section #" },
-    { id: "instructorName", label: "Instructor Name" },
-    { id: "commonDisciplineAreas", label: "Common discipline areas" },
+    {
+      id: "assigned_section.course_info.number",
+      label: "Course #",
+      disableSorting: true,
+    },
+    {
+      id: "assigned_section.sectionNumber",
+      label: "Section #",
+      disableSorting: true,
+    },
+    {
+      id: "assigned_instructor.lastName",
+      label: "Instructor Name",
+      disableSorting: true,
+    },
+    {
+      id: "commonDisciplineAreas",
+      label: "Common discipline areas",
+      disableSorting: true,
+    },
   ];
   const [filterFn, setFilterFn] = React.useState({
     fn: (items) => {
@@ -171,13 +188,18 @@ export default function AssistantPage(props) {
       fn: (items) => {
         if (target.value === "") {
           return items;
-        } else
-          return items.filter((item) =>
-            item.assigned_instructor.lastName
-              .toString()
-              .toLowerCase()
-              .includes(target.value.toLowerCase())
+        } else {
+          return items.filter(
+            (item) =>
+              item.assigned_instructor.lastName
+                .toString()
+                .toLowerCase()
+                .includes(target.value.toLowerCase()) ||
+              item.assigned_section.course_info.number
+                .toString()
+                .includes(target.value)
           );
+        }
       },
     });
     // console.log(target.value)
@@ -213,7 +235,7 @@ export default function AssistantPage(props) {
   const [openPopupNew, setOpenPopupNew] = React.useState(false);
   const [openPopupInfo, setOpenPopupInfo] = React.useState(false);
 
-  // reminder: last return is equivalent to "else return"
+  // REMINDER: last return is equivalent to "else return"
   if (loading === true) return <Loader message={""} />;
   else if (credentials === undefined || credentials === null) {
     return (
@@ -237,28 +259,11 @@ export default function AssistantPage(props) {
         logout={props.removeToken}
       />
 
-      {/* <div style={{ display: "flex" }}>
-        <Controls.Button
-          variant="contained"
-          color="primary"
-          text="Generate schedule (TEST ONLY)"
-          handleClick={generateSchedules}
-          // disabled
-        />
-        <Controls.Button
-          variant="contained"
-          color="primary"
-          text="GET schedule (TEST ONLY)"
-          handleClick={getSchedules}
-        />
-      </div> */}
-
       <div className="table-container-assistant">
-        {/* <section className="test">{testData}</section> */}
         <Paper className={classes.pageContent}>
           <Toolbar>
             <Controls.Input
-              label="Search by instructor's last name"
+              label="Search by last name or course #"
               className={classes.searchInput}
               InputProps={{
                 startAdornment: (
@@ -270,7 +275,6 @@ export default function AssistantPage(props) {
               handleChange={handleSearch}
             />
 
-            {/* QUESTION MARK BUTTON shows popup containing: title, stats (sections assigned/total sections), etc. */}
             <Controls.ActionButton
               color="quarternary"
               handleClick={() => {
@@ -317,7 +321,7 @@ export default function AssistantPage(props) {
                 // console.log(elem);
                 return (
                   <TableRow key={elem.id}>
-                    <TableCell style={{ width: "0px", fontWeight: "bold" }}>
+                    <TableCell style={{ fontWeight: "bold" }}>
                       <Tooltip
                         title={elem.assigned_section.course_info.name}
                         placement="right"
@@ -326,23 +330,28 @@ export default function AssistantPage(props) {
                       </Tooltip>
                     </TableCell>
 
-                    <TableCell style={{ width: "0px" }}>
-                      {elem.assigned_section.sectionNumber}
-                    </TableCell>
-                    <TableCell style={{ width: "0px" }}>
+                    <TableCell>{elem.assigned_section.sectionNumber}</TableCell>
+                    <TableCell>
                       {`${elem.assigned_instructor.lastName}, ${elem.assigned_instructor.firstName}`}
                     </TableCell>
-                    <TableCell style={{ width: "0px" }}>
-                      {elem.assigned_instructor.disciplineAreas
-                        .filter((item) =>
-                          elem.assigned_section.course_info.disciplineAreas.some(
-                            ({ name }) => item.name === name
+                    <TableCell style={{ height: "40px" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "10px",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        {elem.assigned_instructor.disciplineAreas
+                          .filter((item) =>
+                            elem.assigned_section.course_info.disciplineAreas.some(
+                              ({ name }) => item.name === name
+                            )
                           )
-                        )
-                        .map((listItem) => (
-                          <li>{listItem.name}</li>
-                        ))}
-                      {/* {elem.assigned_section.course_info.disciplineAreas.map(x => (<li>{x.name}</li>))} */}
+                          .map((listItem) => (
+                            <Chip label={listItem.name}></Chip>
+                          ))}
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
