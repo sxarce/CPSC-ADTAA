@@ -95,7 +95,7 @@ npm start
 - Navigate to and select *CPSC-ADTAA/venv/Scripts/python.exe*
 
 **Could not proxy request to...**
-- In frontend folder, change localhost to 127.0.0.1 (For Mac)
+- In frontend folder, package.json, change localhost to 127.0.0.1 (For Mac)
 
 
 ***No pyvenv.cfg***
