@@ -2,6 +2,8 @@ import React from "react";
 import axios from "axios";
 import Sidebar from "../../components/Sidebar";
 import Loader from "../../components/LoadingScreen/Loader";
+import "./EditSchedulePage.css"
+import editSchedulesBackground from "../../assets/svg/background_edit_schedules.svg"
 
 export default function EditSchedulePage(props) {
   const [loading, setLoading] = React.useState(true); // For <Loader />
@@ -45,12 +47,12 @@ export default function EditSchedulePage(props) {
     );
   }
   return (
-    <div className="background-assistant">
-      <div className="banner-assistant">
+    <div className="background-edit-schedules">
+      <div className="banner-edit-schedules">
         <img
-          //   src={assistantBackground}
-          alt="assistant logo"
-          className="assistant-background"
+            src={editSchedulesBackground}
+          alt="edit schedules logo"
+          className="edit-schedules-background"
         />
       </div>
 
@@ -61,7 +63,7 @@ export default function EditSchedulePage(props) {
         logout={props.removeToken}
       />
 
-      <div className="table-container-assistant"></div>
+      <div className="table-container-edit-schedules"></div>
     </div>
   );
 }
