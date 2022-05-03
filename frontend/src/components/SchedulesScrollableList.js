@@ -67,17 +67,4 @@ export default function SchedulesScrollableList(props) {
   );
 }
 
-// {[0, 1, 2, 3, 4].map((sectionId) => (
-//   <li key={`section-${sectionId}`}>
-//     <ul>
-//       {/* <ListSubheader>{`I'm sticky ${sectionId}`}</ListSubheader> */}
-//       {[0, 1, 2].map((item) => (
-//         <ListItem key={`item-${sectionId}-${item}`}>
-//           <ListItemButton onClick={() => { console.log("item clicked")}}>
-//             <ListItemText primary={`Item ${item}`} />
-//           </ListItemButton>
-//         </ListItem>
-//       ))}
-//     </ul>
-//   </li>
-// ))}
+

@@ -34,9 +34,8 @@ import InfoIcon from "@mui/icons-material/Info";
 import Popup from "../../components/Forms/Popup";
 import ScheduleForm from "../../components/Forms/ScheduleForm/ScheduleForm";
 import SchedulesScrollableList from "../../components/SchedulesScrollableList";
-import { Box } from "@mui/system";
+
 import ScheduleInfo from "../../components/ScheduleInfo";
-import CustomToolTip from "../../components/Forms/SectionForm/controls/CustomToolTip";
 
 export default function AssistantPage(props) {
   document.title = "Assistant - ADTAA";
@@ -72,9 +71,10 @@ export default function AssistantPage(props) {
   }, []);
 
   const [tableData, setTableData] = React.useState(null);
-
   const [currentSchedule, setCurrentSchedule] = React.useState(null);
-  const [schedulesList, setSchedulesList] = React.useState(null);
+
+  console.log(tableData);
+  console.log(currentSchedule);
 
   const deleteSchedule = () => {
     axios
@@ -97,7 +97,7 @@ export default function AssistantPage(props) {
           setTableData(
             retrievedTableData[retrievedTableData.length - 1].assignedClasses
           );
-          setSchedulesList(retrievedTableData); // for clipboard button (displaying all schedule names)
+          // setSchedulesList(retrievedTableData); // for clipboard button (displaying all schedule names)
         } else setTableData(retrievedTableData);
       })
       .catch((error) => console.log(error));
