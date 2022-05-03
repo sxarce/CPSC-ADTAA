@@ -24,6 +24,7 @@ import AssistantPage from "./pages/AssistantPage/AssistantPage";
 import useToken from "./components/Token/useToken";
 // import Header from "./components/Token/Header";
 import RegRequestsPage from "./pages/RegistrationRequestsPage/RegRequestsPage";
+import EditSchedulePage from "./pages/EditSchedulePage/EditSchedulePage";
 // const App = () => {
 //   let routes = useRoutes([
 //     { path: "/", element: <RegisterPage /> },
@@ -105,6 +106,17 @@ export default function App() {
                 path="/assistant"
                 element={
                   <AssistantPage
+                    token={token}
+                    setToken={setToken}
+                    removeToken={removeToken}
+                  />
+                }
+              />,
+              <Route
+                exact
+                path="/edit-schedules"
+                element={
+                  <EditSchedulePage
                     token={token}
                     setToken={setToken}
                     removeToken={removeToken}

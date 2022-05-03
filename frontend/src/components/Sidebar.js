@@ -29,7 +29,7 @@ export default function Sidebar(props) {
     navigate(path);
   }
   function goToEditPage(e) {
-    let path = "/edit";
+    let path = "/edit-schedules";
     navigate(path);
   }
   function goToRegReqsPage(e) {
@@ -84,7 +84,7 @@ export default function Sidebar(props) {
             </li>
             <li
               className={`${
-                props.page === "edit" ? "sidebar-current-page" : ""
+                props.page === "edit-schedules" ? "sidebar-current-page" : ""
               }`}
               onClick={goToEditPage}
             >

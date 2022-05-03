@@ -104,7 +104,7 @@ export default function DashboardPage(props) {
                   ? "hide-button"
                   : ""
               }`}
-              onClick={() => navigate("/edit")}
+              onClick={() => navigate("/edit-schedules")}
             >
               <img src={pencil} alt="pencil icon" />
             </Button>
