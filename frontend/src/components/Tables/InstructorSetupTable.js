@@ -640,46 +640,48 @@ export default function CustomPaginationActionsTable(props) {
 
         <TableFooter>
           <TableRow>
-            <Button
-              className="add-instructor-btn"
-              variant="contained"
-              onClick={(event) => {
-                Promise.resolve().then(() => {
-                  setAddMode(true);
-                  addInstructor(event);
-                });
-              }}
-              disabled={
-                editMode ||
-                tableData.some((instructor) => instructor.lastName === "")
-                  ? true
-                  : false
-              }
-            >
-              <AddIcon />
-            </Button>
-
-            <Tooltip title="Refresh table" arrow>
-              <IconButton
-                onClick={() => {
+            <TableCell colspan={2} style={{ padding: "0rem" }}>
+              <Button
+                className="add-instructor-btn"
+                variant="contained"
+                onClick={(event) => {
                   Promise.resolve().then(() => {
-                    setInstructorName({
-                      lastNameInput: "",
-                      firstNameInput: "",
-                    });
-                    setDisciplineAreas([]);
-
-                    setEditMode(false);
-                    setEditInstructorID(-1);
-                    setAddMode(false);
-
-                    getInstructorRoster();
+                    setAddMode(true);
+                    addInstructor(event);
                   });
                 }}
+                disabled={
+                  editMode ||
+                  tableData.some((instructor) => instructor.lastName === "")
+                    ? true
+                    : false
+                }
               >
-                <AutorenewIcon />
-              </IconButton>
-            </Tooltip>
+                <AddIcon />
+              </Button>
+
+              <Tooltip title="Refresh table" arrow>
+                <IconButton
+                  onClick={() => {
+                    Promise.resolve().then(() => {
+                      setInstructorName({
+                        lastNameInput: "",
+                        firstNameInput: "",
+                      });
+                      setDisciplineAreas([]);
+
+                      setEditMode(false);
+                      setEditInstructorID(-1);
+                      setAddMode(false);
+
+                      getInstructorRoster();
+                    });
+                  }}
+                >
+                  <AutorenewIcon />
+                </IconButton>
+              </Tooltip>
+            </TableCell>
 
             <TablePagination
               rowsPerPageOptions={[3, 5]}
