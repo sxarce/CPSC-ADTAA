@@ -19,7 +19,8 @@ const useStyles = makeStyles({
     },
 
     "&.MuiButton-root:hover": {
-      backgroundColor: "#73142d",
+      // backgroundColor: "#73142d",
+      backgroundColor: "#662839",
     },
   },
   secondary: {
@@ -53,18 +54,34 @@ const useStyles = makeStyles({
     },
     "&.MuiButton-root:disabled": {
       backgroundColor: "#9fada2",
-    }
-  }
+    },
+  },
 });
 
 export default function ActionButton(props) {
-  const { variant, color, children, handleClick, tooltipTitle, ...others } =
-    props;
+  const {
+    variant,
+    color,
+    children,
+    handleClick,
+    tooltipTitle,
+    tooltipPlacement,
+    isTooltipArrow = false,
+    ...others
+  } = props;
 
   function CustomToolTip(props) {
     const { children, title } = props;
 
-    return <Tooltip title={title}>{children}</Tooltip>;
+    return (
+      <Tooltip
+        title={title}
+        placement={tooltipPlacement ? tooltipPlacement : "bottom"}
+        arrow={isTooltipArrow}
+      >
+        {children}
+      </Tooltip>
+    );
   }
 
   const classes = useStyles();

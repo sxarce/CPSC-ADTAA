@@ -659,7 +659,7 @@ export default function CustomPaginationActionsTable(props) {
               <AddIcon />
             </Button>
 
-            <Tooltip title="Refresh table">
+            <Tooltip title="Refresh table" arrow>
               <IconButton
                 onClick={() => {
                   Promise.resolve().then(() => {

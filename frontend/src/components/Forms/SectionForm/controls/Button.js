@@ -20,6 +20,10 @@ export default function Button(props) {
         backgroundColor: "#732d40 !important",
         color: "#FFF !important",
       },
+      "&.MuiButton-contained:hover": {
+        // backgroundColor: "#73142d",
+        backgroundColor: "#662839 !important",
+      },
       "&.MuiButton-text": {
         backgroundColor: "none",
         color: "#000",

@@ -319,7 +319,7 @@ export default function SetupSectionsPage(props) {
   if (loading === true) return <Loader message={""} />;
   else if (credentials === undefined || credentials === null) {
     return (
-      <Loader message={"Authentication failed. Please refresh the page"} />
+      <Loader message={"Authenticating... Please refresh if page does not load"} />
     );
   } else if (
     credentials.user_access_level !== "ROOT" &&
@@ -391,7 +391,7 @@ export default function SetupSectionsPage(props) {
               {tableDataAfterPagingAndSorting().map((elem) => (
                 <TableRow key={elem.id}>
                   <TableCell style={{ width: "0px", fontWeight: "bold" }}>
-                    <Tooltip title={elem.courseName} placement="right">
+                    <Tooltip title={elem.courseName} placement="right" arrow>
                       <span>{elem.courseNumber}</span>
                     </Tooltip>
                   </TableCell>
@@ -431,7 +431,7 @@ export default function SetupSectionsPage(props) {
                       <TableCell></TableCell>
                     </>
                   )}
-                  <TableCell align="center">
+                  <TableCell align="center" style={{width: "125px"}}>
                     <Controls.ActionButton
                       color="primary"
                       handleClick={() => {
@@ -439,6 +439,8 @@ export default function SetupSectionsPage(props) {
                       }}
                       style={{ margin: "0.15rem" }}
                       tooltipTitle="Edit"
+                      tooltipPlacement="left"
+                      isTooltipArrow={true}
                     >
                       <EditIcon fontSize="small" />
                     </Controls.ActionButton>
@@ -450,6 +452,8 @@ export default function SetupSectionsPage(props) {
                         deleteSection(elem);
                       }}
                       tooltipTitle="Delete"
+                      tooltipPlacement="right"
+                      isTooltipArrow={true}
                     >
                       <DeleteIcon fontSize="small" />
                     </Controls.ActionButton>
@@ -466,7 +470,7 @@ export default function SetupSectionsPage(props) {
               marginTop: "10px",
             }}
           >
-            <Tooltip title="Assign courses and instructors">
+            <Tooltip title="Assign courses and instructors" arrow >
               <IconButton onClick={goToSetupPage} style={{ color: "#732d40" }}>
                 <ArrowBackIcon />
               </IconButton>

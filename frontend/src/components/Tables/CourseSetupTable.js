@@ -652,7 +652,7 @@ export default function CustomPaginationActionsTable(props) {
                 <AddIcon />
               </Button>
 
-              <Tooltip title="Refresh table">
+              <Tooltip title="Refresh table" arrow placement="bottom">
                 <IconButton
                   onClick={() => {
                     Promise.resolve().then(() => {
@@ -675,7 +675,7 @@ export default function CustomPaginationActionsTable(props) {
                 </IconButton>
               </Tooltip>
 
-              <Tooltip title="Assign sections">
+              <Tooltip title="Assign sections" arrow placement="bottom">
                 <IconButton
                   onClick={goToAssignSectionsPage}
                   className="go-to-assign-sections-btn"

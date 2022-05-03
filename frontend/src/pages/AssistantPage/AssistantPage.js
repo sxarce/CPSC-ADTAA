@@ -33,7 +33,7 @@ import InfoIcon from "@mui/icons-material/Info";
 
 import Popup from "../../components/Forms/Popup";
 import ScheduleForm from "../../components/Forms/ScheduleForm/ScheduleForm";
-import ScrollableList from "../../components/Forms/SectionForm/controls/ScrollableList";
+import SchedulesScrollableList from "../../components/SchedulesScrollableList";
 import { Box } from "@mui/system";
 import ScheduleInfo from "../../components/ScheduleInfo";
 import CustomToolTip from "../../components/Forms/SectionForm/controls/CustomToolTip";
@@ -72,10 +72,9 @@ export default function AssistantPage(props) {
   }, []);
 
   const [tableData, setTableData] = React.useState(null);
-  console.log(tableData);
+
   const [currentSchedule, setCurrentSchedule] = React.useState(null);
   const [schedulesList, setSchedulesList] = React.useState(null);
-  console.log(currentSchedule);
 
   const deleteSchedule = () => {
     axios
@@ -89,7 +88,7 @@ export default function AssistantPage(props) {
         }
       )
       .then((response) => {
-        console.log(response);
+        // console.log(response);
 
         let retrievedTableData = response.data.TableData;
         if (retrievedTableData.length > 0) {
@@ -105,7 +104,7 @@ export default function AssistantPage(props) {
   };
 
   const generateSchedule = (formData) => {
-    console.log("Clicked! Generating schedule...");
+    // console.log("Clicked! Generating schedule...");
     axios
       .post("/generate-schedule", formData, {
         headers: {
@@ -121,18 +120,18 @@ export default function AssistantPage(props) {
             retrievedTableData[retrievedTableData.length - 1].assignedClasses
           ); // retrievedTableData[0].assignedClasses
         } else setTableData(retrievedTableData);
-        console.log(response);
+        // console.log(response);
       })
       .catch((error) => console.log(error));
   };
 
   // getSchedules() used for initial render
   const getSchedules = () => {
-    console.log("Getting schedules");
+    // console.log("Getting schedules");
     axios
       .get("/get-schedules")
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         let retrievedTableData = response.data.TableData;
         if (retrievedTableData.length > 0) {
           setCurrentSchedule(retrievedTableData[retrievedTableData.length - 1]);
@@ -234,12 +233,15 @@ export default function AssistantPage(props) {
 
   const [openPopupNew, setOpenPopupNew] = React.useState(false);
   const [openPopupInfo, setOpenPopupInfo] = React.useState(false);
+  const [openPopupSchedules, setOpenPopupSchedules] = React.useState(false);
 
   // REMINDER: last return is equivalent to "else return"
   if (loading === true) return <Loader message={""} />;
   else if (credentials === undefined || credentials === null) {
     return (
-      <Loader message={"Authentication failed. Please refresh the page"} />
+      <Loader
+        message={"Authenticating... Please refresh if page does not load"}
+      />
     );
   }
   return (
@@ -283,6 +285,8 @@ export default function AssistantPage(props) {
               style={{ position: "absolute", right: "70px" }}
               disabled={tableData.length <= 0}
               tooltipTitle="Show schedule information"
+              tooltipPlacement="top"
+              isTooltipArrow={true}
             >
               <InfoIcon />
             </Controls.ActionButton>
@@ -310,6 +314,9 @@ export default function AssistantPage(props) {
                 right: "20px",
               }}
               tooltipTitle="Show schedule list"
+              handleClick={() => {
+                setOpenPopupSchedules(true);
+              }}
             >
               <AssignmentOutlinedIcon />
             </Controls.ActionButton>
@@ -325,6 +332,7 @@ export default function AssistantPage(props) {
                       <Tooltip
                         title={elem.assigned_section.course_info.name}
                         placement="right"
+                        arrow
                       >
                         <span>{elem.assigned_section.course_info.number}</span>
                       </Tooltip>
@@ -361,7 +369,7 @@ export default function AssistantPage(props) {
             <TableFooter>
               <TableRow>
                 <TableCell colspan={3} style={{ borderBottom: "0" }}>
-                  <Tooltip title="Delete schedule">
+                  <Tooltip title="Delete schedule" arrow>
                     <IconButton
                       style={{
                         color: "#732d40",
@@ -393,6 +401,17 @@ export default function AssistantPage(props) {
           setOpenPopup={setOpenPopupInfo}
         >
           <ScheduleInfo currentSchedule={currentSchedule} />
+        </Popup>
+        <Popup
+          title="List of schedules"
+          openPopup={openPopupSchedules}
+          setOpenPopup={setOpenPopupSchedules}
+        >
+          <SchedulesScrollableList
+            setTableData={setTableData}
+            setCurrentSchedule={setCurrentSchedule}
+            setOpenPopup={setOpenPopupSchedules}
+          />
         </Popup>
       </div>
     </div>

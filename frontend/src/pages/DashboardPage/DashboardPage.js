@@ -18,12 +18,13 @@ import Loader from "../../components/LoadingScreen/Loader";
 import { useSpring, animated } from "react-spring";
 
 export default function DashboardPage(props) {
-  document.title = "Dashboard - ADTAA";
+  
   const [loading, setLoading] = useState(true); // For <Loader />
   const [credentials, setCredentials] = useState(null);
   let navigate = useNavigate();
 
   useEffect(() => {
+    document.title = "Dashboard - ADTAA";
     setTimeout(() => setLoading(false), 1500);
     getData();
     // testProtected()
@@ -67,7 +68,7 @@ export default function DashboardPage(props) {
       {loading ? (
         <Loader message={""} />
       ) : credentials === undefined || credentials === null ? (
-        <Loader message={"Authentication failed. Please refresh the page"} />
+        <Loader message={"Authenticating... Please refresh if page does not load"} />
       ) : (
         <animated.div
           className={`${"background-dashboard"}`}

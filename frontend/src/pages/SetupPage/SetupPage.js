@@ -54,7 +54,7 @@ export default function SetupPage(props) {
   if (loading === true) return <Loader message={""} />;
   else if (credentials === undefined || credentials === null) {
     return (
-      <Loader message={"Authentication failed. Please refresh the page"} />
+      <Loader message={"Authenticating... Please refresh if page does not load"} />
     );
   } else if (
     credentials.user_access_level !== "ROOT" &&

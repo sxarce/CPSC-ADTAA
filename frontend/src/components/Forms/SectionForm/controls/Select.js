@@ -20,6 +20,10 @@ export default function Select(props) {
     error = null,
   } = props;
 
+  // options --> course
+  // options2 --> days
+  // options3 --> algo
+  
   return (
     <FormControl variant={variant} {...(error && { error: true })}>
       <InputLabel>{label}</InputLabel>

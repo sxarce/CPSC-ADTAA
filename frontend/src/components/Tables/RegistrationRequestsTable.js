@@ -275,7 +275,7 @@ export default function RegistrationRequestsTable(props) {
 
           <TableFooter>
             <TableRow>
-              <Tooltip title="Refresh table">
+              <Tooltip title="Refresh table" arrow>
                 <IconButton
                   onClick={getRegisterRequests}
                   style={{ padding: "1rem" }}

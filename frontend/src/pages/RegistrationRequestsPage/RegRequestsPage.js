@@ -64,7 +64,7 @@ export default function RegRequestsPage(props) {
   else if (credentials === undefined || credentials === null)
     // handles tampering using localStorage.setItem("token") and localStorage.removeItem("token")
     return (
-      <Loader message={"Authentication failed. Please refresh the page."} />
+      <Loader message={"Authenticating... Please refresh if page does not load"} />
     );
   else if (credentials.user_access_level !== "ROOT") {
     // handles going to page via URL and unauthorized access.
