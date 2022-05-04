@@ -262,6 +262,8 @@ export default function SectionsForm(props) {
                 label="Period 1 Start time"
                 value={formData.meetingPeriod1Start}
                 handleChange={handleInputChange}
+                minTime={new Date(0, 0, 0, 7, 0)}
+                maxTime={new Date(0, 0, 0, 20, 0)}
               />
             </Grid>
             <Grid item xs={3.5}>
@@ -292,6 +294,8 @@ export default function SectionsForm(props) {
                     label="Period 2 Start time"
                     value={formData.meetingPeriod2Start}
                     handleChange={handleInputChange}
+                    minTime={new Date(0, 0, 0, 7, 0)}
+                    maxTime={new Date(0, 0, 0, 20, 0)}
                   />
                 </Grid>
                 <Grid item xs={3.5}>
@@ -322,6 +326,8 @@ export default function SectionsForm(props) {
                         label="Period 3 Start time"
                         value={formData.meetingPeriod3Start}
                         handleChange={handleInputChange}
+                        minTime={new Date(0, 0, 0, 7, 0)}
+                        maxTime={new Date(0, 0, 0, 20, 0)}
                       />
                     </Grid>
                     <Grid item xs={3.5} align="center">

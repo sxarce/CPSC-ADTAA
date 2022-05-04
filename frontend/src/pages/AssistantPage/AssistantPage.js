@@ -330,11 +330,11 @@ export default function AssistantPage(props) {
                   <TableRow key={elem.id}>
                     <TableCell style={{ fontWeight: "bold" }}>
                       <Tooltip
-                        title={elem.assigned_section.course_info.name}
-                        placement="right"
+                        title={`Course #${elem.assigned_section.course_info.number}`}
+                        placement="left"
                         arrow
                       >
-                        <span>{elem.assigned_section.course_info.number}</span>
+                        <span>{elem.assigned_section.course_info.name}</span>
                       </Tooltip>
                     </TableCell>
 

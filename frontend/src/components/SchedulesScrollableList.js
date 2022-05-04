@@ -36,7 +36,7 @@ export default function SchedulesScrollableList(props) {
         position: "relative",
         overflowY: "scroll",
         overflowX: "auto",
-        minHeight: 150,
+        minHeight: 200,
         "& ul": { padding: 0 },
       }}
       subheader={<li />}

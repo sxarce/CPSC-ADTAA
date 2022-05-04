@@ -211,7 +211,7 @@ export default function CustomPaginationActionsTable(props) {
       const indexToDelete = tableData.findIndex(
         (course) => course.courseName === name && course.courseNumber === number
       );
-      
+
       // DELETE ROW from UI
       prevTableData.splice(indexToDelete, 1);
 
@@ -228,9 +228,6 @@ export default function CustomPaginationActionsTable(props) {
           }
         });
       }
-
-      
-      
 
       return prevTableData;
     });
@@ -480,7 +477,7 @@ export default function CustomPaginationActionsTable(props) {
           ).map((row) => {
             return (
               <TableRow key={row.name} style={{ border: "none" }}>
-                <TableCell>
+                <TableCell style={{fontWeight: "bold"}}>
                   {row.courseName === "" || editCourseID === row.id ? (
                     <TextField
                       variant="outlined"
@@ -496,7 +493,17 @@ export default function CustomPaginationActionsTable(props) {
                       autoComplete="off"
                     />
                   ) : (
-                    row.courseName
+                    <Tooltip
+                      title={
+                        row.courseReferenceNumber
+                          ? `CRN: ${row.courseReferenceNumber}`
+                          : `CRN: ${100 + tableData.length - 1}`
+                      }
+                      arrow
+                      placement="left"
+                    >
+                      <span>{row.courseName}</span>
+                    </Tooltip>
                   )}
                 </TableCell>
                 <TableCell>
@@ -515,21 +522,9 @@ export default function CustomPaginationActionsTable(props) {
                       autoComplete="off"
                     />
                   ) : (
-                    <Tooltip
-                      title={
-                        row.courseReferenceNumber
-                          ? `CRN: ${row.courseReferenceNumber}`
-                          : `CRN: ${100 + tableData.length - 1}`
-                      }
-                      arrow
-                      placement="right"
-                    >
-                      <span>{row.courseNumber}</span>
-                    </Tooltip>
+                    row.courseNumber
                   )}
                 </TableCell>
-
-                {/* <TableCell>{row.courseReferenceNumber ? row.courseReferenceNumber : 100 + tableData.length - 1 }</TableCell> */}
 
                 <TableCell>
                   {row.courseDeptCode === "" || editCourseID === row.id ? (

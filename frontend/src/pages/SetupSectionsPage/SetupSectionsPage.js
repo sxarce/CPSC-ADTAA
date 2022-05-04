@@ -391,7 +391,7 @@ export default function SetupSectionsPage(props) {
               {tableDataAfterPagingAndSorting().map((elem) => (
                 <TableRow key={elem.id}>
                   <TableCell style={{ width: "0px", fontWeight: "bold" }}>
-                    <Tooltip title={elem.courseName} placement="right" arrow>
+                    <Tooltip title={elem.courseName} placement="left" arrow>
                       <span>{elem.courseNumber}</span>
                     </Tooltip>
                   </TableCell>

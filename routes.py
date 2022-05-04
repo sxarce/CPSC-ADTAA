@@ -341,16 +341,19 @@ def isOverlapping(sectionToAssign, assignedSection):
 def hasTimeConflict(meetingPeriodToAssign, assignedMeetingPeriod):
     '''Helper function for isOverlapping(). Accepts exactly 2 meeting_periods as arguments'''
 
-    # print(f'{assignedMeetingPeriod} --- TOASSIGN: {meetingPeriodToAssign}') # DEBUG TIME CONFLICTS
+    # DEBUG TIME CONFLICTS
+    print(f'{assignedMeetingPeriod} --- TOASSIGN: {meetingPeriodToAssign}')
+    print(f'{assignedMeetingPeriod.startTime.replace(second=0, microsecond=0).time()} -- {meetingPeriodToAssign.startTime.replace(second=0, microsecond=0).time()} -- {assignedMeetingPeriod.endTime.replace(second=0, microsecond=0).time()}')
 
-    result = (assignedMeetingPeriod.startTime.replace(microsecond=0).time() <
-              meetingPeriodToAssign.startTime.replace(microsecond=0).time()
-              < assignedMeetingPeriod.endTime.replace(microsecond=0).time()) or (
-        assignedMeetingPeriod.startTime.replace(microsecond=0).time() <
-        meetingPeriodToAssign.endTime.replace(microsecond=0).time()
-        < assignedMeetingPeriod.endTime.replace(microsecond=0).time())
+    result = (assignedMeetingPeriod.startTime.replace(second=0, microsecond=0).time() <=
+              meetingPeriodToAssign.startTime.replace(
+                  second=0, microsecond=0).time()
+              <= assignedMeetingPeriod.endTime.replace(second=0, microsecond=0).time()) or (
+        assignedMeetingPeriod.startTime.replace(second=0, microsecond=0).time() <=
+        meetingPeriodToAssign.endTime.replace(second=0, microsecond=0).time()
+        <= assignedMeetingPeriod.endTime.replace(second=0, microsecond=0).time())
 
-    # print(f'{result}', file=sys.stderr) # DEBUG TIME CONFLICTS
+    print(f'{result}', file=sys.stderr)  # DEBUG TIME CONFLICTS
     return result
 
 
