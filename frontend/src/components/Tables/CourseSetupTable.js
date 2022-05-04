@@ -100,7 +100,7 @@ export default function CustomPaginationActionsTable(props) {
   const { setNotify } = props;
 
   const [tableData, setTableData] = React.useState([]);
-  // console.log(tableData);
+  console.log(tableData);
   const [courseInfo, setCourseInfo] = React.useState({
     courseNameInput: "",
     courseNumberInput: "",
@@ -211,7 +211,27 @@ export default function CustomPaginationActionsTable(props) {
       const indexToDelete = tableData.findIndex(
         (course) => course.courseName === name && course.courseNumber === number
       );
+      
+      // DELETE ROW from UI
       prevTableData.splice(indexToDelete, 1);
+
+      // FOR updating CRN in frontend only.
+      if (indexToDelete === 0) {
+        prevTableData.forEach((elem) => {
+          elem.courseReferenceNumber -= 1;
+        });
+      } else {
+        prevTableData.forEach((elem, index) => {
+          if (elem.courseReferenceNumber !== 100) {
+            elem.courseReferenceNumber =
+              prevTableData[index - 1].courseReferenceNumber + 1;
+          }
+        });
+      }
+
+      
+      
+
       return prevTableData;
     });
 
@@ -361,6 +381,7 @@ export default function CustomPaginationActionsTable(props) {
                 courseName: course.name,
                 courseNumber: course.number,
                 courseDeptCode: course.deptCode,
+                courseReferenceNumber: course.referenceNumber,
                 requiredExpertise: course.disciplineAreas.map(
                   (disciplineArea) => disciplineArea.name
                 ),
@@ -431,9 +452,11 @@ export default function CustomPaginationActionsTable(props) {
                 Button here!
               </TableCell> */}
           </TableRow>
+
           <TableRow style={HeaderBackgroundStyle}>
             <TableCell style={HeaderStyle}>Course Name</TableCell>
             <TableCell style={HeaderStyle}>Course #</TableCell>
+            {/* <TableCell style={HeaderStyle}>Reference #</TableCell> */}
             <TableCell style={HeaderStyle}>Department Code</TableCell>
             <TableCell style={HeaderStyle}>Required expertise</TableCell>
             <TableCell
@@ -492,9 +515,22 @@ export default function CustomPaginationActionsTable(props) {
                       autoComplete="off"
                     />
                   ) : (
-                    row.courseNumber
+                    <Tooltip
+                      title={
+                        row.courseReferenceNumber
+                          ? `CRN: ${row.courseReferenceNumber}`
+                          : `CRN: ${100 + tableData.length - 1}`
+                      }
+                      arrow
+                      placement="right"
+                    >
+                      <span>{row.courseNumber}</span>
+                    </Tooltip>
                   )}
                 </TableCell>
+
+                {/* <TableCell>{row.courseReferenceNumber ? row.courseReferenceNumber : 100 + tableData.length - 1 }</TableCell> */}
+
                 <TableCell>
                   {row.courseDeptCode === "" || editCourseID === row.id ? (
                     <TextField

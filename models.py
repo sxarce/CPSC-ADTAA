@@ -105,8 +105,14 @@ class Course(db.Model):
     deptCode = db.Column(db.String(10), nullable=False)
     disciplineAreas = db.relationship(
         'CourseDisciplineArea', backref='owning_course', lazy=True)
+    referenceNumber = db.Column(db.Integer, nullable=False, unique=True)
 
     sections = db.relationship('Section', backref='owning_course', lazy=True)
+
+    def __init__(self, **kwargs):
+        super(Course, self).__init__(**kwargs)
+        self.referenceNumber = 100 + len(Course.query.all())
+    
 
     def __repr__(self):
         return f'<COURSE -> NAME: {self.name}, NUMBER: {self.number}, DEPTCODE= {self.deptCode}, disciplineAreas: {self.disciplineAreas}>'
@@ -114,7 +120,7 @@ class Course(db.Model):
 
 class CourseSchema(ma.Schema):
     class Meta:
-        fields = ("id", "name", "number", "deptCode", "disciplineAreas")
+        fields = ("id", "name", "number", "deptCode", "disciplineAreas", "referenceNumber")
 
 
 course_schema = CourseSchema()

@@ -419,6 +419,12 @@ def delete_course():
     db.session.delete(courseToDelete)
     db.session.commit()
 
+    # Update CRN's of every course
+    for count, course in enumerate(Course.query.all()):
+        course.referenceNumber = 100 + count
+
+    db.session.commit()
+
     return {"Message": "Course deleted"}
 
 
