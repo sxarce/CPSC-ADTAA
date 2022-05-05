@@ -21,6 +21,7 @@ import {
   IconButton,
   Typography,
   Grid,
+  TableHead,
 } from "@mui/material";
 import useTable from "../../components/Tables/useTable";
 
@@ -29,6 +30,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import FiberNewOutlinedIcon from "@mui/icons-material/FiberNewOutlined";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import InfoIcon from "@mui/icons-material/Info";
 
 import Popup from "../../components/Forms/Popup";
@@ -36,6 +38,7 @@ import ScheduleForm from "../../components/Forms/ScheduleForm/ScheduleForm";
 import SchedulesScrollableList from "../../components/SchedulesScrollableList";
 
 import ScheduleInfo from "../../components/ScheduleInfo";
+import CreateIcon from "@mui/icons-material/Create";
 
 export default function AssistantPage(props) {
   document.title = "Assistant - ADTAA";
@@ -99,8 +102,9 @@ export default function AssistantPage(props) {
           );
           // setSchedulesList(retrievedTableData); // for clipboard button (displaying all schedule names)
         } else {
-          setCurrentSchedule(null)
-          setTableData(retrievedTableData)};
+          setCurrentSchedule(null);
+          setTableData(retrievedTableData);
+        }
       })
       .catch((error) => console.log(error));
   };
@@ -173,6 +177,7 @@ export default function AssistantPage(props) {
       label: "Common discipline areas",
       disableSorting: true,
     },
+    { id: "actions", label: "", disableSorting: true },
   ];
   const [filterFn, setFilterFn] = React.useState({
     fn: (items) => {
@@ -249,6 +254,13 @@ export default function AssistantPage(props) {
       />
     );
   }
+
+  const HeaderStyle = {
+    fontWeight: "bold",
+    borderBottom: "none",
+    // fontFamily: "Open Sans",
+    color: "#8898AA",
+  };
   return (
     <div className="background-assistant">
       <div className="banner-assistant">
@@ -327,13 +339,19 @@ export default function AssistantPage(props) {
             </Controls.ActionButton>
           </Toolbar>
           <TableContainer>
-            <TableHeader />
+            <TableHead>
+              <TableCell style={HeaderStyle}>Course name</TableCell>
+              <TableCell style={HeaderStyle}>Section #</TableCell>
+              <TableCell style={HeaderStyle}>Instructor name</TableCell>
+              <TableCell style={HeaderStyle}>Common discipline areas</TableCell>
+              {credentials.user_access_level !== "ASSISTANT" ? <TableCell style={HeaderStyle}></TableCell> : ""}
+            </TableHead>
             <TableBody>
               {tableDataAfterPagingAndSorting().map((elem) => {
                 // console.log(elem);
                 return (
                   <TableRow key={elem.id}>
-                    <TableCell style={{ fontWeight: "bold" }}>
+                    <TableCell style={{ fontWeight: "bold", width: "0px" }}>
                       <Tooltip
                         title={`Course #${elem.assigned_section.course_info.number}`}
                         placement="left"
@@ -343,15 +361,17 @@ export default function AssistantPage(props) {
                       </Tooltip>
                     </TableCell>
 
-                    <TableCell>{elem.assigned_section.sectionNumber}</TableCell>
-                    <TableCell>
+                    <TableCell style={{ width: "0px" }}>
+                      {elem.assigned_section.sectionNumber}
+                    </TableCell>
+                    <TableCell style={{ width: "0px" }}>
                       {`${elem.assigned_instructor.lastName}, ${elem.assigned_instructor.firstName}`}
                     </TableCell>
-                    <TableCell style={{ height: "40px" }}>
+                    <TableCell style={{ height: "40px", width: "260px" }}>
                       <div
                         style={{
                           display: "flex",
-                          gap: "10px",
+                          gap: "5px",
                           flexWrap: "wrap",
                         }}
                       >
@@ -366,6 +386,18 @@ export default function AssistantPage(props) {
                           ))}
                       </div>
                     </TableCell>
+                    {credentials.user_access_level !== "ASSISTANT" ? (
+                      <TableCell align="right" style={{ width: "0px" }}>
+                        <IconButton>
+                          <CreateIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton>
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </TableCell>
+                    ) : (
+                      ""
+                    )}
                   </TableRow>
                 );
               })}
@@ -383,7 +415,7 @@ export default function AssistantPage(props) {
                       onClick={deleteSchedule}
                       disabled={currentSchedule === null ? true : false}
                     >
-                      <DeleteIcon />
+                      <DeleteForeverIcon fontSize="large" />
                     </IconButton>
                   </Tooltip>
                 </TableCell>

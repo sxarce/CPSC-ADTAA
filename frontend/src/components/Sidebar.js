@@ -9,7 +9,7 @@ import personImg from "../assets/svg/sidebar/sidebar_person.svg";
 import ualrLogo from "../assets/svg/sidebar/sidebar_ualr.svg";
 import userLogo from "../assets/svg/user-logo-bottom.svg";
 import keyLogo from "../assets/svg/key-logo-bottom.svg";
-import powerLogo from "../assets/svg/power-off-solid.svg"
+import powerLogo from "../assets/svg/power-off-solid.svg";
 
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -82,16 +82,15 @@ export default function Sidebar(props) {
                 </p>
               )}
             </li>
-            <li
+            {/* <li
               className={`${
                 props.page === "edit-schedules" ? "sidebar-current-page" : ""
               }`}
               onClick={goToEditPage}
             >
               <img src={pencilImg} alt="pencil icon" />
-              {/* <Link to="/edit">Edit</Link> */}
               <p>Edit</p>
-            </li>
+            </li> */}
           </>
         )}
         {props.accessLevel === "ROOT" && (

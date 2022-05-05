@@ -97,7 +97,7 @@ export default function DashboardPage(props) {
             <Button className="btn" onClick={() => navigate("/assistant")}>
               <img src={peopleAssist} alt="assist icon" />
             </Button>
-            <Button
+            {/* <Button
               className={`btn ${
                 credentials.user_access_level !== "ROOT" &&
                 credentials.user_access_level !== "ADMIN"
@@ -107,7 +107,7 @@ export default function DashboardPage(props) {
               onClick={() => navigate("/edit-schedules")}
             >
               <img src={pencil} alt="pencil icon" />
-            </Button>
+            </Button> */}
           </div>
         </animated.div>
       )}
