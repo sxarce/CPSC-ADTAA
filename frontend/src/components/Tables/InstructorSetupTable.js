@@ -102,12 +102,15 @@ export default function CustomPaginationActionsTable(props) {
   const { setNotify } = props;
 
   const [tableData, setTableData] = React.useState([]);
-  // console.log(tableData);
+  console.log(tableData);
   const [instructorName, setInstructorName] = React.useState({
     lastNameInput: "",
     firstNameInput: "",
   });
-  // console.log(instructorName)
+
+  // NEW (1)
+  const [instructorMaxLoad, setInstructorMaxLoad] = React.useState("");
+
   const [disciplineAreas, setDisciplineAreas] = React.useState([]);
 
   // <FORM VALIDATION>
@@ -119,6 +122,10 @@ export default function CustomPaginationActionsTable(props) {
 
   const [validDisciplineAreas, setValidDisciplineAreas] = React.useState(false);
   const [disciplineAreasFocus, setDisciplineAreasFocus] = React.useState(false);
+
+  // NEW (2)
+  const [validMaxLoad, setValidMaxLoad] = React.useState(false);
+  const [maxLoadFocus, setMaxLoadFocus] = React.useState(false);
 
   // Last name validation
   React.useEffect(() => {
@@ -137,6 +144,13 @@ export default function CustomPaginationActionsTable(props) {
     const resultDisciplineAreas = disciplineAreas.length <= 0 ? false : true;
     setValidDisciplineAreas(resultDisciplineAreas);
   }, [disciplineAreas]);
+
+  // NEW (3) Max Load validation
+  React.useEffect(() => {
+    const resultMaxLoad =
+      instructorMaxLoad <= 0 || instructorMaxLoad >= 10 ? false : true;
+    setValidMaxLoad(resultMaxLoad);
+  }, [instructorMaxLoad]);
 
   // </FORM VALIDATION>
 
@@ -180,7 +194,7 @@ export default function CustomPaginationActionsTable(props) {
         }
       )
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         const data = response.data;
         data.access_token && props.setToken(data.access_token);
 
@@ -208,12 +222,9 @@ export default function CustomPaginationActionsTable(props) {
       prevTableData.splice(indexToDelete, 1);
       return prevTableData;
     });
-
-    console.log(tableData);
   }
 
   function saveCurrentTable(instructorIndex) {
-    // console.log(tableData.lastName);
     axios
       .post(
         "/add-instructor",
@@ -230,7 +241,7 @@ export default function CustomPaginationActionsTable(props) {
         }
       )
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         setNotify({
           isOpen: true,
           message: "Instructor added/modified!",
@@ -253,6 +264,7 @@ export default function CustomPaginationActionsTable(props) {
       id: -1,
       lastName: "",
       firstName: "",
+      maxLoad: "", // NEW (4)
       expertise: [],
     };
 
@@ -293,6 +305,8 @@ export default function CustomPaginationActionsTable(props) {
       });
       setDisciplineAreas([]);
 
+      setInstructorMaxLoad(""); // NEW (5)
+
       // clear states for editing.
       setEditMode(false);
       setEditInstructorID(-1);
@@ -316,7 +330,7 @@ export default function CustomPaginationActionsTable(props) {
         (instructor) => instructor.id === editInstructorID
       );
     }
-    console.log(indexOfNewInstructor);
+    // console.log(indexOfNewInstructor);
 
     Promise.resolve().then(() => {
       setTableData((prevTableData) => {
@@ -325,6 +339,7 @@ export default function CustomPaginationActionsTable(props) {
         newTableData[indexOfNewInstructor] = {
           lastName: instructorName.lastNameInput,
           firstName: instructorName.firstNameInput,
+          maxLoad: instructorMaxLoad, // NEW (6)
           expertise: disciplineAreas,
         };
 
@@ -346,7 +361,7 @@ export default function CustomPaginationActionsTable(props) {
       };
     });
 
-    console.log(instructorName);
+    // console.log(instructorName);
   }
 
   const handleSelectChange = (event) => {
@@ -358,6 +373,12 @@ export default function CustomPaginationActionsTable(props) {
       typeof value === "string" ? value.split(",") : value
     );
   };
+
+  // NEW (11)
+  function handleInstructorMaxLoadChange(event) {
+    const { value } = event.target;
+    setInstructorMaxLoad(value);
+  }
 
   // const textFieldsBorderStyle = useStyles();
   const theme = useTheme();
@@ -386,6 +407,7 @@ export default function CustomPaginationActionsTable(props) {
                 id: instructor.id,
                 lastName: instructor.lastName,
                 firstName: instructor.firstName,
+                maxLoad: instructor.maxLoad, // NEW (7)
                 expertise: instructor.disciplineAreas.map(
                   (disciplineArea) => disciplineArea.name
                 ),
@@ -403,8 +425,8 @@ export default function CustomPaginationActionsTable(props) {
   const [addMode, setAddMode] = React.useState(false);
 
   // EDITING ROWS . States for editMode and editInstructorID
-  console.log(`EditMode: ${editMode}, editInstructorID: ${editInstructorID}`);
-  console.log(tableData);
+  // console.log(`EditMode: ${editMode}, editInstructorID: ${editInstructorID}`);
+  // console.log(tableData);
   React.useEffect(() => {
     if (editInstructorID === -1) {
       // quick fix for initial render upon loading page. whatever results this may have, they're all unintended side-effects.
@@ -426,6 +448,9 @@ export default function CustomPaginationActionsTable(props) {
         lastNameInput: tableData[indexToEdit].lastName,
       };
     });
+
+    // NEW (13)
+    setInstructorMaxLoad(tableData[indexToEdit].maxLoad);
 
     // console.log(tableData[indexToEdit].expertise)
     setDisciplineAreas(tableData[indexToEdit].expertise);
@@ -460,9 +485,11 @@ export default function CustomPaginationActionsTable(props) {
               Instructors
             </TableCell>
           </TableRow>
+          {/* NEW (9) */}
           <TableRow style={HeaderBackgroundStyle}>
             <TableCell style={HeaderStyle}>Last Name</TableCell>
             <TableCell style={HeaderStyle}>First Name</TableCell>
+            <TableCell style={HeaderStyle}>Max load</TableCell>
             <TableCell style={HeaderStyle}>Expertise</TableCell>
             <TableCell
               style={{
@@ -522,6 +549,26 @@ export default function CustomPaginationActionsTable(props) {
                     row.firstName
                   )}
                 </TableCell>
+                {/* NEW (7) */}
+                <TableCell>
+                  {row.maxLoad === "" || editInstructorID === row.id ? (
+                    <TextField
+                      variant="outlined"
+                      name="maxLoadInput"
+                      label="Max load"
+                      style={{ width: "100%" }}
+                      value={instructorMaxLoad}
+                      onChange={handleInstructorMaxLoadChange}
+                      onFocus={() => setMaxLoadFocus(true)}
+                      onBlur={() => setMaxLoadFocus(false)}
+                      error={!validMaxLoad && maxLoadFocus}
+                      autoComplete="off"
+                    />
+                  ) : (
+                    row.maxLoad
+                  )}
+                </TableCell>
+
                 <TableCell>
                   {!row.expertise.length || editInstructorID === row.id ? (
                     <FormControl sx={{ width: 300 }}>
@@ -664,11 +711,14 @@ export default function CustomPaginationActionsTable(props) {
                 <IconButton
                   onClick={() => {
                     Promise.resolve().then(() => {
+                      // clear state for inputs. back to defaults.
                       setInstructorName({
                         lastNameInput: "",
                         firstNameInput: "",
                       });
                       setDisciplineAreas([]);
+
+                      setInstructorMaxLoad(""); // NEW (10)
 
                       setEditMode(false);
                       setEditInstructorID(-1);

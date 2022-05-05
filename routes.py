@@ -260,6 +260,13 @@ def generate_schedule():
 
     db.session.add(new_schedule)
 
+    # NEW (14)
+    prevMaxLoads = dict()
+    for instructor in sortedInstructorRoster:
+        prevMaxLoads[instructor.id] = instructor.maxLoad
+
+    print(f'{prevMaxLoads}', file=sys.stderr)
+
     instructorsToDelete = []
     for section in sectionsList:
         for instructor in sortedInstructorRoster:
@@ -288,7 +295,7 @@ def generate_schedule():
 
     # TODO: Return result and commit.
 
-    resetMaxLoad()
+    resetMaxLoad(prevMaxLoads)
     resetAssignedInstructors()
     db.session.commit()
 
@@ -301,10 +308,10 @@ def resetAssignedInstructors():
         section.assigned_instructor = None
 
 
-def resetMaxLoad():
+def resetMaxLoad(prevMaxLoads):
     instructorRoster = Instructor.query.all()
     for instructor in instructorRoster:
-        instructor.maxLoad = 4
+        instructor.maxLoad = prevMaxLoads.get(instructor.id)
 
 
 def hasSectionOverlap(sectionToAssign, instructorSections):
@@ -447,6 +454,8 @@ def get_instructors():
         instructor['disciplineAreas'] = instructorDisciplineAreas_schema.dump(
             instructor['disciplineAreas'])
 
+    print(f'{serialized_instructor_roster}', file=sys.stderr)
+
     # print(f'{serialized_instructor_roster}', file=sys.stderr)
     # NOTE: This might be an initial step when designing the assistant algorithm.
     return {"Request": "OK", "TableData": serialized_instructor_roster}
@@ -486,7 +495,7 @@ def add_instructor():
         instructorToAdd = tableData[len(tableData) - 1]
 
         new_instructor = Instructor(
-            lastName=instructorToAdd['lastName'], firstName=instructorToAdd['firstName'])
+            lastName=instructorToAdd['lastName'], firstName=instructorToAdd['firstName'], maxLoad=instructorToAdd['maxLoad'])  # NEW (10)
         db.session.add(new_instructor)
 
         for disciplineArea in instructorToAdd['expertise']:
@@ -508,6 +517,8 @@ def add_instructor():
         # Make changes to existing instructor
         instructorToEdit.lastName = modifiedInstructor['lastName']
         instructorToEdit.firstName = modifiedInstructor['firstName']
+        # NEW (11)
+        instructorToEdit.maxLoad = modifiedInstructor['maxLoad']
 
         for disciplineArea in modifiedInstructor['expertise']:
             new_discipline_area = InstructorDisciplineArea(
