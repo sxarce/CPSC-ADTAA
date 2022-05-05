@@ -75,10 +75,12 @@ export default function AssistantPage(props) {
   }, []);
 
   const [tableData, setTableData] = React.useState(null);
+  
   const [currentSchedule, setCurrentSchedule] = React.useState(null);
 
   // console.log(tableData);
   console.log(currentSchedule);
+  
 
   const editAssignedClass = (assignedClassID, formData, resetForm) => {
     axios
@@ -412,68 +414,76 @@ export default function AssistantPage(props) {
               )}
             </TableHead>
             <TableBody>
-              {tableDataAfterPagingAndSorting().map((elem) => {
-                // console.log(elem);
-                return (
-                  <TableRow key={elem.id}>
-                    <TableCell style={{ fontWeight: "bold", width: "0px" }}>
-                      <Tooltip
-                        title={`Course #${elem.assigned_section.course_info.number}`}
-                        placement="left"
-                        arrow
-                      >
-                        <span>{elem.assigned_section.course_info.name}</span>
-                      </Tooltip>
-                    </TableCell>
-
-                    <TableCell style={{ width: "0px" }}>
-                      {elem.assigned_section.sectionNumber}
-                    </TableCell>
-                    <TableCell style={{ width: "0px" }}>
-                      {`${elem.assigned_instructor.lastName}, ${elem.assigned_instructor.firstName}`}
-                    </TableCell>
-                    <TableCell style={{ height: "40px", width: "260px" }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: "5px",
-                          flexWrap: "wrap",
-                        }}
-                      >
-                        {elem.assigned_instructor.disciplineAreas
-                          .filter((item) =>
-                            elem.assigned_section.course_info.disciplineAreas.some(
-                              ({ name }) => item.name === name
-                            )
-                          )
-                          .map((listItem) => (
-                            <Chip label={listItem.name}></Chip>
-                          ))}
-                      </div>
-                    </TableCell>
-                    {credentials.user_access_level !== "ASSISTANT" ? (
-                      <TableCell align="right" style={{ width: "0px" }}>
-                        <IconButton
-                          onClick={() => {
-                            openInEditPopUp(elem);
-                          }}
+              {(tableData.length <= 0 && currentSchedule !== null)  && (
+                <TableRow>
+                  <Typography variant="h6" style={{ padding: "1rem" }}>
+                    Empty schedule!
+                  </Typography>
+                </TableRow>
+              )}
+              {tableData.length > 0 &&
+                tableDataAfterPagingAndSorting().map((elem) => {
+                  // console.log(elem);
+                  return (
+                    <TableRow key={elem.id}>
+                      <TableCell style={{ fontWeight: "bold", width: "0px" }}>
+                        <Tooltip
+                          title={`Course #${elem.assigned_section.course_info.number}`}
+                          placement="left"
+                          arrow
                         >
-                          <CreateIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          onClick={(event) => {
-                            deleteAssignedClass(elem.id);
-                          }}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
+                          <span>{elem.assigned_section.course_info.name}</span>
+                        </Tooltip>
                       </TableCell>
-                    ) : (
-                      ""
-                    )}
-                  </TableRow>
-                );
-              })}
+
+                      <TableCell style={{ width: "0px" }}>
+                        {elem.assigned_section.sectionNumber}
+                      </TableCell>
+                      <TableCell style={{ width: "0px" }}>
+                        {`${elem.assigned_instructor.lastName}, ${elem.assigned_instructor.firstName}`}
+                      </TableCell>
+                      <TableCell style={{ height: "40px", width: "260px" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "5px",
+                            flexWrap: "wrap",
+                          }}
+                        >
+                          {elem.assigned_instructor.disciplineAreas
+                            .filter((item) =>
+                              elem.assigned_section.course_info.disciplineAreas.some(
+                                ({ name }) => item.name === name
+                              )
+                            )
+                            .map((listItem) => (
+                              <Chip label={listItem.name}></Chip>
+                            ))}
+                        </div>
+                      </TableCell>
+                      {credentials.user_access_level !== "ASSISTANT" ? (
+                        <TableCell align="right" style={{ width: "0px" }}>
+                          <IconButton
+                            onClick={() => {
+                              openInEditPopUp(elem);
+                            }}
+                          >
+                            <CreateIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            onClick={(event) => {
+                              deleteAssignedClass(elem.id);
+                            }}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </TableCell>
+                      ) : (
+                        ""
+                      )}
+                    </TableRow>
+                  );
+                })}
             </TableBody>
 
             <TableFooter>
