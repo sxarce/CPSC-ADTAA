@@ -39,6 +39,7 @@ import SchedulesScrollableList from "../../components/SchedulesScrollableList";
 
 import ScheduleInfo from "../../components/ScheduleInfo";
 import CreateIcon from "@mui/icons-material/Create";
+import EditAssignedClassForm from "../../components/Forms/EditAssignedClassForm/EditAssignedClassForm";
 
 export default function AssistantPage(props) {
   document.title = "Assistant - ADTAA";
@@ -78,6 +79,32 @@ export default function AssistantPage(props) {
 
   // console.log(tableData);
   console.log(currentSchedule);
+
+  const editAssignedClass = (assignedClassID, formData, resetForm) => {
+    axios
+      .post("/edit-assigned-class", {
+        formData: formData,
+        assignedClassID: assignedClassID,
+      })
+      .then((response) => {
+        // console.log(response);
+
+        let retrievedTableData = response.data.TableData;
+        // update current schedule
+        let currentScheduleIndex = retrievedTableData.findIndex(
+          (schedule) => schedule.id === currentSchedule.id
+        );
+        setCurrentSchedule(retrievedTableData[currentScheduleIndex]);
+
+        // update table data (assignedClasses)
+        setTableData(retrievedTableData[currentScheduleIndex].assignedClasses);
+      })
+      .catch((error) => console.log(error));
+
+    setOpenPopupEditClass(false);
+    resetForm();
+    setAssignedClassToEdit(null);
+  };
   const deleteAssignedClass = (assignedClassID) => {
     // console.log(`${assignedClassID}`);
     axios
@@ -94,11 +121,11 @@ export default function AssistantPage(props) {
         console.log(response);
         let retrievedTableData = response.data.TableData;
 
-        // update current schedule 
+        // update current schedule
         let currentScheduleIndex = retrievedTableData.findIndex(
           (schedule) => schedule.id === currentSchedule.id
         );
-        setCurrentSchedule(retrievedTableData[currentScheduleIndex])  
+        setCurrentSchedule(retrievedTableData[currentScheduleIndex]);
 
         // update table data (assignedClasses)
         setTableData(retrievedTableData[currentScheduleIndex].assignedClasses);
@@ -271,6 +298,14 @@ export default function AssistantPage(props) {
   const [openPopupInfo, setOpenPopupInfo] = React.useState(false);
   const [openPopupSchedules, setOpenPopupSchedules] = React.useState(false);
 
+  const [openPopupEditClass, setOpenPopupEditClass] = React.useState(false);
+  const [assignedClassToEdit, setAssignedClassToEdit] = React.useState(null);
+
+  function openInEditPopUp(assignedClassToEdit) {
+    setOpenPopupEditClass(true);
+    setAssignedClassToEdit(assignedClassToEdit);
+  }
+
   // REMINDER: last return is equivalent to "else return"
   if (loading === true) return <Loader message={""} />;
   else if (credentials === undefined || credentials === null) {
@@ -418,7 +453,11 @@ export default function AssistantPage(props) {
                     </TableCell>
                     {credentials.user_access_level !== "ASSISTANT" ? (
                       <TableCell align="right" style={{ width: "0px" }}>
-                        <IconButton>
+                        <IconButton
+                          onClick={() => {
+                            openInEditPopUp(elem);
+                          }}
+                        >
                           <CreateIcon fontSize="small" />
                         </IconButton>
                         <IconButton
@@ -460,6 +499,7 @@ export default function AssistantPage(props) {
             </TableFooter>
           </TableContainer>
         </Paper>
+        {/* GENERATE NEW POPUP */}
         <Popup
           title="Generate schedule"
           openPopup={openPopupNew}
@@ -475,6 +515,7 @@ export default function AssistantPage(props) {
         >
           <ScheduleInfo currentSchedule={currentSchedule} />
         </Popup>
+        {/* SCHEDULES LIST POPUP */}
         <Popup
           title="Existing schedules"
           openPopup={openPopupSchedules}
@@ -484,6 +525,18 @@ export default function AssistantPage(props) {
             setTableData={setTableData}
             setCurrentSchedule={setCurrentSchedule}
             setOpenPopup={setOpenPopupSchedules}
+          />
+        </Popup>
+        {/* EDIT ASSIGNEDCLASS POPUP */}
+        <Popup
+          title="Edit assigned class"
+          openPopup={openPopupEditClass}
+          setOpenPopup={setOpenPopupEditClass}
+        >
+          <EditAssignedClassForm
+            assignedClassToEdit={assignedClassToEdit}
+            token={props.token}
+            editAssignedClass={editAssignedClass}
           />
         </Popup>
       </div>

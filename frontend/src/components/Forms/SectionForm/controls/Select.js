@@ -17,13 +17,15 @@ export default function Select(props) {
     options,
     options2,
     options3,
+    options4,
+    options5,
     error = null,
   } = props;
 
   // options --> course
   // options2 --> days
   // options3 --> algo
-  
+
   return (
     <FormControl variant={variant} {...(error && { error: true })}>
       <InputLabel>{label}</InputLabel>
@@ -51,6 +53,21 @@ export default function Select(props) {
           options3.map((algo) => (
             <MenuItem key={algo.key} value={algo.name}>
               {algo.name}
+            </MenuItem>
+          ))}
+
+        {options4 &&
+          options4.map((section) => (
+            <MenuItem
+              key={section.id}
+              value={section.id}
+            >{`Section ${section.sectionNumber} - ${section.courseName}`}</MenuItem>
+          ))}
+
+        {options5 &&
+          options5.map((instructor) => (
+            <MenuItem key={instructor.id} value={instructor.id}>
+              {`${instructor.lastName}, ${instructor.firstName}`}
             </MenuItem>
           ))}
       </MuiSelect>

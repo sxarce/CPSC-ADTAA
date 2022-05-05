@@ -4,7 +4,7 @@ import axios from "axios";
 
 export default function ScheduleInfo(props) {
   const { currentSchedule } = props;
-  console.log(currentSchedule);
+  // console.log(currentSchedule);
 
   const [totalUniqueInstructors, setTotalUniqueInstructors] = React.useState(
     new Set()
@@ -22,7 +22,7 @@ export default function ScheduleInfo(props) {
     axios
       .get("/get-stats")
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         setStats(response.data.stats);
       })
       .catch((error) => console.log(error));

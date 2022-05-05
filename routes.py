@@ -142,14 +142,36 @@ def delete_related_schedule(IDtoDelete, byRelatedSection):
 
     return None
 
+
 @app.route("/delete-assigned-class", methods=['GET', 'POST'])
 def delete_assigned_class():
-    print(f'{request.json["assignedClassID"]}', file=sys.stderr)
-    assignedClassToDelete = AssignedClass.query.filter_by(id=request.json['assignedClassID']).first()
+    # print(f'{request.json["assignedClassID"]}', file=sys.stderr)
+    assignedClassToDelete = AssignedClass.query.filter_by(
+        id=request.json['assignedClassID']).first()
     db.session.delete(assignedClassToDelete)
     db.session.commit()
 
     return get_schedules()
+
+
+@app.route("/edit-assigned-class", methods=['GET', 'POST'])
+def edit_assigned_class():
+    formData = request.json['formData']
+    assignedClassID = request.json['assignedClassID']
+    print(f'{formData}', file=sys.stderr)
+    assignedClassToEdit = AssignedClass.query.filter_by(
+        id=assignedClassID).first()
+
+    # make changes
+    assignedClassToEdit.owning_section = Section.query.filter_by(
+        id=formData['assignedSection']).first()
+    assignedClassToEdit.owning_instructor = Instructor.query.filter_by(
+        id=formData['assignedInstructor']).first()
+
+    db.session.commit()
+
+    return get_schedules()
+
 
 @app.route("/get-schedules")
 def get_schedules():
@@ -464,7 +486,7 @@ def get_instructors():
 
     # print(f'{serialized_instructor_roster}', file=sys.stderr)
     # NOTE: This might be an initial step when designing the assistant algorithm.
-    return {"Request": "OK", "TableData": serialized_instructor_roster}
+    return {"Request": "Instructors retrieved!", "TableData": serialized_instructor_roster}
 
 
 @app.route("/get-course-list")
@@ -533,7 +555,6 @@ def add_instructor():
 
         # delete schedule associated with instructor upon modification.
         delete_related_schedule(instructorToEdit.id, False)
-
 
     db.session.commit()
 
