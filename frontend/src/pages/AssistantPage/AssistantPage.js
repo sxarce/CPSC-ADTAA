@@ -154,8 +154,8 @@ export default function AssistantPage(props) {
 
   const headerCells = [
     {
-      id: "assigned_section.course_info.number",
-      label: "Course #",
+      id: "assigned_section.course_info.number", // id has no functionality.
+      label: "Course name",
       disableSorting: true,
     },
     {
@@ -165,7 +165,7 @@ export default function AssistantPage(props) {
     },
     {
       id: "assigned_instructor.lastName",
-      label: "Instructor Name",
+      label: "Instructor name",
       disableSorting: true,
     },
     {

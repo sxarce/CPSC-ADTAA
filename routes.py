@@ -523,6 +523,10 @@ def add_instructor():
                 name=disciplineArea, owning_instructor=instructorToEdit)
             db.session.add(new_discipline_area)
 
+        # delete schedule associated with instructor upon modification.
+        delete_related_schedule(instructorToEdit.id, False)
+
+
     db.session.commit()
 
     return jsonify({'Message': f'Instructor added/modified!'})

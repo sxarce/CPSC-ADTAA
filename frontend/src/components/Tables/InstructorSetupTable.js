@@ -639,7 +639,7 @@ export default function CustomPaginationActionsTable(props) {
                         disabled={
                           !validLastName ||
                           !validFirstName ||
-                          !validDisciplineAreas || 
+                          !validDisciplineAreas ||
                           !validMaxLoad
                         }
                         className="save-btn"

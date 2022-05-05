@@ -34,7 +34,8 @@
 .list-items-discipline-areas {
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  /* gap: 10px; */
+  gap: 5px;
   flex-wrap: wrap;
 }
 /* TODO: Make li into MUI chips */
