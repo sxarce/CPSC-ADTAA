@@ -3,7 +3,7 @@
 .background-assistant {
   position: relative;
   width: 100vw;
-  height: 200vh;  
+  height: 200vh;
   background-color: rgb(231, 235, 240);
 }
 
@@ -20,6 +20,9 @@
   position: absolute;
   right: 0rem;
   top: 0rem;
+}
+.delete-schedule-btn:disabled {
+  color: #9fada2 !important;
 }
 /* 
 @media all and (max-height: 620px) {

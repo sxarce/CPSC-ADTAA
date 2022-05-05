@@ -74,7 +74,7 @@ export default function AssistantPage(props) {
   const [currentSchedule, setCurrentSchedule] = React.useState(null);
 
   console.log(tableData);
-  console.log(currentSchedule);
+  // console.log(currentSchedule);
 
   const deleteSchedule = () => {
     axios
@@ -98,7 +98,9 @@ export default function AssistantPage(props) {
             retrievedTableData[retrievedTableData.length - 1].assignedClasses
           );
           // setSchedulesList(retrievedTableData); // for clipboard button (displaying all schedule names)
-        } else setTableData(retrievedTableData);
+        } else {
+          setCurrentSchedule(null)
+          setTableData(retrievedTableData)};
       })
       .catch((error) => console.log(error));
   };
@@ -138,7 +140,10 @@ export default function AssistantPage(props) {
           setTableData(
             retrievedTableData[retrievedTableData.length - 1].assignedClasses
           ); // retrievedTableData[0].assignedClasses
-        } else setTableData(retrievedTableData);
+        } else {
+          setTableData(retrievedTableData);
+          setCurrentSchedule(null);
+        }
       })
       .catch((error) => console.log(error));
   };
@@ -374,7 +379,9 @@ export default function AssistantPage(props) {
                       style={{
                         color: "#732d40",
                       }}
+                      className="delete-schedule-btn"
                       onClick={deleteSchedule}
+                      disabled={currentSchedule === null ? true : false}
                     >
                       <DeleteIcon />
                     </IconButton>

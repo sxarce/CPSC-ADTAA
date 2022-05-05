@@ -148,7 +148,7 @@ export default function CustomPaginationActionsTable(props) {
   // NEW (3) Max Load validation
   React.useEffect(() => {
     const resultMaxLoad =
-      instructorMaxLoad <= 0 || instructorMaxLoad >= 10 ? false : true;
+      instructorMaxLoad <= 0 || instructorMaxLoad > 4 ? false : true;
     setValidMaxLoad(resultMaxLoad);
   }, [instructorMaxLoad]);
 
@@ -556,6 +556,7 @@ export default function CustomPaginationActionsTable(props) {
                       variant="outlined"
                       name="maxLoadInput"
                       label="Max load"
+                      type="number"
                       style={{ width: "100%" }}
                       value={instructorMaxLoad}
                       onChange={handleInstructorMaxLoadChange}
@@ -638,7 +639,8 @@ export default function CustomPaginationActionsTable(props) {
                         disabled={
                           !validLastName ||
                           !validFirstName ||
-                          !validDisciplineAreas
+                          !validDisciplineAreas || 
+                          !validMaxLoad
                         }
                         className="save-btn"
                         onClick={(e) => {

@@ -87,8 +87,6 @@ def get_stats():
 @app.route("/delete-schedule", methods=['GET', 'POST'])
 def delete_schedule():
     currentScheduleID = request.json['currentScheduleID']
-    if not currentScheduleID:
-        return {"Message": "No schedules to delete"}
 
     scheduleToDelete = PartialSchedule.query.filter_by(
         id=currentScheduleID).first()
