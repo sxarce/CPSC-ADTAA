@@ -142,6 +142,14 @@ def delete_related_schedule(IDtoDelete, byRelatedSection):
 
     return None
 
+@app.route("/delete-assigned-class", methods=['GET', 'POST'])
+def delete_assigned_class():
+    print(f'{request.json["assignedClassID"]}', file=sys.stderr)
+    assignedClassToDelete = AssignedClass.query.filter_by(id=request.json['assignedClassID']).first()
+    db.session.delete(assignedClassToDelete)
+    db.session.commit()
+
+    return get_schedules()
 
 @app.route("/get-schedules")
 def get_schedules():

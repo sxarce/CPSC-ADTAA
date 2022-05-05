@@ -76,9 +76,35 @@ export default function AssistantPage(props) {
   const [tableData, setTableData] = React.useState(null);
   const [currentSchedule, setCurrentSchedule] = React.useState(null);
 
-  console.log(tableData);
-  // console.log(currentSchedule);
+  // console.log(tableData);
+  console.log(currentSchedule);
+  const deleteAssignedClass = (assignedClassID) => {
+    // console.log(`${assignedClassID}`);
+    axios
+      .post(
+        "/delete-assigned-class",
+        { assignedClassID: assignedClassID },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+        let retrievedTableData = response.data.TableData;
 
+        // update current schedule 
+        let currentScheduleIndex = retrievedTableData.findIndex(
+          (schedule) => schedule.id === currentSchedule.id
+        );
+        setCurrentSchedule(retrievedTableData[currentScheduleIndex])  
+
+        // update table data (assignedClasses)
+        setTableData(retrievedTableData[currentScheduleIndex].assignedClasses);
+      })
+      .catch((error) => console.log(error));
+  };
   const deleteSchedule = () => {
     axios
       .post(
@@ -344,7 +370,11 @@ export default function AssistantPage(props) {
               <TableCell style={HeaderStyle}>Section #</TableCell>
               <TableCell style={HeaderStyle}>Instructor name</TableCell>
               <TableCell style={HeaderStyle}>Common discipline areas</TableCell>
-              {credentials.user_access_level !== "ASSISTANT" ? <TableCell style={HeaderStyle}></TableCell> : ""}
+              {credentials.user_access_level !== "ASSISTANT" ? (
+                <TableCell style={HeaderStyle}></TableCell>
+              ) : (
+                ""
+              )}
             </TableHead>
             <TableBody>
               {tableDataAfterPagingAndSorting().map((elem) => {
@@ -391,7 +421,11 @@ export default function AssistantPage(props) {
                         <IconButton>
                           <CreateIcon fontSize="small" />
                         </IconButton>
-                        <IconButton>
+                        <IconButton
+                          onClick={(event) => {
+                            deleteAssignedClass(elem.id);
+                          }}
+                        >
                           <DeleteIcon fontSize="small" />
                         </IconButton>
                       </TableCell>
@@ -442,7 +476,7 @@ export default function AssistantPage(props) {
           <ScheduleInfo currentSchedule={currentSchedule} />
         </Popup>
         <Popup
-          title="List of schedules"
+          title="Existing schedules"
           openPopup={openPopupSchedules}
           setOpenPopup={setOpenPopupSchedules}
         >
