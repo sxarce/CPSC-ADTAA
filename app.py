@@ -31,15 +31,25 @@ def create_app():
     # jwt = JWTManager(app)
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
-    app.config['MAIL_SERVER'] = 'smtp.mailtrap.io'
+    # app.config['MAIL_SERVER'] = 'smtp.mailtrap.io'
 
-    # email configurations
-    app.config['MAIL_SERVER'] = 'smtp.mailtrap.io'
-    app.config['MAIL_PORT'] = 2525
-    app.config['MAIL_USERNAME'] = '33acc45e679867'
-    app.config['MAIL_PASSWORD'] = '11626d76e96b23'
-    app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_USE_SSL'] = False
+    # EMAIL CONFIGURATIONS
+    
+    # email-config for testing
+    # app.config['MAIL_SERVER'] = 'smtp.mailtrap.io'
+    # app.config['MAIL_PORT'] = 2525
+    # app.config['MAIL_USERNAME'] = '33acc45e679867'
+    # app.config['MAIL_PASSWORD'] = '11626d76e96b23'
+    # app.config['MAIL_USE_TLS'] = True
+    # app.config['MAIL_USE_SSL'] = False
+
+    # email-config for deployment
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_USERNAME'] = 'cpscadtaa@gmail.com'
+    app.config['MAIL_PASSWORD'] = 'uaomhcin4392'
+    app.config['MAIL_USE_TLS'] = False
+    app.config['MAIL_USE_SSL'] = True
 
     # TODO: Make a gmail account for this app. Use gmail to handle sending email.
     # app.config['MAIL_SERVER']='smtp.gmail.com'
