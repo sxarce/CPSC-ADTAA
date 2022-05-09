@@ -44,7 +44,7 @@ References:
   git push origin main
   ```
 ------------------------------------------
-**Setting up (Windows)** (Updated 4/8/22)
+### **Setting up (Windows)** (Updated 4/8/22)
 
 Inside VSCode, open 2 terminals. One for frontend (```cd frontend```), one for backend.
 
@@ -74,7 +74,7 @@ npm start
 ```
 
 ------------------------------------------
-**Setting up (MacOS)** (Updated 4/8/22)
+### **Setting up (MacOS)** (Updated 4/8/22)
 
 Inside VSCode, open 2 terminals. One for frontend (```cd frontend```), one for backend.
 
@@ -132,7 +132,7 @@ npm start
 ```
 
 ------------------------------------------
-***ISSUES*** (Updated 4/29/22)
+### ***ISSUES*** (Updated 4/29/22)
 
 ***Import could not be resolved from source***
 - Inside VSCode command palette (```Ctrl + Shift + P```), find *Python: Select Interpeter*
