@@ -68,3 +68,7 @@
   /* border: 1px solid green; */
   /* align-self: center; */
 }
+
+.meetingPeriodsCell {
+  padding-inline-start: 1rem !important;
+}
