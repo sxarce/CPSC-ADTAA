@@ -24,7 +24,7 @@ References:
 - Deploying flask-react app in heroku [article tutorial](https://towardsdatascience.com/build-deploy-a-react-flask-app-47a89a5d17d9)
 - Heroku deployment [docs](https://devcenter.heroku.com/articles/git) 
 
-### ***Making modifications to the app*** 
+### ***Modifying the app after deployment*** 
 *(Updated 5/8/22)*
 
 - To modify deployed app:
