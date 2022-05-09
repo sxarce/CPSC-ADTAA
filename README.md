@@ -1,4 +1,49 @@
 
+###  **Deployment** 
+*(Updated 5/8/22)*
+
+- **Get zip file** of latest branch
+- **Create** a new **GitHub repository** (i.e., ```git init```) and push source code from zip.
+- Run ```heroku git:remote -a example-app``` and ```git push```
+- Then, make the following changes:
+  - In ***app.py***, add the following line: *app = Flask(__name__, static_folder='frontend/build' static_url_path='')*
+  - In ***routes.py***, add: *def serve(): return send_from_directory(app.static_folder, 'index.html')*
+  - In ***frontend/package.json***, change proxy to name of heroku domain (*https://cpsc-adtaa.herokuapp.com/*).
+  - In ***frontend/.gitignore***, comment out */build* 
+  - In ***.flaskenv***, do *FLASK_ENV=production* from *FLASK_ENV=development*
+  - In the ***root folder***, create a Procfile (i.e., ```touch Procfile```) and add *web: gunicorn* ***routes:app*** (make this point to the Flask object)
+
+- Finally, run the following:
+```
+npm run build
+git push heroku main
+```
+
+References:
+- Deploying flask-react app in heroku [YouTube tutorial](https://youtu.be/h96KP3JMX7Q?t=784)
+- Deploying flask-react app in heroku [article tutorial](https://towardsdatascience.com/build-deploy-a-react-flask-app-47a89a5d17d9)
+- Heroku deployment [docs](https://devcenter.heroku.com/articles/git) 
+
+### ***Making modifications to the app*** 
+*(Updated 5/8/22)*
+
+- To modify deployed app:
+  - In ***.flaskenv***, change *FLASK_ENV* from *production* to *development*
+  - In **frontend/package.json**, change proxy to *localhost:5000*
+  - Then run, ```npm run build``` (Otherwise, changes wont reflect in UI or in database)
+
+- After modifications:
+  - In ***.flaskenv***, change *FLASK_ENV* from *development* to *production*
+  - In ***frontend/package.json***, change proxy back to domain name
+  - Run, ```npm run build```
+  - In ***frontend/build***, place required files for dead-end-pages 
+  - Save changes in GitHub and heroku repos:
+  
+  ```
+  git push heroku main
+  git push origin main
+  ```
+------------------------------------------
 **Setting up (Windows)** (Updated 4/8/22)
 
 Inside VSCode, open 2 terminals. One for frontend (```cd frontend```), one for backend.
